@@ -151,18 +151,40 @@
             setTimeout(tempoSim, 1000);
         }
 
-       async function loadRewards() {
-    try {
-        const response = await fetch('https://yourusername.github.io/yourrepo/rewards.json');
-        const data = await response.json();
-        const jsonData = JSON.parse(data.contents);
-        
-        // Your existing code to parse the rewards and display them goes here
-    } catch (error) {
-        console.error('Error loading rewards:', error);
-        document.getElementById('rewards').innerHTML = 'Error loading rewards.';
-    }
-}
+        async function loadRewards() {
+            try {
+                const response = await fetch('https://yourusername.github.io/yourrepo/rewards.json'); // Replace with your GitHub URL
+                const data = await response.json(); // Assuming this returns the correct JSON structure
+
+                // Assuming the JSON structure is an array of reward objects with name and image properties
+                const rewardsContainer = document.getElementById('rewards');
+                rewardsContainer.innerHTML = ''; // Clear previous content
+
+                // Loop through each reward item and display it
+                data.forEach(reward => {
+                    const rewardItem = document.createElement('div');
+                    rewardItem.className = 'reward-item';
+
+                    // Create a span element to hold the reward name
+                    const rewardName = document.createElement('span');
+                    rewardName.textContent = reward.name;
+
+                    rewardItem.appendChild(rewardName);
+
+                    // If an image is available, display it
+                    if (reward.image) {
+                        const rewardImage = document.createElement('img');
+                        rewardImage.src = `https://simnationserver.com/redeem/${reward.image}`; // Update with the correct path
+                        rewardItem.appendChild(rewardImage);
+                    }
+
+                    rewardsContainer.appendChild(rewardItem);
+                });
+            } catch (error) {
+                console.error('Error loading rewards:', error);
+                document.getElementById('rewards').innerHTML = 'Error loading rewards.';
+            }
+        }
 
         window.onload = function() {
             loadLots();
