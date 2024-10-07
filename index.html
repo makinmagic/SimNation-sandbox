@@ -63,39 +63,37 @@
             // Your existing code for tempoSim
         }
 
-        const rewardsUrl = 'YOUR_REWARDS_API_ENDPOINT_HERE'; // Replace with the actual URL for rewards
+        const rewardsUrl = 'https://leonsden.github.io/SimNation-sandbox/rewards.json'; // Replace with the actual URL for rewards
 
-async function fetchRewards() {
-    try {
-        const response = await fetch(rewardsUrl);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        async function fetchRewards() {
+            try {
+                const response = await fetch(rewardsUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                populateRewards(data);
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                document.getElementById('rewards').textContent = 'Failed to load rewards.';
+            }
         }
-        const data = await response.json();
-        populateRewards(data);
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-    }
-}
 
-function populateRewards(rewards) {
-    const rewardsDropdown = document.getElementById('rewards-dropdown');
-    rewardsDropdown.innerHTML = ''; // Clear existing content
+        function populateRewards(rewards) {
+            const rewardsDropdown = document.getElementById('rewards-dropdown');
+            rewardsDropdown.innerHTML = ''; // Clear existing content
 
-    rewards.forEach(reward => {
-        const li = document.createElement('li');
-        li.textContent = reward.name; // Assuming reward object has a 'name' property
-        rewardsDropdown.appendChild(li);
-    });
-}
-
-// Call the fetchRewards function to load rewards when the page loads
-fetchRewards();
+            rewards.forEach(reward => {
+                const li = document.createElement('li');
+                li.textContent = reward.name; // Assuming reward object has a 'name' property
+                rewardsDropdown.appendChild(li);
+            });
+        }
 
         window.onload = function() {
             loadLots();
             tempoSim();
-            loadRewards();
+            fetchRewards(); // Change to fetchRewards
         };
     </script>
 </head>
@@ -103,6 +101,11 @@ fetchRewards();
     <h1>SimNation - Active Lots and Rewards</h1>
     <div id="tempoSim" style="text-align: center; font-size: 18px; margin-bottom: 20px;">Loading time...</div>
     <div id="lots">Loading lots...</div>
-    <div id="rewards" style="margin-top: 30px; text-align: center;">Loading rewards...</div>
+    <div id="rewards" style="margin-top: 30px; text-align: center;">
+        <h3>Rewards</h3>
+        <ul id="rewards-dropdown">
+            <!-- Rewards will be populated here -->
+        </ul>
+    </div>
 </body>
 </html>
