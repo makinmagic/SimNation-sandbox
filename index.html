@@ -158,17 +158,33 @@
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(data.contents, 'text/html');
 
-        // Create base URL for images
+        // Base URL for images
         const baseURL = "https://simnationserver.com/redeem/";
 
-        // Insert rewards into the page
-        const rewardsList = `
-            <h2>Rewards Currently Available to Patrons:</h2>
-            <div class="reward-item"><span>Spin The Bottle</span> <img src="${baseURL}images/spin_the_bottle.png" alt="Spin The Bottle"></div>
-            <div class="reward-item"><span>Golden Toilet</span> <img src="${baseURL}images/golden_toilet.png" alt="Golden Toilet"></div>
-            <!-- Add more rewards here with the correct data-image path -->
-        `;
+        // Get all reward elements
+        const rewards = doc.querySelectorAll('li'); // Assuming rewards are inside <li> tags
+
+        // Construct rewards list dynamically
+        let rewardsList = '<h2>Rewards Currently Available to Patrons:</h2>';
+
+        rewards.forEach(reward => {
+            const itemName = reward.querySelector('.reward-name')?.textContent.trim();
+            const imagePath = reward.querySelector('img')?.getAttribute('data-image');
+
+            // Default fallback in case of missing image path
+            const imageUrl = imagePath ? `${baseURL}${imagePath}` : 'https://via.placeholder.com/100';
+
+            // Add each reward to the list
+            rewardsList += `
+                <div class="reward-item">
+                    <span>${itemName}</span>
+                    <img src="${imageUrl}" alt="${itemName}" onerror="this.src='https://via.placeholder.com/100'; this.alt='Image not found';">
+                </div>
+            `;
+        });
 
         document.getElementById('rewards').innerHTML = rewardsList;
     } catch (error) {
