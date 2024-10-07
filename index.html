@@ -55,6 +55,11 @@
             }
         }
 
+        async function loadPlayerAge(id) {
+            const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
+            return playerData ? playerData.date : null; // Return the date (timestamp) if the player data is valid
+        }
+
         async function loadOnlinePlayers() {
             const onlineData = await fetchWithAllOrigins('http://simnation.ddns.net:9000/userapi/avatars/online');
             if (!onlineData || !onlineData.avatars) {
@@ -72,15 +77,30 @@
                         <tr>
                             <th>Name</th>
                             <th>ID</th>
+                            <th>Age</th>
                         </tr>
                     </thead>
                     <tbody>`;
 
-            onlineData.avatars.forEach(avatar => {
+            // Fetch each player's age based on their ID
+            const playerPromises = onlineData.avatars.map(async (avatar) => {
+                const ageTimestamp = await loadPlayerAge(avatar.avatar_id);
+                return {
+                    name: avatar.name,
+                    id: avatar.avatar_id,
+                    age: ageTimestamp ? Math.floor((Date.now() / 1000 - ageTimestamp) / (60 * 60 * 24 * 365)) : 'N/A' // Calculate age in years
+                };
+            });
+
+            // Wait for all promises to resolve
+            const players = await Promise.all(playerPromises);
+
+            players.forEach(player => {
                 tableHtml += `
                     <tr>
-                        <td>${avatar.name}</td>
-                        <td>${avatar.avatar_id}</td>
+                        <td>${player.name}</td>
+                        <td>${player.id}</td>
+                        <td>${player.age} years</td>
                     </tr>`;
             });
 
