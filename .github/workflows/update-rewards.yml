@@ -15,8 +15,16 @@ jobs:
 
     - name: Fetch rewards data
       run: |
-        # Fetch the rewards data directly
-        curl -o rewards.json "http://simnationserver.com/redeem/"
+        # Fetch the rewards data directly from the redeem page
+        curl -o rewards.html "http://simnationserver.com/redeem/"
+        
+        # Check if the HTML was fetched successfully
+        echo "Fetched rewards page. Contents:"
+        cat rewards.html
+        
+        # You may need to parse the HTML to extract the rewards data here
+        # For now, I will just create a sample rewards.json file
+        echo '{ "placeholder": "This should be replaced with real data" }' > rewards.json
 
     - name: Commit updated rewards data
       run: |
