@@ -44,78 +44,48 @@
 
     <script>
         async function loadLots() {
-            // Your existing loadLots() function implementation...
-        }
-
-        async function loadOnlinePlayers() {
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const targetUrl = 'http://simnation.ddns.net:9000/userapi/city/1/lots.json';
             try {
-                const proxyUrl = 'https://api.allorigins.win/get?url=';
-                const targetUrl = 'http://simnation.ddns.net:9000/userapi/avatars/online';
-                
                 const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                const data = await response.json();
+                const jsonData = JSON.parse(data.contents);
+                // Display active lots here, similar to how you handled it previously
+                let lotsHtml = '<h2>Active Lots</h2><ul>';
+                jsonData.lots.forEach(lot => {
+                    lotsHtml += `<li>Lot ID: ${lot.id}, Name: ${lot.name}</li>`;
+                });
+                lotsHtml += '</ul>';
+                document.getElementById('active-lots').innerHTML = lotsHtml;
+            } catch (error) {
+                console.error('Error loading active lots:', error);
+                document.getElementById('active-lots').innerHTML = 'Error loading active lots: ' + error.message;
+            }
+        }
 
+        async function loadOnlinePlayers() {
+            const proxyUrl = 'https://api.allorigins.win/get?url=';
+            const targetUrl = 'http://simnation.ddns.net:9000/userapi/avatars/online';
+
+            try {
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
                 const jsonData = JSON.parse(data.contents);
 
-                if (!jsonData.avatars || jsonData.avatars.length === 0) {
-                    throw new Error('No online players found');
-                }
-
-                // Create a table to display online players
-                let playersHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Age</th>
-                                <th>Location</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-
-                for (const avatar of jsonData.avatars) {
-                    const avatarId = avatar.avatar_id;
-
-                    // Fetch details for each avatar
-                    const avatarResponse = await fetch(proxyUrl + encodeURIComponent(`http://simnationserver.com:9000/userapi/avatars/${avatarId}`));
-                    if (!avatarResponse.ok) {
-                        console.error(`Failed to load avatar details for ID ${avatarId}`);
-                        continue;
-                    }
-                    const avatarData = await avatarResponse.json();
-                    const avatarDetails = JSON.parse(avatarData.contents);
-
-                    // Fetch lot information if available
-                    let locationInfo = 'Unknown';
-                    if (avatar.location > 0) {
-                        const lotResponse = await fetch(proxyUrl + encodeURIComponent(`http://simnationserver.com:9000/userapi/city/1/i${avatar.location}.json`));
-                        if (lotResponse.ok) {
-                            const lotData = await lotResponse.json();
-                            const lotInfo = JSON.parse(lotData.contents);
-                            locationInfo = lotInfo.name; // Lot name if available
-                        }
-                    }
-
-                    // Append player info to the HTML table
-                    playersHtml += `
-                        <tr>
-                            <td>${avatarDetails.name}</td>
-                            <td>${new Date(avatarDetails.date * 1000).toLocaleDateString()}</td> <!-- Convert timestamp to date -->
-                            <td>${locationInfo}</td>
-                        </tr>
-                    `;
-                }
-
-                playersHtml += `
-                        </tbody>
-                    </table>
-                `;
-
+                // Display online players
+                let playersHtml = '<h2>Online Players</h2><table><thead><tr><th>Name</th><th>Avatar ID</th></tr></thead><tbody>';
+                jsonData.avatars.forEach(player => {
+                    playersHtml += `<tr><td>${player.name}</td><td>${player.avatar_id}</td></tr>`;
+                });
+                playersHtml += '</tbody></table>';
                 document.getElementById('online-players').innerHTML = playersHtml;
+
             } catch (error) {
                 console.error('Error loading online players:', error);
                 document.getElementById('online-players').innerHTML = 'Error loading online players: ' + error.message;
@@ -124,7 +94,7 @@
 
         window.onload = function() {
             loadLots();
-            loadOnlinePlayers(); // Call to load online players
+            loadOnlinePlayers(); // Load online players when the page loads
         };
     </script>
 
