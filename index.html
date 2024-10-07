@@ -48,7 +48,7 @@
             const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
             const ageInSeconds = currentTime - timestamp;
             const ageInDays = Math.floor(ageInSeconds / (60 * 60 * 24)); // Convert seconds to days
-            return ageInDays;
+            return ageInDays >= 0 ? ageInDays : 'N/A'; // Ensure no negative values
         }
 
         async function fetchWithAllOrigins(url) {
@@ -65,7 +65,7 @@
 
         async function loadPlayerAge(id) {
             const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
-            return playerData ? playerData.date : null; // Return the date (timestamp) if the player data is valid
+            return playerData && playerData.date ? playerData.date : null; // Check if date exists and return it
         }
 
         async function loadOnlinePlayers() {
