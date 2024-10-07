@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimNation - Active Lots</title>
+    <title>SimNation - Active Lots and Rewards</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,20 +42,16 @@
             background-color: #f1f1f1;
         }
 
-        .rewards-section {
-            margin: 40px auto;
-            width: 50%;
-            text-align: center;
+        .reward-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
         }
 
-        select, img {
-            margin-top: 10px;
-        }
-
-        .item-image {
-            margin-top: 20px;
-            height: 187px;
-            width: auto;
+        .reward-item img {
+            margin-left: 10px;
+            width: 50px;
+            height: 50px;
         }
     </style>
     <script>
@@ -74,18 +70,18 @@
                 }
 
                 // Get active lots and their corresponding counts
-                const activeLots = jsonData.activeLots; // Changed to use active lots
-                const onlineCounts = jsonData.onlineCount; // Corresponding counts
+                const activeLots = jsonData.activeLots;
+                const onlineCounts = jsonData.onlineCount;
 
                 // Create an array to hold lot information for sorting
                 const lotsData = [];
 
                 for (let i = 0; i < activeLots.length; i++) {
                     const lotID = activeLots[i];
-                    const lotName = lotMapping[lotID]; // Retrieve the lot name using the lot ID
-                    const count = onlineCounts[i]; // Corresponding player count
+                    const lotName = lotMapping[lotID];
+                    const count = onlineCounts[i];
 
-                    if (count > 0) { // Only display if there's at least one player
+                    if (count > 0) {
                         lotsData.push({ name: lotName, count: count });
                     }
                 }
@@ -95,9 +91,8 @@
 
                 // Displaying the active lots and their player counts in a table
                 const lotsContainer = document.getElementById('lots');
-                lotsContainer.innerHTML = ''; // Clear previous content
-                
-                // Create table structure
+                lotsContainer.innerHTML = '';
+
                 let tableHtml = `
                     <table>
                         <thead>
@@ -108,7 +103,6 @@
                         </thead>
                         <tbody>`;
 
-                // Populate the table rows with sorted data
                 lotsData.forEach(lot => {
                     tableHtml += `
                         <tr>
@@ -120,8 +114,8 @@
                 tableHtml += `
                         </tbody>
                     </table>`;
-                
-                lotsContainer.innerHTML = tableHtml; // Update the container with the table
+
+                lotsContainer.innerHTML = tableHtml;
             } catch (error) {
                 console.error('Error loading lots:', error);
                 document.getElementById('lots').innerHTML = 'Error loading lots.';
@@ -152,68 +146,45 @@
                 tsomins = "0" + tsomins;
             }
 
-            // Update the display for in-game time
             document.getElementById('tempoSim').innerHTML = "Time in Eldorado: " + tsohours + ":" + tsomins + " " + timesuffix;
 
             setTimeout(tempoSim, 1000);
         }
 
-        // Fetch rewards and display them below the table
         async function loadRewards() {
             try {
                 const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnationserver.com/redeem/'));
                 const data = await response.json();
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data.contents, 'text/html');
 
-                // Extract options from the rewards dropdown
-                const rewardsDropdown = doc.querySelector('#giftSelection').innerHTML;
-                
-                // Insert the dropdown options in your page
-                const rewardsContainer = document.getElementById('rewards');
-                rewardsContainer.innerHTML = `
+                // Create base URL for images
+                const baseURL = "https://simnationserver.com/redeem/";
+
+                // Insert rewards into the page
+                const rewardsList = `
                     <h2>Rewards Currently Available to Patrons:</h2>
-                    <select class="form-control" id="giftSelection">
-                        ${rewardsDropdown}
-                    </select>
-                    <img id="itemImage" class="item-image d-none" src="" alt="Item Image">`;
+                    <div class="reward-item"><span>Spin The Bottle</span> <img src="${baseURL}images/spin_the_bottle.png" alt="Spin The Bottle"></div>
+                    <div class="reward-item"><span>Golden Toilet</span> <img src="${baseURL}images/goldein_toilet.png" alt="Golden Toilet"></div>
+                    <!-- Add more rewards here with the correct data-image path -->
+                `;
 
-                // Image handling for selected reward
-                const giftSelection = document.getElementById('giftSelection');
-                const itemImage = document.getElementById('itemImage');
-                
-                giftSelection.addEventListener('change', function() {
-                    const selectedOption = giftSelection.options[giftSelection.selectedIndex];
-                    const imageUrl = selectedOption.getAttribute('data-image');
-
-                    if (imageUrl) {
-                        itemImage.src = imageUrl;
-                        itemImage.classList.remove('d-none');
-                    } else {
-                        itemImage.classList.add('d-none');
-                    }
-                });
+                document.getElementById('rewards').innerHTML = rewardsList;
             } catch (error) {
                 console.error('Error loading rewards:', error);
+                document.getElementById('rewards').innerHTML = 'Error loading rewards.';
             }
         }
 
-        // Call the loadLots function, tempoSim, and loadRewards when the window loads
         window.onload = function() {
             loadLots();
-            tempoSim(); // Start the in-game time function
-            loadRewards(); // Load rewards dropdown
+            tempoSim();
+            loadRewards(); // Load rewards when the page loads
         };
     </script>
 </head>
 <body>
-    <h1>SimNation - Active Lots and Players</h1>
+    <h1>SimNation - Active Lots and Rewards</h1>
     <div id="tempoSim" style="text-align: center; font-size: 18px; margin-bottom: 20px;">Loading time...</div>
     <div id="lots">Loading lots...</div>
-
-    <!-- Rewards section -->
-    <div id="rewards" class="rewards-section">
-        Loading rewards...
-    </div>
+    <div id="rewards" style="margin-top: 30px; text-align: center;">Loading rewards...</div>
 </body>
 </html>
