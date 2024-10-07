@@ -43,15 +43,11 @@
     </div>
 
     <script>
-        // Function to calculate player age in days based on the custom in-game epoch
+        // Function to calculate player age in days from the timestamp
         function calculatePlayerAge(gameTimestamp) {
             const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
-            const epochAdjustment = 1728072236 - 3 * 24 * 60 * 60; // Known example: this timestamp corresponds to 3 days
-
-            // Adjust the timestamp based on the inferred custom epoch
-            const adjustedTimestamp = gameTimestamp - epochAdjustment;
-            const ageInSeconds = currentTimestamp - adjustedTimestamp;
-            const ageInDays = Math.floor(ageInSeconds / (60 * 60 * 24)); // Convert seconds to days
+            const ageInSeconds = currentTimestamp - gameTimestamp; // Difference in seconds
+            const ageInDays = Math.floor(ageInSeconds / 86400); // Convert to days (86400 seconds in a day)
 
             return ageInDays >= 0 ? ageInDays : 'N/A'; // Ensure no negative values
         }
