@@ -1,10 +1,12 @@
 name: Update Rewards
 
-# Allow manual triggering and schedule the workflow every hour
 on:
-  workflow_dispatch:  # Enables manual trigger
+  workflow_dispatch:
   schedule:
     - cron: '0 * * * *'
+
+permissions:
+  contents: write  # Allow the workflow to write to the repository contents
 
 jobs:
   update-rewards:
