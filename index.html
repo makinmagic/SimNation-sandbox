@@ -3,100 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimNation Dashboard</title>
+    <title>SimNation - Online Players</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
             background-color: #f4f4f4;
-        }
-        h1 {
             color: #333;
+            margin: 0;
+            padding: 20px;
         }
-        #active-lots, #online-players {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+        h1, h3 {
+            text-align: center;
+            color: #0056b3;
+            font-size: 32px;
         }
+
         table {
-            width: 100%;
+            width: 50%;
+            margin: 20px auto;
             border-collapse: collapse;
-            margin-top: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
             text-align: left;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: #007bff;
+            color: white;
         }
-    </style>
-</head>
-<body>
 
-    <h1>SimNation Dashboard</h1>
+        tr:hover {
+            background-color: #f1f1f1;
+        }
 
-    <div id="active-lots">Loading active lots...</div>
-    <div id="online-players">Loading online players...</div>
-
-    <script>
-        async function loadLots() {
-            const proxyUrl = 'https://api.allorigins.win/get?url=';
-            const targetUrl = 'http://simnation.ddns.net:9000/userapi/city/1/lots.json';
-            try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                const jsonData = JSON.parse(data.contents);
-                // Display active lots here, similar to how you handled it previously
-                let lotsHtml = '<h2>Active Lots</h2><ul>';
-                jsonData.lots.forEach(lot => {
-                    lotsHtml += `<li>Lot ID: ${lot.id}, Name: ${lot.name}</li>`;
-                });
-                lotsHtml += '</ul>';
-                document.getElementById('active-lots').innerHTML = lotsHtml;
-            } catch (error) {
-                console.error('Error loading active lots:', error);
-                document.getElementById('active-lots').innerHTML = 'Error loading active lots: ' + error.message;
+        /* Responsive design */
+        @media (max-width: 768px) {
+            table {
+                width: 100%;
             }
         }
-
+    </style>
+    <script>
         async function loadOnlinePlayers() {
-            const proxyUrl = 'https://api.allorigins.win/get?url=';
-            const targetUrl = 'http://simnation.ddns.net:9000/userapi/avatars/online';
-
             try {
-                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const onlineResponse = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/avatars/online'));
+                const onlineData = await onlineResponse.json();
+                const avatars = JSON.parse(onlineData.contents).avatars;
+
+                const playersData = [];
+
+                for (const avatar of avatars) {
+                    const { avatar_id, name, location } = avatar;
+
+                    // Fetch age from the individual avatar API
+                    const ageResponse = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://simnationserver.com:9000/userapi/avatars/' + avatar_id)}`);
+                    const ageData = await ageResponse.json();
+                    const age = new Date(ageData.contents.date * 1000).toLocaleDateString(); // Convert UNIX timestamp to date
+
+                    // Fetch lot name if location is known
+                    let lotName = "Unknown";
+                    if (location) {
+                        const lotResponse = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('http://simnationserver.com:9000/userapi/city/1/i' + location + '.json')}`);
+                        const lotData = await lotResponse.json();
+                        lotName = JSON.parse(lotData.contents).name; // Get the lot name
+                    }
+
+                    playersData.push({ name, age, location: lotName });
                 }
-                const data = await response.json();
-                const jsonData = JSON.parse(data.contents);
 
-                // Display online players
-                let playersHtml = '<h2>Online Players</h2><table><thead><tr><th>Name</th><th>Avatar ID</th></tr></thead><tbody>';
-                jsonData.avatars.forEach(player => {
-                    playersHtml += `<tr><td>${player.name}</td><td>${player.avatar_id}</td></tr>`;
+                // Display players in a table
+                const playersContainer = document.getElementById('players');
+                playersContainer.innerHTML = ''; // Clear previous content
+
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                playersData.forEach(player => {
+                    tableHtml += `
+                        <tr>
+                            <td>${player.name}</td>
+                            <td>${player.age}</td>
+                            <td>${player.location}</td>
+                        </tr>`;
                 });
-                playersHtml += '</tbody></table>';
-                document.getElementById('online-players').innerHTML = playersHtml;
 
+                tableHtml += `
+                        </tbody>
+                    </table>`;
+
+                playersContainer.innerHTML = tableHtml; // Update the container with the table
             } catch (error) {
                 console.error('Error loading online players:', error);
-                document.getElementById('online-players').innerHTML = 'Error loading online players: ' + error.message;
+                document.getElementById('players').innerHTML = 'Error loading online players.';
             }
         }
 
         window.onload = function() {
-            loadLots();
-            loadOnlinePlayers(); // Load online players when the page loads
+            loadOnlinePlayers();
         };
     </script>
-
+</head>
+<body>
+    <h1>SimNation - Online Players</h1>
+    <div id="players">Loading online players...</div>
 </body>
 </html>
