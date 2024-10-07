@@ -152,27 +152,30 @@
         }
 
         async function loadRewards() {
-            try {
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnationserver.com/redeem/'));
-                const data = await response.json();
-
-                // Create base URL for images
-                const baseURL = "https://simnationserver.com/redeem/";
-
-                // Insert rewards into the page
-                const rewardsList = `
-                    <h2>Rewards Currently Available to Patrons:</h2>
-                    <div class="reward-item"><span>Spin The Bottle</span> <img src="${baseURL}images/spin_the_bottle.png" alt="Spin The Bottle"></div>
-                    <div class="reward-item"><span>Golden Toilet</span> <img src="${baseURL}images/goldein_toilet.png" alt="Golden Toilet"></div>
-                    <!-- Add more rewards here with the correct data-image path -->
-                `;
-
-                document.getElementById('rewards').innerHTML = rewardsList;
-            } catch (error) {
-                console.error('Error loading rewards:', error);
-                document.getElementById('rewards').innerHTML = 'Error loading rewards.';
-            }
+    try {
+        const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnationserver.com/redeem/'));
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const data = await response.json();
+
+        // Create base URL for images
+        const baseURL = "https://simnationserver.com/redeem/";
+
+        // Insert rewards into the page
+        const rewardsList = `
+            <h2>Rewards Currently Available to Patrons:</h2>
+            <div class="reward-item"><span>Spin The Bottle</span> <img src="${baseURL}images/spin_the_bottle.png" alt="Spin The Bottle"></div>
+            <div class="reward-item"><span>Golden Toilet</span> <img src="${baseURL}images/golden_toilet.png" alt="Golden Toilet"></div>
+            <!-- Add more rewards here with the correct data-image path -->
+        `;
+
+        document.getElementById('rewards').innerHTML = rewardsList;
+    } catch (error) {
+        console.error('Error loading rewards:', error);
+        document.getElementById('rewards').innerHTML = 'Error loading rewards. Check console for details.';
+    }
+}
 
         window.onload = function() {
             loadLots();
