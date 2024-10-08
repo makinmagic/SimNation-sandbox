@@ -171,6 +171,48 @@
             }
         }
 
+        async function loadPlayers() {
+            // Dummy function for player loading (replace with your actual logic)
+            const playersContainer = document.getElementById('players');
+            playersContainer.innerHTML = ''; // Clear previous content
+            playersContainer.innerHTML = '<p>Loading players...</p>';
+
+            try {
+                // Mockup fetching player data (replace with actual API call)
+                const mockPlayers = [
+                    { name: "Player1", age: 5 },
+                    { name: "Player2", age: 3 },
+                ]; // Replace this with your player data fetching logic
+
+                let playersTableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Player Name</th>
+                                <th>Age (Days)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                mockPlayers.forEach(player => {
+                    playersTableHtml += `
+                        <tr>
+                            <td>${player.name}</td>
+                            <td>${player.age}</td>
+                        </tr>`;
+                });
+
+                playersTableHtml += `
+                        </tbody>
+                    </table>`;
+
+                playersContainer.innerHTML = playersTableHtml; // Update the container with the table
+            } catch (error) {
+                console.error('Error loading players:', error);
+                playersContainer.innerHTML = 'Error loading players.';
+            }
+        }
+
         function tempoSim() {
             var currenttime = new Date();
             var hours = currenttime.getUTCHours();
@@ -223,48 +265,29 @@
             const doc = parser.parseFromString(htmlContent, 'text/html');
             const options = doc.querySelectorAll('#giftSelection option');
             const rewardsContainer = document.getElementById('rewards-dropdown');
-            rewardsContainer.innerHTML = ''; // Clear existing content
-
-            // Create table structure for rewards
-            let tableHtml = 
-                `<table>
-                    <thead>
-                        <tr>
-                            <th>Reward Name</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+            rewardsContainer.innerHTML = ''; // Clear previous content
 
             options.forEach(option => {
-                const rewardName = option.textContent; // Reward name
-                const imagePath = option.getAttribute('data-image'); // Image relative path
-                const fullImagePath = `http://simnationserver.com/redeem/${imagePath}`; // Full image URL
-
-                // Populate the table rows with rewards
-                tableHtml += 
-                    `<tr>
-                        <td>${rewardName}</td>
-                        <td><img src="${fullImagePath}" alt="${rewardName}" style="width: 50px; height: 50px;"></td>
-                    </tr>`;
+                const rewardItem = document.createElement('div');
+                rewardItem.className = 'reward-item';
+                rewardItem.innerHTML = `<img src="${option.dataset.img}" alt="${option.textContent}"><span>${option.textContent}</span>`;
+                rewardsContainer.appendChild(rewardItem);
             });
-
-            tableHtml += 
-                    `</tbody>
-                </table>`;
-                
-            rewardsContainer.innerHTML = tableHtml; // Update the container with the table
         }
 
-        window.onload = function() {
-            loadLots();
-            tempoSim(); // Start the in-game time function
-            fetchRewards(); // Fetch rewards on load
+        // Initialize everything
+        window.onload = async () => {
+            await loadLots();
+            await loadPlayers();
+            await fetchRewards();
+            tempoSim(); // Start the clock
         };
     </script>
 </head>
 <body>
     <h1>SimNation Dashboard</h1>
+
+    <div id="tempoSim" style="text-align: center; margin-bottom: 20px;"></div>
 
     <div class="container">
         <div class="lots-container" id="lots">
@@ -283,7 +306,5 @@
             <!-- Rewards will be populated here -->
         </div>
     </div>
-
-    <div id="tempoSim" style="text-align: center; margin-top: 20px;"></div>
 </body>
 </html>
