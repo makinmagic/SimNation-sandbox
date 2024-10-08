@@ -55,11 +55,6 @@
             }
         }
 
-        async function loadPlayerLocation(id) {
-            const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
-            return playerData && playerData.location !== undefined ? playerData.location : null; // Get the location or return null
-        }
-
         async function loadOnlinePlayers() {
             const onlineData = await fetchWithAllOrigins('http://simnation.ddns.net:9000/userapi/avatars/online');
             if (!onlineData || !onlineData.avatars) {
@@ -82,25 +77,13 @@
                     </thead>
                     <tbody>`;
 
-            // Fetch each player's location based on their ID
-            const playerPromises = onlineData.avatars.map(async (avatar) => {
-                const locationId = await loadPlayerLocation(avatar.avatar_id);
-                return {
-                    name: avatar.name,
-                    id: avatar.avatar_id,
-                    location: locationId !== null && locationId !== 0 ? locationId : 'Unknown' // Display "Unknown" if location is 0 or null
-                };
-            });
-
-            // Wait for all promises to resolve
-            const players = await Promise.all(playerPromises);
-
-            players.forEach(player => {
+            // Loop through the avatars and get the name, id, and location (no changes to location)
+            onlineData.avatars.forEach(avatar => {
                 tableHtml += `
                     <tr>
-                        <td>${player.name}</td>
-                        <td>${player.id}</td>
-                        <td>${player.location}</td>
+                        <td>${avatar.name}</td>
+                        <td>${avatar.avatar_id}</td>
+                        <td>${avatar.location}</td>
                     </tr>`;
             });
 
