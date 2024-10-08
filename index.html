@@ -78,62 +78,88 @@
                 margin-bottom: 20px;
             }
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
     <script>
-        async function loadPlayers() {
+        async function fetchWithAllOrigins(url) {
             try {
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/avatars/online'));
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
+                if (!response.ok) throw new Error('Network response was not ok');
                 const data = await response.json();
-                if (!data.contents) {
-                    throw new Error('No content found');
-                }
-
-                const jsonData = JSON.parse(data.contents);
-
-                if (!jsonData.avatars_online || jsonData.avatars_online.length === 0) {
-                    throw new Error('No players found');
-                }
-
-                const players = jsonData.avatars_online;
-                const playerCount = jsonData.avatars_online_count;
-
-                document.getElementById('players-title').textContent = 'Sims Online: ' + playerCount;
-
-                const playersContainer = document.getElementById('players');
-                playersContainer.innerHTML = ''; // Clear previous content
-
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sim</th>
-                                <th>Location</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-                players.forEach(player => {
-                    tableHtml += `
-                        <tr>
-                            <td>${player.name}</td>
-                            <td>${player.location}</td>
-                        </tr>`;
-                });
-
-                tableHtml += `
-                        </tbody>
-                    </table>`;
-
-                playersContainer.innerHTML = tableHtml;
-
+                return JSON.parse(data.contents);
             } catch (error) {
-                console.error('Error loading players:', error);
-                document.getElementById('players').innerHTML = 'Error loading players.';
+                console.error('Error fetching data:', error);
+                return null;
             }
+        }
+
+        async function loadLotName(lotId) {
+            if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
+            const lotData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`);
+            return lotData ? lotData.name : 'N/A'; // Return the lot name if valid
+        }
+
+        async function loadOnlinePlayers() {
+            const onlineData = await fetchWithAllOrigins('http://simnation.ddns.net:9000/userapi/avatars/online');
+            if (!onlineData || !onlineData.avatars) {
+                console.error('Failed to load online players');
+                document.getElementById('players').innerHTML = 'Error loading online players.';
+                return;
+            }
+
+            // Update the title with the count of online players
+            document.getElementById('players-title').textContent = `Sims Online: ${onlineData.avatars_online_count}`;
+
+            const playersContainer = document.getElementById('players');
+            playersContainer.innerHTML = ''; // Clear previous content
+
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sim</th>
+                            <th class="hidden">ID</th>
+                            <th class="hidden">Location ID</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            // Fetch each player's lot name based on their location ID
+            const playerPromises = onlineData.avatars.map(async (avatar) => {
+                const lotName = await loadLotName(avatar.location); // Fetch lot name using the location ID
+                return {
+                    name: avatar.name,
+                    id: avatar.avatar_id,
+                    location: avatar.location,
+                    lotName: lotName // Include lot name in the object
+                };
+            });
+
+            // Wait for all promises to resolve
+            const players = await Promise.all(playerPromises);
+
+            // Sort players alphabetically by name
+            players.sort((a, b) => a.name.localeCompare(b.name));
+
+            players.forEach(player => {
+                tableHtml += `
+                    <tr>
+                        <td>${player.name}</td>
+                        <td class="hidden">${player.id}</td>
+                        <td class="hidden">${player.location}</td>
+                        <td>${player.lotName}</td>
+                    </tr>`;
+            });
+
+            tableHtml += `
+                    </tbody>
+                </table>`;
+
+            playersContainer.innerHTML = tableHtml; // Update the container with the table
         }
 
         async function loadLots() {
@@ -224,7 +250,7 @@
         }
 
         window.onload = function() {
-            loadPlayers();
+            loadOnlinePlayers();
             loadLots();
             tempoSim();
         };
