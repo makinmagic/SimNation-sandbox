@@ -32,6 +32,10 @@
         th {
             background-color: #f2f2f2;
         }
+        /* Hide columns for ID and Location ID */
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -76,10 +80,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>ID</th>
-                            <th>Location ID</th>
-                            <th>Lot Name</th>
+                            <th>Sim</th>
+                            <th class="hidden">ID</th>
+                            <th class="hidden">Location ID</th>
+                            <th>Location</th>
                         </tr>
                     </thead>
                     <tbody>`;
@@ -105,8 +109,8 @@
                 tableHtml += `
                     <tr>
                         <td>${player.name}</td>
-                        <td>${player.id}</td>
-                        <td>${player.location}</td>
+                        <td class="hidden">${player.id}</td>
+                        <td class="hidden">${player.location}</td>
                         <td>${player.lotName}</td>
                     </tr>`;
             });
