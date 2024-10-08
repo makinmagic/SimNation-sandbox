@@ -22,11 +22,11 @@
         #main-container {
             display: flex;
             justify-content: space-between;
-            gap: 2%;
+            gap: 1%; /* Reduced gap to bring tables closer */
         }
 
         #players-container, #lots-container {
-            width: 45%;
+            width: 49%; /* Make both containers almost equal and close to each other */
             background: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -152,6 +152,16 @@
                 const lotsContainer = document.getElementById('lots');
                 lotsContainer.innerHTML = ''; // Clear previous content
 
+                let lotsData = activeLots.map((lotID, index) => {
+                    return {
+                        name: lotMapping[lotID] || lotID, // Fallback to ID if name not found
+                        count: onlineCounts[index]
+                    };
+                });
+
+                // Sort lots by Sims count (busiest first)
+                lotsData.sort((a, b) => b.count - a.count);
+
                 let tableHtml = `
                     <table>
                         <thead>
@@ -162,15 +172,12 @@
                         </thead>
                         <tbody>`;
 
-                activeLots.forEach((lotID, index) => {
-                    const lotName = lotMapping[lotID] || lotID; // Fallback to ID if name not found
-                    const count = onlineCounts[index];
-
-                    if (count > 0) {
+                lotsData.forEach(lot => {
+                    if (lot.count > 0) {
                         tableHtml += `
                             <tr>
-                                <td>${lotName}</td>
-                                <td>${count}</td>
+                                <td>${lot.name}</td>
+                                <td>${lot.count}</td>
                             </tr>`;
                     }
                 });
