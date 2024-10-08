@@ -40,7 +40,7 @@
 </head>
 <body>
 
-    <h1>SimNation Dashboard</h1>
+    <h1 id="dashboard-title">SimNation Dashboard</h1>
     <div id="players">
         <h2>Online Players</h2>
         <p>Loading online players...</p>
@@ -72,6 +72,10 @@
                 document.getElementById('players').innerHTML = 'Error loading online players.';
                 return;
             }
+
+            // Update the title with the count of online players
+            const titleElement = document.getElementById('dashboard-title');
+            titleElement.textContent = `Sims Online: ${onlineData.avatars_online_count}`;
 
             const playersContainer = document.getElementById('players');
             playersContainer.innerHTML = ''; // Clear previous content
