@@ -106,63 +106,78 @@
         }
 
         async function loadOnlinePlayers() {
-    const onlineData = await fetch('https://makinmagic.github.io/SimNation/data/online-players.json'); // Ensure this URL is correct
-    if (!onlineData.ok || !onlineData.avatars) {
-        console.error('Failed to load online players');
-        document.getElementById('players').innerHTML = 'Error loading online players.';
-        return;
-    }
+    try {
+        const response = await fetch('https://makinmagic.github.io/SimNation/data/online-players.json');
 
-    // Update the title with the count of online players
-    document.getElementById('players-title').textContent = `Sims Online: ${onlineData.avatars_online_count}`;
+        // Check if the response is OK (status code 200-299)
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-    const playersContainer = document.getElementById('players');
-    playersContainer.innerHTML = ''; // Clear previous content
+        const onlineData = await response.json(); // Parse the JSON response
 
-    let tableHtml = `
-        <table>
-            <thead>
+        // Verify that the data contains the expected structure
+        if (!onlineData.avatars || onlineData.avatars.length === 0) {
+            console.error('No avatars found in online data.');
+            document.getElementById('players').innerHTML = 'No online players found.';
+            return;
+        }
+
+        // Update the title with the count of online players
+        document.getElementById('players-title').textContent = `Sims Online: ${onlineData.avatars.length}`;
+
+        const playersContainer = document.getElementById('players');
+        playersContainer.innerHTML = ''; // Clear previous content
+
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sim</th>
+                        <th class="hidden">ID</th>
+                        <th class="hidden">Location ID</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        // Fetch each player's lot name based on their location ID
+        const playerPromises = onlineData.avatars.map(async (avatar) => {
+            const lotName = await loadLotName(avatar.location); // Fetch lot name using the location ID
+            return {
+                name: avatar.name,
+                id: avatar.avatar_id,
+                location: avatar.location,
+                lotName: lotName // Include lot name in the object
+            };
+        });
+
+        // Wait for all promises to resolve
+        const players = await Promise.all(playerPromises);
+
+        // Sort players alphabetically by name
+        players.sort((a, b) => a.name.localeCompare(b.name));
+
+        players.forEach(player => {
+            tableHtml += `
                 <tr>
-                    <th>Sim</th>
-                    <th class="hidden">ID</th>
-                    <th class="hidden">Location ID</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
-            <tbody>`;
+                    <td>${player.name}</td>
+                    <td class="hidden">${player.id}</td>
+                    <td class="hidden">${player.location}</td>
+                    <td>${player.lotName}</td>
+                </tr>`;
+        });
 
-    // Fetch each player's lot name based on their location ID
-    const playerPromises = onlineData.avatars.map(async (avatar) => {
-        const lotName = await loadLotName(avatar.location); // Fetch lot name using the location ID
-        return {
-            name: avatar.name,
-            id: avatar.avatar_id,
-            location: avatar.location,
-            lotName: lotName // Include lot name in the object
-        };
-    });
-
-    // Wait for all promises to resolve
-    const players = await Promise.all(playerPromises);
-
-    // Sort players alphabetically by name
-    players.sort((a, b) => a.name.localeCompare(b.name));
-
-    players.forEach(player => {
         tableHtml += `
-            <tr>
-                <td>${player.name}</td>
-                <td class="hidden">${player.id}</td>
-                <td class="hidden">${player.location}</td>
-                <td>${player.lotName}</td>
-            </tr>`;
-    });
+                </tbody>
+            </table>`;
 
-    tableHtml += `
-            </tbody>
-        </table>`;
+        playersContainer.innerHTML = tableHtml; // Update the container with the table
 
-    playersContainer.innerHTML = tableHtml; // Update the container with the table
+    } catch (error) {
+        console.error('Failed to load online players:', error);
+        document.getElementById('players').innerHTML = 'Error loading online players.';
+    }
 }
 
         async function loadLots() {
