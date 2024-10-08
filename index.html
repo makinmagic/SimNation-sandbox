@@ -57,9 +57,31 @@
         }
 
         .scrollable {
-            height: 400px; /* Fixed height for scrolling */
-            overflow-y: auto; /* Enable vertical scrolling */
+            height: 400px;
+            overflow-y: auto;
             flex-grow: 1; /* Allow scrollable area to grow and fill space */
+        }
+
+        #tempoSim {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        #rewards {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        #rewards-dropdown {
+            display: inline-block;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            max-height: 400px; /* Set max height for scrollable area */
+            width: 80%; /* Set width for the rewards dropdown */
+            margin: 0 auto; /* Center the dropdown */
         }
 
         @media (max-width: 768px) {
@@ -72,21 +94,8 @@
             }
         }
 
-        /* Rewards Container Styles */
-        #rewards {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .rewards-table {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            margin: auto; /* Centering the rewards table */
-            width: 80%; /* Adjust width of rewards table */
-            display: flex;
-            flex-direction: column;
+        .hidden {
+            display: none;
         }
     </style>
     <script>
@@ -123,22 +132,24 @@
             playersContainer.innerHTML = ''; // Clear previous content
 
             let tableHtml = `
-                <h2 id="players-title">Sims Online: 0</h2>
-                <div class="scrollable">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sim</th>
-                                <th>Location</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sim</th>
+                            <th class="hidden">ID</th>
+                            <th class="hidden">Location ID</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
             // Fetch each player's lot name based on their location ID
             const playerPromises = onlineData.avatars.map(async (avatar) => {
                 const lotName = await loadLotName(avatar.location); // Fetch lot name using the location ID
                 return {
                     name: avatar.name,
+                    id: avatar.avatar_id,
+                    location: avatar.location,
                     lotName: lotName // Include lot name in the object
                 };
             });
@@ -153,14 +164,15 @@
                 tableHtml += `
                     <tr>
                         <td>${player.name}</td>
+                        <td class="hidden">${player.id}</td>
+                        <td class="hidden">${player.location}</td>
                         <td>${player.lotName}</td>
                     </tr>`;
             });
 
             tableHtml += `
-                        </tbody>
-                    </table>
-                </div>`;
+                    </tbody>
+                </table>`;
 
             playersContainer.innerHTML = tableHtml; // Update the container with the table
         }
@@ -192,16 +204,14 @@
                 lotsData.sort((a, b) => b.count - a.count);
 
                 let tableHtml = `
-                    <h2>Active Lots</h2>
-                    <div class="scrollable">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Location</th>
-                                    <th>Sims Inside</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Sims Inside</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
 
                 lotsData.forEach(lot => {
                     if (lot.count > 0) {
@@ -215,8 +225,7 @@
 
                 tableHtml += `
                         </tbody>
-                    </table>
-                </div>`;
+                    </table>`;
 
                 lotsContainer.innerHTML = tableHtml;
 
@@ -224,6 +233,35 @@
                 console.error('Error loading lots:', error);
                 document.getElementById('lots').innerHTML = 'Error loading lots.';
             }
+        }
+
+        function tempoSim() {
+            var currenttime = new Date();
+            var hours = currenttime.getUTCHours();
+            var minutes = currenttime.getUTCMinutes();
+            var seconds = currenttime.getUTCSeconds();
+            var timesuffix = "AM";
+            var cycle = 0;
+            if (hours % 2 == 1) {
+                cycle = 3600;
+                timesuffix = "PM";
+            }
+            cycle = cycle + minutes * 60 + seconds;
+            var tsohours = Math.floor(cycle / 300);
+            if (tsohours > 12) {
+                tsohours = tsohours - 12;
+            }
+            if (tsohours == 0) {
+                tsohours = 12;
+            }
+            var tsomins = Math.floor((cycle % 300) / 5);
+            if (tsomins < 10) {
+                tsomins = "0" + tsomins;
+            }
+
+            document.getElementById('tempoSim').innerHTML = "Time in Eldorado: " + tsohours + ":" + tsomins + " " + timesuffix;
+
+            setTimeout(tempoSim, 1000);
         }
 
         // Rewards fetching and displaying logic
@@ -239,7 +277,7 @@
                 populateRewards(data.contents); // Adjust based on your JSON structure
             } catch (error) {
                 console.error('There was a problem with the fetch operation:', error);
-                document.getElementById('rewards-dropdown').textContent = 'Failed to load rewards.';
+                document.getElementById('rewards').textContent = 'Failed to load rewards.';
             }
         }
 
@@ -277,32 +315,36 @@
             tableHtml += `
                     </tbody>
                 </table>`;
-
+                
             rewardsContainer.innerHTML = tableHtml; // Update the container with the table
         }
 
         window.onload = function() {
             loadLots();
-            loadOnlinePlayers(); // Load online players on page load
+            tempoSim(); // Start the in-game time function
             fetchRewards(); // Fetch rewards on load
+            loadOnlinePlayers(); // Load online players
         };
     </script>
 </head>
 <body>
     <h1>SimNation Dashboard</h1>
+    <div id="tempoSim">Loading time...</div>
     <div id="main-container">
-        <div class="container" id="lots">
-            <!-- Active Lots section will be populated here -->
+        <div class="container">
+            <h3 id="players-title">Sims Online: COUNT</h3>
+            <div id="players" class="scrollable"></div> <!-- Players Container -->
         </div>
-        <div class="container" id="players">
-            <!-- Online players section will be populated here -->
+        <div class="container">
+            <h3 id="lots-title">Active Lots</h3>
+            <div id="lots" class="scrollable"></div> <!-- Lots Container -->
         </div>
     </div>
 
     <!-- Rewards Section -->
-    <div id="rewards">
-        <h3>Current Patreon Rewards</h3> <!-- Updated font size to match h1 -->
-        <div class="rewards-table" id="rewards-dropdown">
+    <div id="rewards" style="margin-top: 30px; text-align: center;">
+        <h3 style="font-size: 32px;">Current Patreon Rewards</h3> <!-- Updated font size to match h1 -->
+        <div id="rewards-dropdown">
             <!-- Rewards will be populated here -->
         </div>
     </div>
