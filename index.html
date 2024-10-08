@@ -43,15 +43,6 @@
     </div>
 
     <script>
-        // Function to calculate player age in days from the timestamp
-        function calculatePlayerAge(gameTimestamp) {
-            const currentTimestamp = Math.floor(Date.now() / 1000); // Current time in seconds
-            const ageInSeconds = currentTimestamp - gameTimestamp; // Difference in seconds
-            const ageInDays = Math.floor(ageInSeconds / 86400); // Convert to days (86400 seconds in a day)
-
-            return ageInDays >= 0 ? ageInDays : 'N/A'; // Ensure no negative values
-        }
-
         async function fetchWithAllOrigins(url) {
             try {
                 const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`);
@@ -64,9 +55,9 @@
             }
         }
 
-        async function loadPlayerAge(id) {
+        async function loadPlayerLocation(id) {
             const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
-            return playerData && playerData.date ? playerData.date : null; // Check if date exists and return it
+            return playerData && playerData.location !== undefined ? playerData.location : null; // Get the location or return null
         }
 
         async function loadOnlinePlayers() {
@@ -86,18 +77,18 @@
                         <tr>
                             <th>Name</th>
                             <th>ID</th>
-                            <th>Age (Days)</th>
+                            <th>Location</th>
                         </tr>
                     </thead>
                     <tbody>`;
 
-            // Fetch each player's age based on their ID
+            // Fetch each player's location based on their ID
             const playerPromises = onlineData.avatars.map(async (avatar) => {
-                const ageTimestamp = await loadPlayerAge(avatar.avatar_id);
+                const locationId = await loadPlayerLocation(avatar.avatar_id);
                 return {
                     name: avatar.name,
                     id: avatar.avatar_id,
-                    age: ageTimestamp ? calculatePlayerAge(ageTimestamp) : 'N/A' // Calculate age in days
+                    location: locationId !== null && locationId !== 0 ? locationId : 'Unknown' // Display "Unknown" if location is 0 or null
                 };
             });
 
@@ -109,7 +100,7 @@
                     <tr>
                         <td>${player.name}</td>
                         <td>${player.id}</td>
-                        <td>${player.age} days</td>
+                        <td>${player.location}</td>
                     </tr>`;
             });
 
