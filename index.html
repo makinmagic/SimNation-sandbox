@@ -78,10 +78,6 @@
             }
         }
 
-        .hidden {
-            display: none;
-        }
-
         /* Rewards Container Styles */
         #rewards {
             margin-top: 30px;
@@ -176,6 +172,10 @@
                 </table>`;
 
             playersContainer.innerHTML = tableHtml; // Update the container with the table
+
+            // Make the table scrollable by applying the height
+            playersContainer.querySelector('table').style.height = '400px';
+            playersContainer.querySelector('table').style.overflowY = 'auto';
         }
 
         async function loadLots() {
