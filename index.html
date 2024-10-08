@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SimNation Dashboard</title>
+    <title>SimNation - Active Lots and Players</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,15 +19,20 @@
             font-size: 32px;
         }
 
-        .dashboard {
+        .container {
             display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .table-container {
+            width: 48%; /* Adjust the table width */
         }
 
         table {
-            width: 100%; 
+            width: 100%;
             border-collapse: collapse;
             background: white;
             border-radius: 8px;
@@ -49,215 +54,56 @@
             background-color: #f1f1f1;
         }
 
-        #tempoSim {
-            text-align: center;
-            font-size: 18px;
-            margin-bottom: 20px;
+        /* Make the players table scrollable */
+        .scrollable-table {
+            max-height: 400px;
+            overflow-y: auto;
         }
 
-        .reward-item img {
-            margin-right: 10px;
-            width: 50px;
-            height: 50px;
+        /* Limit the height of the rows for players table */
+        .scrollable-table tbody {
+            display: block;
+            max-height: 400px;
+            overflow-y: scroll;
         }
-        
+
+        .scrollable-table thead, .scrollable-table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
-            .dashboard {
+            .container {
                 flex-direction: column;
+            }
+
+            .table-container {
+                width: 100%;
             }
         }
     </style>
-    <script>
-        // Fetch player data and display table
-        async function loadPlayers() {
-            try {
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/avatars/online'));
-                const data = await response.json();
-                const players = JSON.parse(data.contents);
-
-                // Generate player table
-                const playersContainer = document.getElementById('players');
-                playersContainer.innerHTML = ''; 
-                
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Sim</th>
-                                <th>Location</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-                players.avatars.forEach(player => {
-                    tableHtml += `
-                        <tr>
-                            <td>${player.name}</td>
-                            <td>${player.location === 0 ? "Unknown" : player.location}</td>
-                        </tr>`;
-                });
-
-                tableHtml += `
-                        </tbody>
-                    </table>`;
-                
-                playersContainer.innerHTML = tableHtml;
-            } catch (error) {
-                console.error('Error loading players:', error);
-                document.getElementById('players').innerHTML = 'Error loading players.';
-            }
-        }
-
-        // Fetch active lots and display table
-        async function loadLots() {
-            try {
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/city/1/city.json'));
-                const data = await response.json();
-                const jsonData = JSON.parse(data.contents);
-
-                const activeLots = jsonData.activeLots;
-                const onlineCounts = jsonData.onlineCount;
-                const lotMapping = {};
-
-                for (let i = 0; i < jsonData.reservedLots.length; i++) {
-                    lotMapping[jsonData.reservedLots[i]] = jsonData.names[i];
-                }
-
-                const lotsData = [];
-
-                for (let i = 0; i < activeLots.length; i++) {
-                    const lotID = activeLots[i];
-                    const lotName = lotMapping[lotID];
-                    const count = onlineCounts[i];
-
-                    if (count > 0) {
-                        lotsData.push({ name: lotName, count: count });
-                    }
-                }
-
-                lotsData.sort((a, b) => b.count - a.count);
-
-                const lotsContainer = document.getElementById('lots');
-                lotsContainer.innerHTML = ''; 
-
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Lot Name</th>
-                                <th>Sims Inside</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-                lotsData.forEach(lot => {
-                    tableHtml += `
-                        <tr>
-                            <td>${lot.name}</td>
-                            <td>${lot.count}</td>
-                        </tr>`;
-                });
-
-                tableHtml += `
-                        </tbody>
-                    </table>`;
-                
-                lotsContainer.innerHTML = tableHtml;
-            } catch (error) {
-                console.error('Error loading lots:', error);
-                document.getElementById('lots').innerHTML = 'Error loading lots.';
-            }
-        }
-
-        function tempoSim() {
-            var currenttime = new Date();
-            var hours = currenttime.getUTCHours();
-            var minutes = currenttime.getUTCMinutes();
-            var seconds = currenttime.getUTCSeconds();
-            var timesuffix = "AM";
-            var cycle = 0;
-            if (hours % 2 == 1) {
-                cycle = 3600;
-                timesuffix = "PM";
-            }
-            cycle = cycle + minutes * 60 + seconds;
-            var tsohours = Math.floor(cycle / 300);
-            if (tsohours > 12) {
-                tsohours = tsohours - 12;
-            }
-            if (tsohours == 0) {
-                tsohours = 12;
-            }
-            var tsomins = Math.floor((cycle % 300) / 5);
-            if (tsomins < 10) {
-                tsomins = "0" + tsomins;
-            }
-
-            document.getElementById('tempoSim').innerHTML = "Time in Eldorado: " + tsohours + ":" + tsomins + " " + timesuffix;
-            setTimeout(tempoSim, 1000);
-        }
-
-        async function fetchRewards() {
-            try {
-                const response = await fetch('https://makinmagic.github.io/SimNation-sandbox/rewards.json');
-                const data = await response.json();
-                populateRewards(data);
-            } catch (error) {
-                console.error('Error fetching rewards:', error);
-                document.getElementById('rewards').innerHTML = 'Failed to load rewards.';
-            }
-        }
-
-        function populateRewards(rewards) {
-            const rewardsContainer = document.getElementById('rewards-dropdown');
-            rewardsContainer.innerHTML = ''; 
-
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Reward Name</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-
-            rewards.forEach(reward => {
-                tableHtml += `
-                    <tr>
-                        <td>${reward.name}</td>
-                        <td><img src="${reward.image}" alt="${reward.name}" style="width: 50px; height: 50px;"></td>
-                    </tr>`;
-            });
-
-            tableHtml += `
-                    </tbody>
-                </table>`;
-                
-            rewardsContainer.innerHTML = tableHtml;
-        }
-
-        window.onload = function() {
-            loadPlayers();
-            loadLots();
-            tempoSim(); 
-            fetchRewards(); 
-        };
-    </script>
 </head>
 <body>
-    <h1 id="dashboard-title">SimNation Dashboard</h1>
-    <div id="tempoSim">Loading time...</div>
-    <div class="dashboard">
-        <div id="players">Loading players...</div>
-        <div id="lots">Loading lots...</div>
-    </div>
-    <div id="rewards" style="margin-top: 30px; text-align: center;">
-        <h3>Current Patreon Rewards</h3>
-        <div id="rewards-dropdown">
-            <!-- Rewards will be populated here -->
+    <h1>SimNation - Active Lots and Players</h1>
+    <div id="tempoSim" style="text-align: center; font-size: 18px; margin-bottom: 20px;">Loading time...</div>
+
+    <div class="container">
+        <!-- Players Table -->
+        <div class="table-container">
+            <div id="players-container" class="scrollable-table">Loading players...</div>
+        </div>
+
+        <!-- Lots Table -->
+        <div class="table-container">
+            <div id="lots">Loading lots...</div>
         </div>
     </div>
+
+    <script>
+        // The players table fetching logic and lots loading function will be placed here.
+        // Example: tempoSim(), loadLots(), loadPlayers() to render both tables side by side.
+    </script>
 </body>
 </html>
