@@ -58,10 +58,16 @@
         async function loadPlayerAge(id) {
             const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
             if (playerData && playerData.date) {
-                const accountCreationDate = new Date(playerData.date * 1000); // Convert Unix time to milliseconds
+                // Convert the Unix timestamp to milliseconds
+                const accountCreationDate = new Date(playerData.date * 1000);
                 const currentDate = new Date();
-                const ageInDays = Math.floor((currentDate - accountCreationDate) / (1000 * 60 * 60 * 24)); // Difference in days
-                return ageInDays;
+
+                // Calculate the difference in milliseconds
+                const ageInMilliseconds = currentDate - accountCreationDate;
+
+                // Convert milliseconds to days
+                const ageInDays = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24));
+                return ageInDays; // Return age in days
             }
             return 'N/A'; // Return 'N/A' if no valid date is found
         }
