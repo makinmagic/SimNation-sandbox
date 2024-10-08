@@ -56,6 +56,7 @@
         }
 
         async function loadLotName(lotId) {
+            if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
             const lotData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`);
             return lotData ? lotData.name : 'N/A'; // Return the lot name if valid
         }
@@ -96,6 +97,9 @@
 
             // Wait for all promises to resolve
             const players = await Promise.all(playerPromises);
+
+            // Sort players alphabetically by name
+            players.sort((a, b) => a.name.localeCompare(b.name));
 
             players.forEach(player => {
                 tableHtml += `
