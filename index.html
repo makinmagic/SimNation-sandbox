@@ -55,21 +55,9 @@
             }
         }
 
-        async function loadPlayerAge(id) {
-            const playerData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/avatars/${id}`);
-            if (playerData && playerData.date) {
-                // Convert the Unix timestamp to milliseconds
-                const accountCreationDate = new Date(playerData.date * 1000);
-                const currentDate = new Date();
-
-                // Calculate the difference in milliseconds
-                const ageInMilliseconds = currentDate - accountCreationDate;
-
-                // Convert milliseconds to days
-                const ageInDays = Math.floor(ageInMilliseconds / (1000 * 60 * 60 * 24));
-                return ageInDays; // Return age in days
-            }
-            return 'N/A'; // Return 'N/A' if no valid date is found
+        async function loadLotName(lotId) {
+            const lotData = await fetchWithAllOrigins(`http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`);
+            return lotData ? lotData.name : 'N/A'; // Return the lot name if valid
         }
 
         async function loadOnlinePlayers() {
@@ -89,20 +77,20 @@
                         <tr>
                             <th>Name</th>
                             <th>ID</th>
-                            <th>Location</th>
-                            <th>Account Age (Days)</th>
+                            <th>Location ID</th>
+                            <th>Lot Name</th>
                         </tr>
                     </thead>
                     <tbody>`;
 
-            // Fetch each player's age based on their ID
+            // Fetch each player's lot name based on their location ID
             const playerPromises = onlineData.avatars.map(async (avatar) => {
-                const ageInDays = await loadPlayerAge(avatar.avatar_id);
+                const lotName = await loadLotName(avatar.location); // Fetch lot name using the location ID
                 return {
                     name: avatar.name,
                     id: avatar.avatar_id,
                     location: avatar.location,
-                    age: ageInDays
+                    lotName: lotName // Include lot name in the object
                 };
             });
 
@@ -115,7 +103,7 @@
                         <td>${player.name}</td>
                         <td>${player.id}</td>
                         <td>${player.location}</td>
-                        <td>${player.age} days</td>
+                        <td>${player.lotName}</td>
                     </tr>`;
             });
 
