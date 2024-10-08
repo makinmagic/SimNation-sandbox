@@ -25,17 +25,20 @@
             gap: 1%; /* Reduced gap to bring tables closer */
         }
 
-        #players-container, #lots-container {
+        .container {
             width: 49%; /* Make both containers almost equal and close to each other */
             background: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 10px;
+            display: flex;
+            flex-direction: column; /* Align title and table vertically */
         }
 
-        #players-container table, #lots-container table {
+        table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 10px; /* Space between title and table */
         }
 
         th, td {
@@ -53,14 +56,10 @@
             background-color: #f1f1f1;
         }
 
-        #players-container {
+        .scrollable {
             height: 400px;
             overflow-y: auto;
-        }
-
-        #lots-container {
-            height: 400px;
-            overflow-y: auto;
+            flex-grow: 1; /* Allow scrollable area to grow and fill space */
         }
 
         #tempoSim {
@@ -73,7 +72,7 @@
             #main-container {
                 flex-direction: column;
             }
-            #players-container, #lots-container {
+            .container {
                 width: 100%;
                 margin-bottom: 20px;
             }
@@ -260,19 +259,17 @@
     <h1>SimNation - Active Lots and Players</h1>
     <div id="tempoSim">Loading time...</div>
     <div id="main-container">
-        <div id="players-container">
+        <div class="container">
             <h3 id="players-title">Loading players...</h3>
+            <div class="scrollable" id="players">
+                Loading players...
+            </div>
         </div>
-        <div id="lots-container">
+        <div class="container">
             <h3 id="lots-title">Active Lots</h3>
-        </div>
-    </div>
-    <div id="main-container">
-        <div id="players">
-            Loading players...
-        </div>
-        <div id="lots">
-            Loading lots...
+            <div class="scrollable" id="lots">
+                Loading lots...
+            </div>
         </div>
     </div>
 </body>
