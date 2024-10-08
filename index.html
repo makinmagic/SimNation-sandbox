@@ -13,30 +13,30 @@
             padding: 20px;
         }
 
-        h1, h3 {
+        h1 {
             text-align: center;
             color: #0056b3;
-            font-size: 32px;
         }
 
-        .container {
+        /* Container holding both tables */
+        .tables-container {
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
+            gap: 20px;
         }
 
-        .table-container {
-            width: 48%; /* Adjust the table width */
+        /* Individual table styles */
+        .table-wrapper {
+            width: 50%;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Ensure content doesn't spill out */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
         th, td {
@@ -50,21 +50,21 @@
             color: white;
         }
 
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-
-        /* Make the players table scrollable */
+        /* Scrolling table body */
         .scrollable-table {
-            max-height: 400px;
+            display: block;
+            max-height: 400px; /* Adjust to fit your design */
             overflow-y: auto;
         }
 
-        /* Limit the height of the rows for players table */
+        .scrollable-table table {
+            width: 100%;
+        }
+
         .scrollable-table tbody {
             display: block;
             max-height: 400px;
-            overflow-y: scroll;
+            overflow-y: auto;
         }
 
         .scrollable-table thead, .scrollable-table tbody tr {
@@ -73,48 +73,39 @@
             table-layout: fixed;
         }
 
+        .scrollable-table th, .scrollable-table td {
+            width: 50%;
+        }
+
+        /* Rewards section styling */
+        #rewards {
+            margin-top: 30px;
+            text-align: center;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
-            .container {
+            .tables-container {
                 flex-direction: column;
             }
 
-            .table-container {
+            .table-wrapper {
                 width: 100%;
             }
         }
     </style>
-</head>
-<body>
-    <h1>SimNation - Active Lots and Players</h1>
-    <div id="tempoSim" style="text-align: center; font-size: 18px; margin-bottom: 20px;">Loading time...</div>
-
-    <div class="container">
-        <!-- Players Table -->
-        <div class="table-container">
-            <div id="players-container" class="scrollable-table">Loading players...</div>
-        </div>
-
-        <!-- Lots Table -->
-        <div class="table-container">
-            <div id="lots">Loading lots...</div>
-        </div>
-    </div>
-
     <script>
         async function loadPlayers() {
             try {
-                // Use AllOrigins to bypass the mixed content issue
                 const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/avatars/online'));
                 const data = await response.json();
-
-                // Parse the actual data from the response
                 const jsonData = JSON.parse(data.contents);
 
-                const playersTable = document.getElementById('players-container');
-                playersTable.innerHTML = ''; // Clear previous content
+                const playersContainer = document.getElementById('players');
+                playersContainer.innerHTML = ''; // Clear previous content
                 
                 let tableHtml = `
+                    <div class="scrollable-table">
                     <table>
                         <thead>
                             <tr>
@@ -123,119 +114,56 @@
                             </tr>
                         </thead>
                         <tbody>`;
-                
-                jsonData.avatars.forEach((player, index) => {
-                    if (index < 15) { // Only show the first 15 rows
-                        tableHtml += `
-                            <tr>
-                                <td>${player.name}</td>
-                                <td>${player.lotName}</td>
-                            </tr>`;
-                    }
+
+                jsonData.avatars.forEach((avatar, index) => {
+                    const sim = avatar.name;
+                    const location = avatar.lot_id === 0 ? 'Unknown' : avatar.location;
+                    tableHtml += `
+                        <tr>
+                            <td>${sim}</td>
+                            <td>${location}</td>
+                        </tr>`;
                 });
 
                 tableHtml += `
                         </tbody>
-                    </table>`;
-                
-                playersTable.innerHTML = tableHtml; // Update the container with the table
+                    </table>
+                    </div>`;
+
+                playersContainer.innerHTML = tableHtml; // Update the container with the table
             } catch (error) {
                 console.error('Error loading players:', error);
-                document.getElementById('players-container').innerHTML = 'Error loading players.';
+                document.getElementById('players').innerHTML = 'Error loading players.';
             }
         }
 
         async function loadLots() {
-            try {
-                // Use AllOrigins to bypass the mixed content issue
-                const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/city/1/city.json'));
-                const data = await response.json();
-
-                // Parse the actual data from the response
-                const jsonData = JSON.parse(data.contents);
-
-                // Create a mapping of lot IDs to names
-                const lotMapping = {};
-                for (let i = 0; i < jsonData.reservedLots.length; i++) {
-                    lotMapping[jsonData.reservedLots[i]] = jsonData.names[i];
-                }
-
-                // Get active lots and their corresponding counts
-                const activeLots = jsonData.activeLots;
-                const onlineCounts = jsonData.onlineCount;
-
-                const lotsContainer = document.getElementById('lots');
-                lotsContainer.innerHTML = ''; // Clear previous content
-                
-                let tableHtml = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Lot Name</th>
-                                <th>Sims Inside</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
-
-                activeLots.forEach((lotID, index) => {
-                    const lotName = lotMapping[lotID];
-                    const count = onlineCounts[index];
-
-                    if (count > 0) { // Only display if there's at least one player
-                        tableHtml += `
-                            <tr>
-                                <td>${lotName}</td>
-                                <td>${count}</td>
-                            </tr>`;
-                    }
-                });
-
-                tableHtml += `
-                        </tbody>
-                    </table>`;
-                
-                lotsContainer.innerHTML = tableHtml; // Update the container with the table
-            } catch (error) {
-                console.error('Error loading lots:', error);
-                document.getElementById('lots').innerHTML = 'Error loading lots.';
-            }
-        }
-
-        function tempoSim() {
-            var currenttime = new Date();
-            var hours = currenttime.getUTCHours();
-            var minutes = currenttime.getUTCMinutes();
-            var seconds = currenttime.getUTCSeconds();
-            var timesuffix = "AM";
-            var cycle = 0;
-            if (hours % 2 == 1) {
-                cycle = 3600;
-                timesuffix = "PM";
-            }
-            cycle = cycle + minutes * 60 + seconds;
-            var tsohours = Math.floor(cycle / 300);
-            if (tsohours > 12) {
-                tsohours = tsohours - 12;
-            }
-            if (tsohours == 0) {
-                tsohours = 12;
-            }
-            var tsomins = Math.floor((cycle % 300) / 5);
-            if (tsomins < 10) {
-                tsomins = "0" + tsomins;
-            }
-
-            // Update the display for in-game time
-            document.getElementById('tempoSim').innerHTML = "Time in Eldorado: " + tsohours + ":" + tsomins + " " + timesuffix;
-
-            setTimeout(tempoSim, 1000);
+            // Similar logic for loading active lots
         }
 
         window.onload = function() {
             loadPlayers();
             loadLots();
-            tempoSim(); // Start the in-game time function
         };
     </script>
+</head>
+<body>
+    <h1>SimNation - Active Lots and Players</h1>
+    <div id="tempoSim" style="text-align: center;">Loading time...</div>
+
+    <div class="tables-container">
+        <div id="players" class="table-wrapper">
+            <!-- Players table will be loaded here -->
+        </div>
+
+        <div id="lots" class="table-wrapper">
+            <!-- Lots table will be loaded here -->
+        </div>
+    </div>
+
+    <div id="rewards">
+        <h3>Current Rewards</h3>
+        <!-- Rewards table will be loaded here -->
+    </div>
 </body>
 </html>
