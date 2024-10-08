@@ -112,76 +112,64 @@
         }
 
         async function loadOnlinePlayers() {
-    const onlineData = await fetchWithAllOrigins('http://simnation.ddns.net:9000/userapi/avatars/online');
-    if (!onlineData || !onlineData.avatars) {
-        console.error('Failed to load online players');
-        document.getElementById('players').innerHTML = 'Error loading online players.';
-        return;
-    }
+    try {
+        const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('http://simnation.ddns.net:9000/userapi/city/1/city.json'));
+        const data = await response.json();
+        const jsonData = JSON.parse(data.contents);
 
-    // Update the title with the count of online players
-    document.getElementById('players-title').textContent = `Sims Online: ${onlineData.avatars_online_count}`;
+        const onlinePlayers = jsonData.onlinePlayers; // Assuming this is the correct path to the online players data
+        const lotMapping = {};
 
-    const playersContainer = document.getElementById('players');
-    playersContainer.innerHTML = ''; // Clear previous content
+        // Create a mapping of lot IDs to names
+        for (let i = 0; i < jsonData.reservedLots.length; i++) {
+            lotMapping[jsonData.reservedLots[i]] = jsonData.names[i];
+        }
 
-    let tableHtml = `
-        <table>
-            <thead>
+        const playersContainer = document.getElementById('players');
+        playersContainer.innerHTML = ''; // Clear previous content
+
+        let playersData = onlinePlayers.map(player => {
+            return {
+                name: player.name, // Assuming player.name exists
+                id: player.id, // Assuming player.id exists
+                lotID: player.lotID, // Assuming player.lotID exists
+                lotName: lotMapping[player.lotID] || player.lotID // Use lot name from mapping or fallback to ID
+            };
+        });
+
+        // Sort players by name (or any other criteria you prefer)
+        playersData.sort((a, b) => a.name.localeCompare(b.name));
+
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Player Name</th>
+                        <th>Player ID</th>
+                        <th>Lot Name</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+
+        playersData.forEach(player => {
+            tableHtml += `
                 <tr>
-                    <th>Sim</th>
-                    <th class="hidden">ID</th>
-                    <th class="hidden">Location ID</th>
-                    <th>Location</th>
-                </tr>
-            </thead>
-            <tbody>`;
+                    <td>${player.name}</td>
+                    <td>${player.id}</td>
+                    <td>${player.lotName}</td>
+                </tr>`;
+        });
 
-    // Fetch city data to get lot names
-    const cityData = await fetchWithAllOrigins('http://simnation.ddns.net:9000/userapi/city/1/city.json');
-    if (!cityData) {
-        console.error('Failed to load city data');
-        return;
-    }
-
-    const lotMapping = {};
-    // Create a mapping of lot IDs to lot names
-    cityData.names.forEach((name, index) => {
-        lotMapping[cityData.activeLots[index]] = name; // Assuming activeLots corresponds to names
-    });
-
-    // Update player data to include lot names from the mapping
-    const playerPromises = onlineData.avatars.map(avatar => {
-        const lotName = lotMapping[avatar.location] || 'Unknown'; // Use the mapping for the lot name
-        return {
-            name: avatar.name,
-            id: avatar.avatar_id,
-            location: avatar.location,
-            lotName: lotName // Include lot name from mapping
-        };
-    });
-
-    // Wait for all promises to resolve
-    const players = await Promise.all(playerPromises);
-
-    // Sort players alphabetically by name
-    players.sort((a, b) => a.name.localeCompare(b.name));
-
-    players.forEach(player => {
         tableHtml += `
-            <tr>
-                <td>${player.name}</td>
-                <td class="hidden">${player.id}</td>
-                <td class="hidden">${player.location}</td>
-                <td>${player.lotName}</td>
-            </tr>`;
-    });
+                </tbody>
+            </table>`;
 
-    tableHtml += `
-            </tbody>
-        </table>`;
+        playersContainer.innerHTML = tableHtml;
 
-    playersContainer.innerHTML = tableHtml; // Update the container with the table
+    } catch (error) {
+        console.error('Error loading online players:', error);
+        document.getElementById('players').innerHTML = 'Error loading players.';
+    }
 }
 
         async function loadLots() {
