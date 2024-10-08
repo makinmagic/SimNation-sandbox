@@ -307,36 +307,38 @@ async function loadOnlinePlayers() {
         }
 
         function populateRewards(htmlContent) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlContent, 'text/html');
-            const options = doc.querySelectorAll('#giftSelection option');
-            const rewardsContainer = document.getElementById('rewards-dropdown');
-            rewardsContainer.innerHTML = ''; // Clear existing content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const options = doc.querySelectorAll('#giftSelection option');
+    const rewardsContainer = document.getElementById('rewards-dropdown');
+    rewardsContainer.innerHTML = ''; // Clear existing content
 
-            // Create table structure for rewards
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Rewards</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+    // Create table structure for rewards
+    let tableHtml = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Reward Name</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>`;
 
-            options.forEach(option => {
-                const imageUrl = 'http://simnationserver.com/redeem/' + option.dataset.image; // Use root URL for images
-                tableHtml += `
-                    <tr>
-                        <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/> ${option.text}</td>
-                    </tr>`;
-            });
+    options.forEach(option => {
+        const imageUrl = 'http://simnationserver.com/redeem/' + option.dataset.image; // Use root URL for images
+        tableHtml += `
+            <tr>
+                <td>${option.text}</td>
+                <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/></td>
+            </tr>`;
+    });
 
-            tableHtml += `
-                    </tbody>
-                </table>`;
+    tableHtml += `
+            </tbody>
+        </table>`;
 
-            rewardsContainer.innerHTML = tableHtml; // Set the inner HTML of rewards dropdown
-        }
+    rewardsContainer.innerHTML = tableHtml; // Set the inner HTML of rewards dropdown
+}
 
         // Initialize the dashboard
         async function init() {
