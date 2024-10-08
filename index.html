@@ -142,6 +142,7 @@ async function loadOnlinePlayers() {
         if (!onlineData.avatars || onlineData.avatars.length === 0) {
             console.error('No avatars found in online data.');
             document.getElementById('players').innerHTML = 'No online players found.';
+            document.getElementById('simsOnlineTitle').innerText = 'Sims Online: 0'; // Update the title for 0 players
             return;
         }
 
@@ -150,6 +151,9 @@ async function loadOnlinePlayers() {
 
         // Fetch active lots data and create a mapping
         const lotMapping = await loadActiveLots();
+
+        // Sort the avatars alphabetically by name
+        const sortedAvatars = onlineData.avatars.sort((a, b) => a.name.localeCompare(b.name));
 
         let tableHtml = `
             <table>
@@ -163,8 +167,8 @@ async function loadOnlinePlayers() {
                 </thead>
                 <tbody>`;
 
-        // Process online players
-        onlineData.avatars.forEach(avatar => {
+        // Process sorted online players
+        sortedAvatars.forEach(avatar => {
             const lotName = lotMapping[avatar.location] || 'Unknown'; // Get the lot name using the mapping
             tableHtml += `
                 <tr>
@@ -181,9 +185,13 @@ async function loadOnlinePlayers() {
 
         playersContainer.innerHTML = tableHtml; // Update the container with the table
 
+        // Update the title with the online player count
+        document.getElementById('simsOnlineTitle').innerText = `Sims Online: ${onlineData.avatars_online_count}`;
+
     } catch (error) {
         console.error('Failed to load online players:', error);
         document.getElementById('players').innerHTML = 'Error loading online players.';
+        document.getElementById('simsOnlineTitle').innerText = 'Sims Online: 0'; // Update the title in case of error
     }
 }
         async function loadLots() {
