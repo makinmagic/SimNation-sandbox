@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <title>SimNation - Active Lots and Players</title>
     <style>
     body {
@@ -354,16 +355,16 @@ async function loadOnlinePlayers() {
     </script>
 </head>
 <body>
-    <h1>SimNation Dashboard - v1.2</h1>
+    <h1><i class="fas fa-pumpkin"></i> SimNation Dashboard - v1.2 <i class="fas fa-pumpkin"></i></h1>
     <div id="tempoSim">Time in Eldorado: Loading time...</div>
     <p style="font-style: italic; text-align: center;">Data is refreshed every minute for the most current information.</p>
     <div id="main-container">
         <div class="container">
-            <h3 id="players-title">Sims Online: 0</h3>
+            <h3><i class="fas fa-ghost"></i> Sims Online: <span id="playerCount"></span> <i class="fas fa-ghost"></i></h3>
             <div class="scrollable" id="players"></div>
         </div>
         <div class="container">
-            <h3 id="lots-title">Active Lots</h3>
+            <h3><i class="fas fa-bat"></i> Active Lots <i class="fas fa-bat"></i></h3>
             <div class="scrollable" id="lots"></div>
         </div>
     </div>
@@ -371,5 +372,8 @@ async function loadOnlinePlayers() {
         <h3>Current Patreon Rewards</h3>
         <div id="rewards-dropdown"></div>
     </div>
+    <div style="position: fixed; bottom: 10px; right: 10px;">
+    <i class="fas fa-ghost" style="font-size: 30px; color: #ff7518;"></i>
+</div>
 </body>
 </html>
