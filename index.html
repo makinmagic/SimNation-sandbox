@@ -22,20 +22,21 @@
     }
 
     #main-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 1%;
-    }
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: space-between; 
+    gap: 20px; 
+}
 
-    .container {
-    width: 49%; /* Adjust as necessary to fit four containers side by side */
+.container {
+    width: 49%; 
     background: #333; 
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
     padding: 10px;
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px; /* Ensures spacing between rows */
+    margin-bottom: 20px; 
 }
 
     .row {
@@ -382,27 +383,24 @@ async function loadOnlinePlayers() {
     <h1><i class="fa-solid fa-ghost"></i> SimNation Dashboard - Halloween Version <i class="fa-solid fa-ghost"></i></h1>
 
     <div id="main-container">
-    <div class="row">
-        <div class="container">
-            <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
-            <div class="scrollable" id="players"></div>
-        </div>
-        <div class="container">
-            <h3 id="lots-title"><i class="fa-solid fa-spider"></i> Active Lots <i class="fa-solid fa-spider"></i></h3>
-            <div class="scrollable" id="lots"></div>
-        </div>
+    <div class="container">
+        <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
+        <div class="scrollable" id="players"></div>
     </div>
-    <div class="row">
-        <div class="container">
-            <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
-            <div class="scrollable" id="rewards-dropdown"></div>
-        </div>
-        <div class="container">
-            <h3><i class="fa-solid fa-gamepad"></i> Console <i class="fa-solid fa-gamepad"></i></h3>
-            <div class="scrollable" id="console-dropdown"></div>
-        </div>
+    <div class="container">
+        <h3 id="lots-title"><i class="fa-solid fa-spider"></i> Active Lots <i class="fa-solid fa-spider"></i></h3>
+        <div class="scrollable" id="lots"></div>
+    </div>
+    <div class="container">
+        <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
+        <div class="scrollable" id="rewards-dropdown"></div>
+    </div>
+    <div class="container">
+        <h3><i class="fa-solid fa-gamepad"></i> Console <i class="fa-solid fa-gamepad"></i></h3>
+        <div class="scrollable" id="console-dropdown"></div>
     </div>
 </div>
+
 
 </body>
 </html>
