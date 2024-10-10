@@ -100,6 +100,50 @@
     .hidden {
         display: none;
     }
+
+        /* Add small icons to table headers */
+table th {
+    position: relative;
+}
+
+table th::before {
+    content: '';
+    position: absolute;
+    width: 20px; /* Adjust size */
+    height: 20px; /* Adjust size */
+    background-image: url('https://cdn-icons-png.flaticon.com/512/685/685844.png'); /* Replace with the path to your icon */
+    background-size: contain;
+    background-repeat: no-repeat;
+    left: -30px; /* Adjust as needed */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%);
+}
+
+        /* Show icon on row hover */
+table tr {
+    position: relative;
+}
+
+table tr:hover::after {
+    content: '';
+    position: absolute;
+    width: 20px; /* Adjust size */
+    height: 20px; /* Adjust size */
+    background-image: url('https://images.vexels.com/media/users/3/143810/isolated/lists/622a68a165a7c71e97d485c687cda054-black-ghost-silhouette-5.png'); /* Replace with the path to your icon */
+    background-size: contain;
+    background-repeat: no-repeat;
+    right: 10px; /* Adjust position */
+    top: 10px; /* Adjust position */
+    animation: fade-in 0.3s; /* Optional fade-in effect */
+}
+
+/* Fade-in animation */
+@keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+        
 </style>
     <script>
         async function loadLotName(lotId) {
