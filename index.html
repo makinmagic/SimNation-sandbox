@@ -329,38 +329,22 @@
         }
 
         function populateRewards(htmlContent) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlContent, 'text/html');
-            const options = doc.querySelectorAll('#giftSelection option');
-            const rewardsContainer = document.getElementById('rewards-dropdown');
-            rewardsContainer.innerHTML = ''; // Clear existing content
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, 'text/html');
+    const options = doc.querySelectorAll('#giftSelection option');
+    const rewardsContainer = document.getElementById('rewards-table').getElementsByTagName('tbody')[0];
+    rewardsContainer.innerHTML = ''; // Clear existing content
 
-            // Create table structure for rewards
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Reward Name</th>
-                            <th>Image</th>
-                        </tr>
-                    </thead>
-                    <tbody>`;
-
-            options.forEach(option => {
-                const imageUrl = 'http://simnationserver.com/redeem/' + option.dataset.image; // Use root URL for images
-                tableHtml += `
-                    <tr>
-                        <td>${option.text}</td>
-                        <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/></td>
-                    </tr>`;
-            });
-
-            tableHtml += `
-                    </tbody>
-                </table>`;
-
-            rewardsContainer.innerHTML = tableHtml; // Set the inner HTML of rewards dropdown
-        }
+    // Create table rows for rewards
+    options.forEach(option => {
+        const imageUrl = 'http://simnationserver.com/redeem/' + option.dataset.image; // Use root URL for images
+        const row = rewardsContainer.insertRow();
+        row.innerHTML = `
+            <td>${option.text}</td>
+            <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/></td>
+        `;
+    });
+}
 
         // Initialize the dashboard
         async function init() {
@@ -389,16 +373,29 @@
     </div>
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
-        <div class="container">
-            <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
-            <div class="scrollable" id="rewards-dropdown"></div>
-        </div>
-        <div class="container">
-            <h3>Console</h3>
-            <div id="console-content">
-                <!-- Content for Console will go here -->
-            </div>
+    <div class="container">
+        <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
+        <div class="scrollable" id="rewards-container">
+            <!-- Rewards table will be populated here -->
+            <table id="rewards-table">
+                <thead>
+                    <tr>
+                        <th>Reward Name</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Content will be populated dynamically by JavaScript -->
+                </tbody>
+            </table>
         </div>
     </div>
+    <div class="container">
+        <h3>Console</h3>
+        <div id="console-content">
+            <!-- Content for Console will go here -->
+        </div>
+    </div>
+</div>
 </body>
 </html>
