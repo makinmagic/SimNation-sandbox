@@ -346,7 +346,7 @@
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <h4 style="text-align: center;">${lotData.name}</h4>
-            <img src="http://simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name} Image" style="display: block; margin: 0 auto;"/>
+            <img src="https://api.allorigins.win/get?url=${encodeURIComponent(`http://simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name} Image" style="display: block; margin: 0 auto;"/>
             <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
