@@ -303,8 +303,8 @@
 }
 
         async function displayLotInfo(lotId) {
-    // Use your own proxy for fetching lot data
-    const url = `https://makinmagic.github.io/cors-proxy/${encodeURIComponent(`http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`)}`;
+    // Use Railway proxy for fetching lot data
+    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
 
     try {
         const response = await fetch(url);
@@ -312,8 +312,8 @@
             throw new Error('Network response was not ok');
         }
 
-        const data = await response.json();
-        const lotData = JSON.parse(data.contents); // Parse the JSON data from the response
+        const data = await response.json(); // No need for JSON.parse since it's already parsed
+        const lotData = data; // The JSON is directly available
 
         // Mapping for lot categories
         const categoryMapping = {
@@ -331,14 +331,13 @@
         };
 
         // Fetch owner's name using owner_id
-        const ownerNameUrl = `https://makinmagic.github.io/cors-proxy/${encodeURIComponent(`http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`)}`;
+        const ownerNameUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`;
         const ownerResponse = await fetch(ownerNameUrl);
         if (!ownerResponse.ok) {
             throw new Error('Failed to fetch owner name');
         }
         const ownerData = await ownerResponse.json();
-        const ownerDataParsed = JSON.parse(ownerData.contents);
-        const ownerName = ownerDataParsed.name; // Get the owner's name
+        const ownerName = ownerData.name; // Get the owner's name
 
         // Replace \r\n with <br> in description
         const formattedDescription = (lotData.description || 'No description available.').replace(/\r\n/g, '<br>');
