@@ -339,9 +339,12 @@
         const ownerData = await ownerResponse.json();
         const ownerName = ownerData.name; // Get the owner's name
 
-         // Fetch roommates' names
+        // Filter out the owner from the roommates list
+        const roommatesWithoutOwner = lotData.roommates.filter(id => id !== lotData.owner_id);
+
+        // Fetch roommates' names (excluding the owner)
         const roommateNames = await Promise.all(
-            lotData.roommates.map(async (roommateId) => {
+            roommatesWithoutOwner.map(async (roommateId) => {
                 const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
                 const roommateResponse = await fetch(roommateUrl);
                 if (!roommateResponse.ok) {
