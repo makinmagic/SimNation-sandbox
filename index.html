@@ -339,6 +339,20 @@
         const ownerData = await ownerResponse.json();
         const ownerName = ownerData.name; // Get the owner's name
 
+         // Fetch roommates' names
+        const roommateNames = await Promise.all(
+            lotData.roommates.map(async (roommateId) => {
+                const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
+                const roommateResponse = await fetch(roommateUrl);
+                if (!roommateResponse.ok) {
+                    console.error(`Failed to fetch roommate with id ${roommateId}`);
+                    return 'Unknown'; // Fallback if roommate fetch fails
+                }
+                const roommateData = await roommateResponse.json();
+                return roommateData.name || 'Unknown'; // Return roommate's name or fallback
+            })
+        );
+
         // Replace \r\n with <br> in description
         const formattedDescription = (lotData.description || 'No description available.').replace(/\r\n/g, '<br>');
 
@@ -360,6 +374,7 @@
             <p><strong>Description:</strong> ${formattedDescription}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
+            <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
             <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
             <p><em>There may be sims inside with their location hidden.</em></p>
         `;
