@@ -366,7 +366,8 @@ async function displayPlayerInfo(avatarId) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = ''; // Clear existing content
     
-    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`http://simnationserver.com:9000/userapi/avatars/${avatarId}`)}`;
+    // Use Railway proxy for fetching player data
+    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
 
     try {
         const response = await fetch(url);
@@ -374,8 +375,7 @@ async function displayPlayerInfo(avatarId) {
             throw new Error('Network response was not ok');
         }
 
-        const data = await response.json();
-        const playerData = JSON.parse(data.contents); // Parse the JSON data from the response
+        const playerData = await response.json(); // No need for JSON.parse since it's already parsed
 
         // Calculate player age from Unix timestamp
         const creationDate = new Date(playerData.date * 1000); // Convert to milliseconds
@@ -392,7 +392,6 @@ async function displayPlayerInfo(avatarId) {
         const formattedDescription = (playerData.description || 'No description available.').replace(/\r\n/g, '<br>');
 
         // Display all information in the Console
-        const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${playerData.name}
