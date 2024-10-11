@@ -330,21 +330,23 @@
         const ownerDataParsed = JSON.parse(ownerData.contents);
         const ownerName = ownerDataParsed.name; // Get the owner's name
 
-        // Get the list of known Sims inside the lot
-        const playersContainer = document.getElementById('players');
-        const playersData = Array.from(playersContainer.querySelectorAll('tr[data-lot-id]'))
-            .filter(playerRow => playerRow.dataset.lotId === lotId) // Filter players by lot ID
-            .map(playerRow => playerRow.querySelector('td').textContent); // Get player names
+        // Get the list of known Sims inside the lot (by matching Sims Online "location" with the lot ID)
+        const playersContainer = document.getElementById('players'); // Sims Online table
+        const playersRows = Array.from(playersContainer.querySelectorAll('tr')); // Get all rows in the Sims Online table
+
+        const knownSims = playersRows
+            .filter(row => row.querySelector('.hidden:nth-child(3)').textContent === lotId.toString()) // Match lotId with player's "location"
+            .map(row => row.querySelector('td').textContent); // Get the player's name
 
         // Display all information in the Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <h4 style="text-align: center;">${lotData.name}</h4>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 75px; height: 75px; border-radius: 8px; display: block; margin: 10px auto;">
             <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
-            <p><strong>Known Sims Inside:</strong> ${playersData.length > 0 ? playersData.join(', ') : 'None'}</p>
+            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
             <p>There may be more Sims inside that are unknown.</p>
         `;
     } catch (error) {
