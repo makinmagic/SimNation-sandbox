@@ -340,6 +340,7 @@
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <h4 style="text-align: center;">${lotData.name}</h4>
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 100%; border-radius: 8px; margin-bottom: 10px;">
             <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
