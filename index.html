@@ -365,7 +365,7 @@
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
-            <p>There may be sims inside with their location hidden.</p>
+            <p><em>There may be sims inside with their location hidden.</em></p>
         `;
     } catch (error) {
         console.error('Failed to fetch lot details:', error);
