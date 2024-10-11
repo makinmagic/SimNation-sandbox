@@ -304,17 +304,45 @@
         const data = await response.json();
         const lotData = JSON.parse(data.contents); // Parse the JSON data from the response
 
-        // Display the lot name and description in the Console
+        // Mapping for lot categories
+        const categoryMapping = {
+            1: 'Welcome',
+            2: 'Money',
+            3: 'Skills',
+            4: 'Service',
+            5: 'Entertainment',
+            6: 'Romance',
+            7: 'Store',
+            8: 'Games',
+            9: 'Offbeat',
+            10: 'Residential',
+            11: 'Community'
+        };
+
+        // Fetch owner's name using owner_id
+        const ownerNameUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(`http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`)}`;
+        const ownerResponse = await fetch(ownerNameUrl);
+        if (!ownerResponse.ok) {
+            throw new Error('Failed to fetch owner name');
+        }
+        const ownerData = await ownerResponse.json();
+        const ownerDataParsed = JSON.parse(ownerData.contents);
+        const ownerName = ownerDataParsed.name; // Get the owner's name
+
+        // Display all information in the Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <h4>${lotData.name}</h4>
-            <p>${lotData.description || 'No description available.'}</p>
+            <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
+            <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
+            <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
         `;
     } catch (error) {
         console.error('Failed to fetch lot details:', error);
         document.getElementById('console-content').innerHTML = 'Error loading lot details.';
     }
 }
+
 
 
         function tempoSim() {
