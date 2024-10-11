@@ -342,6 +342,14 @@
         // Replace \r\n with <br> in description
         const formattedDescription = (lotData.description || 'No description available.').replace(/\r\n/g, '<br>');
 
+        // Find known Sims inside the lot (from the Sims Online table)
+        const playersContainer = document.getElementById('players');
+        const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
+
+        const knownSims = playersRows
+            .filter(row => row.querySelector('.hidden:nth-child(3)').textContent === lotId.toString()) // Match lotId with player's "location"
+            .map(row => row.querySelector('td').textContent); // Get the player's name
+
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
