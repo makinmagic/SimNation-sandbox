@@ -303,6 +303,10 @@
 }
 
         async function displayLotInfo(lotId) {
+            // Remove placeholder text
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = ''; // Clear existing content
+            
     const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`)}`;
 
     try {
@@ -370,6 +374,11 @@
 }
 
 async function displayPlayerInfo(avatarId) {
+
+    // Remove placeholder text
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = ''; // Clear existing content
+    
     const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`http://simnationserver.com:9000/userapi/avatars/${avatarId}`)}`;
 
     try {
@@ -522,6 +531,7 @@ async function displayPlayerInfo(avatarId) {
     <div class="container">
         <h3><i class="fa-solid fa-book-skull"></i> Console <i class="fa-solid fa-book-skull"></i></h3>
         <div id="console-content">
+                <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
             <!-- Content for Console will go here -->
         </div>
     </div>
