@@ -341,20 +341,21 @@
         // Display all information in the Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
-            <h4 style="text-align: center;">${lotData.name}</h4>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 75px; height: 75px; border-radius: 8px; display: block; margin: 10px auto;">
+            <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
+                ${lotData.name}
+            </div>
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 100px; height: 100px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto;">
             <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
-            <p>There may be more Sims inside that are unknown.</p>
+            <p>There may be sims inside with their location hidden.</p>
         `;
     } catch (error) {
         console.error('Failed to fetch lot details:', error);
         document.getElementById('console-content').innerHTML = 'Error loading lot details.';
     }
 }
-
         function tempoSim() {
             var currenttime = new Date();
             var hours = currenttime.getUTCHours();
