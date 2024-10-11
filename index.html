@@ -360,6 +360,7 @@
             <p><strong>Description:</strong> ${formattedDescription}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
+            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
             <p><em>There may be sims inside with their location hidden.</em></p>
         `;
     } catch (error) {
