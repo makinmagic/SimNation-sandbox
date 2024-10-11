@@ -330,30 +330,20 @@
         const ownerDataParsed = JSON.parse(ownerData.contents);
         const ownerName = ownerDataParsed.name; // Get the owner's name
 
-        // Retrieve known Sims inside using the Online Players data
+        // Get the list of known Sims inside the lot
         const playersContainer = document.getElementById('players');
-        const knownSims = Array.from(playersContainer.querySelectorAll('tr')).map(row => {
-            const simId = row.querySelector('.hidden').textContent; // Assuming hidden class contains the player ID
-            return {
-                id: simId,
-                name: row.cells[0].textContent // Assuming first cell contains the player name
-            };
-        }).filter(sim => sim.name); // Filter out any without a name
-
-        // Create a string of known Sims' names
-        const knownSimsList = knownSims.map(sim => sim.name).join(', ') || 'None';
+        const playersData = Array.from(playersContainer.querySelectorAll('tr[data-lot-id]'))
+            .filter(playerRow => playerRow.dataset.lotId === lotId) // Filter players by lot ID
+            .map(playerRow => playerRow.querySelector('td').textContent); // Get player names
 
         // Display all information in the Console
         const consoleContent = document.getElementById('console-content');
-        const lotImageUrl = `http://simnationserver.com:9000/userapi/city/1/${lotId}.png`; // Direct URL for the lot image
-
         consoleContent.innerHTML = `
             <h4 style="text-align: center;">${lotData.name}</h4>
-            <img src="${lotImageUrl}" alt="${lotData.name} Image" style="display: block; margin: 0 auto;"/>
             <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
-            <p><strong>Known Sims Inside:</strong> ${knownSimsList}</p>
+            <p><strong>Known Sims Inside:</strong> ${playersData.length > 0 ? playersData.join(', ') : 'None'}</p>
             <p>There may be more Sims inside that are unknown.</p>
         `;
     } catch (error) {
