@@ -101,24 +101,19 @@
         margin-bottom: 20px;
     }
 
-    /* Change the order on smaller screens */
-    #players-title {
-        order: 1;
-    }
-
-    #lots-title {
-        order: 2;
-    }
-
-    #console-content {
-        order: 3;
+#bottom-container {
+        flex-direction: column;
     }
 
     #rewards-container {
-        order: 4;
+        order: 4; 
+        width: 100%;
     }
-}
 
+    #console-container {
+        order: 3; 
+        width: 100%; 
+    }
     .hidden {
         display: none;
     }
@@ -563,9 +558,9 @@ function displayRewardInfo(rewardName, rewardImage) {
     </div>
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
-    <div class="container">
+    <div id="rewards-container" class="container">
         <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
-        <div class="scrollable" id="rewards-container">
+        <div class="scrollable">
             <!-- Rewards table will be populated here -->
             <table id="rewards-table">
                 <thead>
@@ -580,10 +575,10 @@ function displayRewardInfo(rewardName, rewardImage) {
             </table>
         </div>
     </div>
-    <div class="container">
+    <div id="console-container" class="container">
         <h3><i class="fa-solid fa-book-skull"></i> Console <i class="fa-solid fa-book-skull"></i></h3>
         <div id="console-content">
-                <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
+            <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
             <!-- Content for Console will go here -->
         </div>
     </div>
