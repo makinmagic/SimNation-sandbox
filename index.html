@@ -164,6 +164,13 @@
 
 async function loadOnlinePlayers() {
     try {
+
+        // Set the Sims Online title to "Loading..." while data is being fetched
+        const playersTitle = document.getElementById('players-title');
+        if (playersTitle) {
+            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: Loading... <i class="fa-solid fa-hat-wizard"></i>`;
+        }
+        
         const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -219,18 +226,17 @@ async function loadOnlinePlayers() {
             });
         });
 
-        // Update the title with the online player count and keep the icons
-        const playersTitle = document.getElementById('players-title');
+        // Update the title with the online player count
         if (playersTitle) {
             playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-wizard"></i>`;
         }
 
-    } catch (error) {
+} catch (error) {
         console.error('Failed to load online players:', error);
         document.getElementById('players').innerHTML = 'Error loading online players.';
-        const playersTitle = document.getElementById('players-title');
+        // If there is an error, reset the title to show 0
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i>`; // Keep the icons even in case of an error
+            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i>`;
         }
     }
 }
