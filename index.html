@@ -92,14 +92,32 @@
     }
 
     @media (max-width: 768px) {
-        #main-container, #bottom-container {
-            flex-direction: column;
-        }
-        .container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
+    #main-container, #bottom-container {  
+        flex-direction: column;
     }
+
+    .container {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /* Change the order on smaller screens */
+    #players-title {
+        order: 1;
+    }
+
+    #lots-title {
+        order: 2;
+    }
+
+    #console-content {
+        order: 3;
+    }
+
+    #rewards-container {
+        order: 4;
+    }
+}
 
     .hidden {
         display: none;
@@ -533,7 +551,6 @@ function displayRewardInfo(rewardName, rewardImage) {
 <body>
     <h1><i class="fa-solid fa-ghost"></i> SimNation Dashboard - Halloween Version <i class="fa-solid fa-ghost"></i></h1>
     <div id="tempoSim">Time in Eldorado: Loading time...</div>
-    <p style="font-style: italic; text-align: center;">Data is refreshed every minute for the most current information.</p>
     <div id="main-container">
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
