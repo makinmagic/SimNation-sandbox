@@ -96,9 +96,11 @@
 }
 
     .preserve-whitespace {
-        white-space: pre-wrap; 
-    }
-
+    white-space: pre-wrap;
+    width: 500px; 
+    overflow-wrap: break-word; 
+}
+        
     @media (max-width: 768px) {
     #main-container, #bottom-container {  
         flex-direction: column;
@@ -150,37 +152,7 @@
 
     </style>
     <script>
-
-function wrapTextWithSpaces(text, letterLimit = 28) {
-    const lines = text.split('\n'); // Split the text by existing line breaks
-    let result = '';
-
-    lines.forEach((line) => {
-        let currentLine = '';
-        let currentLength = 0;
-
-        // Split the line by both words and spaces while keeping the spaces
-        let words = line.match(/(\s+|\S+)/g) || [];
-
-        words.forEach(word => {
-            const wordLength = word.length;
-
-            // If the word exceeds the limit, start a new line (keeping spaces intact)
-            if (currentLength + wordLength > letterLimit) {
-                result += currentLine.trimEnd() + '<br>'; // Trim trailing spaces, then break
-                currentLine = word; // Start the new line with the current word
-                currentLength = wordLength;
-            } else {
-                currentLine += word; // Add the word (or space) to the current line
-                currentLength += wordLength;
-            }
-        });
-
-        result += currentLine.trimEnd() + '<br>'; // Add the final line, trimming any trailing spaces
-    });
-
-    return result;
-}       
+        // JavaScript functions as provided earlier
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
             const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
@@ -412,8 +384,8 @@ async function loadOnlinePlayers() {
         );
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextWithSpaces(lotData.description || 'No description available.');
-        
+        const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
+
         // Find known Sims inside the lot (from the Sims Online table)
         const playersContainer = document.getElementById('players');
         const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
@@ -430,7 +402,7 @@ async function loadOnlinePlayers() {
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto;">
             <p><strong>Description:</strong></p>
-            <div class="preserve-whitespace">${formattedDescription}</div>
+        <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
@@ -472,7 +444,7 @@ async function displayPlayerInfo(avatarId) {
         const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(4)').textContent : 'Unknown'; // Get location name
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextWithSpaces(playerData.description || 'No description available.');
+        const formattedDescription = (playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
 
         // Display all information in the Console
         consoleContent.innerHTML = `
@@ -480,7 +452,7 @@ async function displayPlayerInfo(avatarId) {
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
-            <div class="preserve-whitespace">${formattedDescription}</div>
+        <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Age:</strong> ${ageInDays} days old</p>
             <p><strong>Location:</strong> ${playerLocation}</p>
         `;
