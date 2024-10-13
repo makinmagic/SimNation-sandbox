@@ -95,11 +95,14 @@
     display: none;
 }
 
-   .preserve-whitespace {
-    white-space: pre-wrap;
-    width: 350px;
-    overflow-wrap: break-word;
-}
+    .description-container {
+        max-width: 300px; /* Set this to your desired width */
+        margin: 0 auto; /* Center the description */
+        word-wrap: break-word; /* Ensures long words break and wrap */
+        white-space: pre-wrap; /* Preserve line breaks and spaces */
+        padding: 5px; /* Add some padding for better appearance */
+        border: 1px dashed #ff7518; /* Optional: Add a dashed border to match the style */
+    }
         
     @media (max-width: 768px) {
     #main-container, #bottom-container {  
@@ -402,7 +405,7 @@ async function loadOnlinePlayers() {
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto;">
             <p><strong>Description:</strong></p>
-        <div class="preserve-whitespace">${formattedDescription}</div>
+            <div class="description-container">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
@@ -452,7 +455,7 @@ async function displayPlayerInfo(avatarId) {
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
-        <div class="preserve-whitespace">${formattedDescription}</div>
+            <div class="description-container">${formattedDescription}</div>
             <p><strong>Age:</strong> ${ageInDays} days old</p>
             <p><strong>Location:</strong> ${playerLocation}</p>
         `;
