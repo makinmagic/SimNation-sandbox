@@ -95,6 +95,10 @@
     display: none;
 }
 
+    .preserve-whitespace {
+        white-space: pre-wrap; 
+    }
+
     @media (max-width: 768px) {
     #main-container, #bottom-container {  
         flex-direction: column;
@@ -378,7 +382,7 @@ async function loadOnlinePlayers() {
         );
 
         // Replace \r\n with <br> in description
-        const formattedDescription = (lotData.description || 'No description available.').replace(/\r\n/g, '<br>');
+        const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
 
         // Find known Sims inside the lot (from the Sims Online table)
         const playersContainer = document.getElementById('players');
@@ -395,7 +399,8 @@ async function loadOnlinePlayers() {
                 ${lotData.name}
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto;">
-            <p><strong>Description:</strong> ${formattedDescription}</p>
+            <p><strong>Description:</strong></p>
+        <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
@@ -437,14 +442,15 @@ async function displayPlayerInfo(avatarId) {
         const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(4)').textContent : 'Unknown'; // Get location name
 
         // Replace \r\n with <br> in description
-        const formattedDescription = (playerData.description || 'No description available.').replace(/\r\n/g, '<br>');
+        const formattedDescription = (playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
 
         // Display all information in the Console
         consoleContent.innerHTML = `
             <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${playerData.name}
             </div>
-            <p><strong>Description:</strong> ${formattedDescription}</p>
+            <p><strong>Description:</strong></p>
+        <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Age:</strong> ${ageInDays} days old</p>
             <p><strong>Location:</strong> ${playerLocation}</p>
         `;
