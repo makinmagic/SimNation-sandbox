@@ -151,32 +151,32 @@
     </style>
     <script>
 
-function wrapTextRespectingSpaces(text, letterLimit = 28) {
-    const lines = text.split('\n'); // Split by manual line breaks first
+function wrapTextWithSpaces(text, letterLimit = 28) {
+    const lines = text.split('\n'); // Split the text by existing line breaks
     let result = '';
 
     lines.forEach((line) => {
         let currentLine = '';
         let currentLength = 0;
 
-        // Keep track of words and spaces
-        let words = line.match(/(\S+|\s+)/g) || [];
+        // Split the line by both words and spaces while keeping the spaces
+        let words = line.match(/(\s+|\S+)/g) || [];
 
         words.forEach(word => {
-            const wordLength = word.trim() === '' ? word.length : word.length; // Count both spaces and letters
+            const wordLength = word.length;
 
-            // If adding the next word exceeds the limit, start a new line
+            // If the word exceeds the limit, start a new line (keeping spaces intact)
             if (currentLength + wordLength > letterLimit) {
-                result += currentLine + '<br>'; // Add a line break
-                currentLine = word; // Start a new line with the current word
-                currentLength = wordLength; // Reset length count
+                result += currentLine.trimEnd() + '<br>'; // Trim trailing spaces, then break
+                currentLine = word; // Start the new line with the current word
+                currentLength = wordLength;
             } else {
-                currentLine += word; // Add the word or spaces to the line
-                currentLength += wordLength; // Update length count
+                currentLine += word; // Add the word (or space) to the current line
+                currentLength += wordLength;
             }
         });
 
-        result += currentLine + '<br>'; // Add remaining text in the line
+        result += currentLine.trimEnd() + '<br>'; // Add the final line, trimming any trailing spaces
     });
 
     return result;
@@ -412,7 +412,7 @@ async function loadOnlinePlayers() {
         );
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextRespectingSpaces(lotData.description || 'No description available.');
+        const formattedDescription = wrapTextWithSpaces(lotData.description || 'No description available.');
         
         // Find known Sims inside the lot (from the Sims Online table)
         const playersContainer = document.getElementById('players');
@@ -472,7 +472,7 @@ async function displayPlayerInfo(avatarId) {
         const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(4)').textContent : 'Unknown'; // Get location name
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextRespectingSpaces(lotData.description || 'No description available.');
+        const formattedDescription = wrapTextWithSpaces(playerData.description || 'No description available.');
 
         // Display all information in the Console
         consoleContent.innerHTML = `
