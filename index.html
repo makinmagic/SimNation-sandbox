@@ -95,23 +95,6 @@
     display: none;
 }
 
-    function wrapTextAtLimit(text, limit = 29) {
-    const words = text.split(' '); // Split the text by spaces
-    let result = '';
-    let currentLine = '';
-
-    words.forEach(word => {
-        if (currentLine.length + word.length + 1 > limit) {
-            result += currentLine.trim() + '<br>'; // Add current line to result and move to next line
-            currentLine = word + ' '; // Start new line with the current word
-        } else {
-            currentLine += word + ' '; // Add word to the current line
-        }
-    });
-
-    result += currentLine.trim(); // Add the last line
-    return result;
-}
     .preserve-whitespace {
         white-space: pre-wrap; 
     }
@@ -167,7 +150,25 @@
 
     </style>
     <script>
-        // JavaScript functions as provided earlier
+
+function wrapTextAtLimit(text, limit = 29) {
+    const words = text.split(' '); // Split the text by spaces
+    let result = '';
+    let currentLine = '';
+
+    words.forEach(word => {
+        if (currentLine.length + word.length + 1 > limit) {
+            result += currentLine.trim() + '<br>'; // Add current line to result and move to next line
+            currentLine = word + ' '; // Start new line with the current word
+        } else {
+            currentLine += word + ' '; // Add word to the current line
+        }
+    });
+
+    result += currentLine.trim(); // Add the last line
+    return result;
+}
+        
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
             const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
