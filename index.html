@@ -152,23 +152,28 @@
     <script>
 
 function wrapTextAtLimit(text, limit = 29) {
-    const words = text.split(' '); // Split the text by spaces
+    const lines = text.split('\n');
     let result = '';
-    let currentLine = '';
 
-    words.forEach(word => {
-        if (currentLine.length + word.length + 1 > limit) {
-            result += currentLine.trim() + '<br>'; // Add current line to result and move to next line
-            currentLine = word + ' '; // Start new line with the current word
-        } else {
-            currentLine += word + ' '; // Add word to the current line
-        }
+    lines.forEach((line) => {
+        let currentLine = '';
+
+        // Split line into words and iterate
+        line.split(' ').forEach(word => {
+            // Handle cases where the word + current line length exceeds the limit
+            if (currentLine.length + word.length + 1 > limit) {
+                result += currentLine.trim() + '<br>'; // Add the current line to result with <br>
+                currentLine = word + ' '; // Start new line with the current word
+            } else {
+                currentLine += word + ' '; // Add word to current line
+            }
+        });
+
+        result += currentLine.trim() + '<br>'; // Add the last line and preserve manual new lines
     });
 
-    result += currentLine.trim(); // Add the last line
     return result;
-}
-        
+}       
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
             const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
@@ -400,7 +405,7 @@ async function loadOnlinePlayers() {
         );
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextAtLimit((lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>'));
+        const formattedDescription = wrapTextAtLimit(lotData.description || 'No description available.');
         
         // Find known Sims inside the lot (from the Sims Online table)
         const playersContainer = document.getElementById('players');
@@ -460,7 +465,7 @@ async function displayPlayerInfo(avatarId) {
         const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(4)').textContent : 'Unknown'; // Get location name
 
         // Replace \r\n with <br> in description
-        const formattedDescription = wrapTextAtLimit((playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>'));
+        const formattedDescription = wrapTextAtLimit(playerData.description || 'No description available.');
 
         // Display all information in the Console
         consoleContent.innerHTML = `
