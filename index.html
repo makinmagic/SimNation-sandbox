@@ -152,24 +152,26 @@
     <script>
 
 function wrapTextAtLimit(text, limit = 29) {
-    const lines = text.split('\n');
+    const lines = text.split('\n'); // Split by newline first
     let result = '';
 
     lines.forEach((line) => {
         let currentLine = '';
 
-        // Split line into words and iterate
-        line.split(' ').forEach(word => {
-            // Handle cases where the word + current line length exceeds the limit
-            if (currentLine.length + word.length + 1 > limit) {
-                result += currentLine.trim() + '<br>'; // Add the current line to result with <br>
-                currentLine = word + ' '; // Start new line with the current word
+        // Split line by spaces while preserving consecutive spaces
+        let words = line.match(/(\S+|\s+)/g) || [];
+
+        words.forEach(word => {
+            // If adding the next word exceeds the limit, start a new line
+            if (currentLine.length + word.length > limit) {
+                result += currentLine.trimEnd() + '<br>'; // Trim to avoid trailing spaces before break
+                currentLine = word; // Start new line with the current word
             } else {
-                currentLine += word + ' '; // Add word to current line
+                currentLine += word; // Continue adding to the current line
             }
         });
 
-        result += currentLine.trim() + '<br>'; // Add the last line and preserve manual new lines
+        result += currentLine.trimEnd() + '<br>'; // Add the remaining text in the line
     });
 
     return result;
