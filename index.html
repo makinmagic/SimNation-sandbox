@@ -95,6 +95,23 @@
     display: none;
 }
 
+    function wrapTextAtLimit(text, limit = 29) {
+    const words = text.split(' '); // Split the text by spaces
+    let result = '';
+    let currentLine = '';
+
+    words.forEach(word => {
+        if (currentLine.length + word.length + 1 > limit) {
+            result += currentLine.trim() + '<br>'; // Add current line to result and move to next line
+            currentLine = word + ' '; // Start new line with the current word
+        } else {
+            currentLine += word + ' '; // Add word to the current line
+        }
+    });
+
+    result += currentLine.trim(); // Add the last line
+    return result;
+}
     .preserve-whitespace {
         white-space: pre-wrap; 
     }
@@ -350,7 +367,7 @@ async function loadOnlinePlayers() {
             6: 'Skills',
             7: 'Welcome',
             8: 'Games',
-            9: 'Offbeat',
+            9: 'Entertainment',
             10: 'Residential',
             11: 'Community'
         };
@@ -382,8 +399,8 @@ async function loadOnlinePlayers() {
         );
 
         // Replace \r\n with <br> in description
-        const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
-
+        const formattedDescription = wrapTextAtLimit((lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>'));
+        
         // Find known Sims inside the lot (from the Sims Online table)
         const playersContainer = document.getElementById('players');
         const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
@@ -400,7 +417,7 @@ async function loadOnlinePlayers() {
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto;">
             <p><strong>Description:</strong></p>
-        <div class="preserve-whitespace">${formattedDescription}</div>
+            <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
@@ -442,7 +459,7 @@ async function displayPlayerInfo(avatarId) {
         const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(4)').textContent : 'Unknown'; // Get location name
 
         // Replace \r\n with <br> in description
-        const formattedDescription = (playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
+        const formattedDescription = wrapTextAtLimit((playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>'));
 
         // Display all information in the Console
         consoleContent.innerHTML = `
@@ -450,7 +467,7 @@ async function displayPlayerInfo(avatarId) {
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
-        <div class="preserve-whitespace">${formattedDescription}</div>
+            <div class="preserve-whitespace">${formattedDescription}</div>
             <p><strong>Age:</strong> ${ageInDays} days old</p>
             <p><strong>Location:</strong> ${playerLocation}</p>
         `;
