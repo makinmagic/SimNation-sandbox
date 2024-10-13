@@ -151,23 +151,29 @@
     </style>
     <script>
 
-function wrapTextAtLimit(text, limit = 29) {
-    const lines = text.split('\n'); // Split by newline first
+function wrapTextAtLimit(text, letterLimit = 28, spaceLimit = 61) {
+    const lines = text.split('\n'); // Split by newline characters first
     let result = '';
 
     lines.forEach((line) => {
         let currentLine = '';
+        let currentLength = 0; // Track the combined space taken by letters and spaces
 
-        // Split line by spaces while preserving consecutive spaces
+        // Split line by words while preserving consecutive spaces
         let words = line.match(/(\S+|\s+)/g) || [];
 
         words.forEach(word => {
-            // If adding the next word exceeds the limit, start a new line
-            if (currentLine.length + word.length > limit) {
+            const isSpace = word.trim() === ''; // Check if the word is just spaces
+            const wordLength = isSpace ? word.length / 2 : word.length; // Treat spaces as half the size
+
+            // If adding the next word exceeds the limits, start a new line
+            if (currentLength + wordLength > (isSpace ? spaceLimit : letterLimit)) {
                 result += currentLine.trimEnd() + '<br>'; // Trim to avoid trailing spaces before break
-                currentLine = word; // Start new line with the current word
+                currentLine = word; // Start a new line with the current word
+                currentLength = wordLength; // Reset the length count
             } else {
                 currentLine += word; // Continue adding to the current line
+                currentLength += wordLength; // Update the length count
             }
         });
 
