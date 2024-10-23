@@ -303,22 +303,35 @@ async function loadOnlinePlayers() {
         // Sort lots by Sims count (busiest first)
         lotsData.sort((a, b) => b.count - a.count);
 
+        const fetchLotDetailsPromises = lotsData.map(lot =>
+            fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
+        );
+
+        // Wait for all lot detail requests to complete
+        const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
+
         let tableHtml = `
             <table>
                 <thead>
                     <tr>
                         <th>Location</th>
                         <th>Sims Inside</th>
+                        <th>Lot Type</th>
                     </tr>
                 </thead>
                 <tbody>`;
 
-        lotsData.forEach(lot => {
+ // Process active lots and display them along with their types
+        lotsData.forEach((lot, index) => {
             if (lot.count > 0) {
+                const lotDetails = lotDetailsArray[index];
+                const lotType = categoryMapping[lotDetails.category] || 'Unknown'; // Map category to lot type
+                
                 tableHtml += `
                     <tr data-lot-id="${lot.id}"> <!-- Store lot ID in a data attribute -->
                         <td>${lot.name}</td>
                         <td>${lot.count}</td>
+                        <td>${lotType}</td> <!-- Display Lot Type -->
                     </tr>`;
             }
         });
