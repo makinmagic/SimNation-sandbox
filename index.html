@@ -207,6 +207,14 @@ async function loadOnlinePlayers() {
         // Sort the avatars alphabetically by name
         const sortedAvatars = onlineData.avatars.sort((a, b) => a.name.localeCompare(b.name));
 
+        // Prepare fetch requests for all avatars in parallel
+        const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
+            fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
+        );
+
+        // Wait for all player detail requests to complete
+        const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
+
         let tableHtml = `
             <table>
                 <thead>
@@ -221,12 +229,9 @@ async function loadOnlinePlayers() {
                 <tbody>`;
 
         // Process sorted online players
-        for (let avatar of sortedAvatars) {
+        sortedAvatars.forEach((avatar, index) => {
             const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
-
-            // Fetch player details using avatar_id to get the "date" field
-            const playerDetailsResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`);
-            const playerDetails = await playerDetailsResponse.json();
+            const playerDetails = playerDetailsArray[index]; // Get the corresponding player details
             
             // Calculate player age from Unix timestamp (avatar.date)
             const creationDate = new Date(playerDetails.date * 1000); // Convert to milliseconds
@@ -240,7 +245,7 @@ async function loadOnlinePlayers() {
                     <td>${lotName}</td>
                     <td>${ageInDays} days</td> <!-- Display Age -->
                 </tr>`;
-        }
+        });
 
         tableHtml += `
                 </tbody>
