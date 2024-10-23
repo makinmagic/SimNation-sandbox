@@ -225,7 +225,7 @@ async function loadOnlinePlayers() {
             const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
 
             // Fetch player details using avatar_id to get the "date" field
-            const playerDetailsResponse = await fetch(`http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`);
+            const playerDetailsResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`);
             const playerDetails = await playerDetailsResponse.json();
             
             // Calculate player age from Unix timestamp (avatar.date)
