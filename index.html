@@ -427,7 +427,10 @@ async function loadOnlinePlayers() {
         const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
         const knownSims = playersRows
-            .filter(row => row.querySelector('.hidden:nth-child(3)').textContent === lotId.toString()) // Match lotId with player's "location"
+            .filter(row => {
+                const locationCell = row.querySelector('.hidden:nth-child(4)');
+                return locationCell && locationCell.textContent === lotId.toString(); // Ensure cell exists and matches lot ID
+            })
             .map(row => row.querySelector('td').textContent); // Get the player's name
 
         // Display lot information in Console
