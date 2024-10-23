@@ -225,7 +225,7 @@ async function loadOnlinePlayers() {
         sortedAvatars.forEach(avatar => {
             const lotName = lotMapping[avatar.location] || 'Unknown'; // Get the lot name using the mapping
 
-            // Calculate age in days
+            // Age calculation
             const creationDate = new Date(avatar.date * 1000); // Convert Unix timestamp to date
             const currentDate = new Date();
             const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Calculate age in days
