@@ -198,7 +198,6 @@ async function loadOnlinePlayers() {
         }
 
         const onlineData = await response.json();
-
         const playersContainer = document.getElementById('players');
         playersContainer.innerHTML = ''; // Clear previous content
 
@@ -213,8 +212,8 @@ async function loadOnlinePlayers() {
                 <thead>
                     <tr>
                         <th>Sim</th>
-                        <th>Age</th>
                         <th class="hidden">ID</th>
+                        <th>Age (days)</th>
                         <th class="hidden">Location ID</th>
                         <th>Location</th>
                     </tr>
@@ -222,23 +221,26 @@ async function loadOnlinePlayers() {
                 <tbody>`;
 
         // Process sorted online players
-        sortedAvatars.forEach(avatar => {
-            const lotName = lotMapping[avatar.location] || 'Unknown'; // Get the lot name using the mapping
+        for (let avatar of sortedAvatars) {
+            const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
 
-            // Age calculation
-            const creationDate = new Date(avatar.date * 1000); // Convert Unix timestamp to date
-            const currentDate = new Date();
-            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Calculate age in days
+            // Fetch player details using avatar_id to get the "date" field
+            const playerDetailsResponse = await fetch(`http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`);
+            const playerDetails = await playerDetailsResponse.json();
             
+            // Calculate player age from Unix timestamp (avatar.date)
+            const creationDate = new Date(playerDetails.date * 1000); // Convert to milliseconds
+            const currentDate = new Date();
+            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
+
             tableHtml += `
                 <tr data-avatar-id="${avatar.avatar_id}">
                     <td>${avatar.name}</td>
-                    <td>${ageInDays} days</td>
                     <td class="hidden">${avatar.avatar_id}</td>
-                    <td class="hidden">${avatar.location}</td>
                     <td>${lotName}</td>
+                    <td>${ageInDays} days</td> <!-- Display Age -->
                 </tr>`;
-        });
+        }
 
         tableHtml += `
                 </tbody>
