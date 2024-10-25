@@ -166,7 +166,8 @@ th:nth-child(4), td:nth-child(4) {
         background-size: contain;
         background-repeat: no-repeat;
         right: 10px; 
-        top: 10px; 
+        top: 10px;
+        table-layout: fixed;
         animation: fade-in 0.3s; 
     }
 
@@ -397,8 +398,6 @@ let tableHtml = `
         <th data-sort="sims-inside">Sims Inside</th>
         <th class="hidden">ID</th>
         <th data-sort="lot-type">Lot Type</th>
-                        <th>Sims Inside</th>
-                        <th>Lot Type</th>
                     </tr>
                 </thead>
                 <tbody>`;
