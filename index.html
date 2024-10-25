@@ -279,14 +279,15 @@ async function loadOnlinePlayers() {
         // Wait for all player detail requests to complete
         const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
 
-        let tableHtml = `
+let tableHtml = `
             <table>
                 <thead>
                     <tr>
-                        <th data-sort="name">Sim</th>
-        <th data-sort="age">Age</th>
-        <th class="hidden" data-sort="id">ID</th>
-        <th data-sort="location-sim">Location</th>
+                        <th>Sim</th>
+                        <th class="hidden">ID</th>
+                        <th>Age</th>
+                        <th class="hidden">Location ID</th>
+                        <th>Location</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -302,12 +303,13 @@ async function loadOnlinePlayers() {
             const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
 
             tableHtml += `
-                <tr data-avatar-id="${avatar.avatar_id}">
-                    <td>${avatar.name}</td>
-                    <td class="hidden">${avatar.avatar_id}</td>
-                    <td>${ageInDays} days</td>
-                    <td>${lotName}</td>
-                </tr>`;
+            <tr data-avatar-id="${avatar.avatar_id}">
+        <td>${avatar.name}</td>
+        <td class="hidden">${avatar.avatar_id}</td>
+        <td>${ageInDays} days</td>
+        <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
+        <td>${lotName}</td> <!-- This should be the visible Location name -->
+    </tr>`;
         });
 
         tableHtml += `
