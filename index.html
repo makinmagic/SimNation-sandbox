@@ -3,600 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://blogimages6.wordpress.com/wp-content/uploads/2024/10/favicon-48x48-1-e1728676952232.png" type="image/png"> <!-- Favicon -->
+    <link rel="icon" href="https://blogimages6.wordpress.com/wp-content/uploads/2024/10/favicon-48x48-1-e1728676952232.png" type="image/png">
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>SimNation Dashboard - Halloween Version</title>
     <script src="https://kit.fontawesome.com/aa64a4e171.js" crossorigin="anonymous"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1b1b1b;
+            color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
 
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #1b1b1b; 
-        color: #f4f4f4; 
-        margin: 0;
-        padding: 20px;
-    }
+        h1, h3 {
+            text-align: center;
+            color: #ff7518;
+            font-size: 32px;
+        }
 
-    h1, h3 {
-        text-align: center;
-        color: #ff7518; 
-        font-size: 32px;
-    }
+        #main-container, #bottom-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 1%;
+        }
 
-    #main-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 1%;
-    }
+        .container {
+            width: 49%;
+            background: #333;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
 
-    .container {
-        width: 49%;
-        background: #333; 
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px; /* Add spacing between rows */
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #555;
+            text-align: left;
+        }
 
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #555; 
-        text-align: left;
-    }
+        th {
+            background-color: #ff7518;
+            color: white;
+            cursor: pointer;
+        }
 
-    th {
-        background-color: #ff7518; 
-        color: white;
-    }
-
-                /* Adjust table column widths */
+        /* Column width adjustments */
         #playersTable th:nth-child(1), #lotsTable th:nth-child(1) { width: 30%; }
         #playersTable th:nth-child(3), #lotsTable th:nth-child(2) { width: 20%; }
         #playersTable th:nth-child(5), #lotsTable th:nth-child(3) { width: 25%; }
 
-    tr:hover {
-        background-color: #444; 
-        color: #ff7518; 
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        tr:hover {
+            background-color: #444;
+            color: #ff7518;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-    .scrollable {
-        height: 400px;
-        overflow-y: auto;
-        flex-grow: 1;
-    }
+        .scrollable {
+            height: 400px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
 
-    #tempoSim {
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 20px;
-        color: #ff7518; 
-    }
+        #tempoSim {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ff7518;
+        }
 
-    #rewards {
-        margin-top: 30px;
-        text-align: center;
-    }
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            #main-container, #bottom-container {
+                flex-direction: column;
+            }
 
-    #rewards-dropdown {
-        background: #333; 
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        overflow-y: auto;
-        max-height: 400px;
-        width: 80%;
-        margin: 0 auto;
-    }
-
-    .hidden {
-    display: none;
-}
-
-    .description-container {
-        max-width: 260px; 
-        word-wrap: break-word; 
-        white-space: pre-wrap; 
-    }
-        
-    @media (max-width: 768px) {
-    #main-container, #bottom-container {  
-        flex-direction: column;
-    }
-
-    .container {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-#bottom-container {
-        flex-direction: column;
-    }
-
-    #rewards-container {
-        order: 4; 
-        width: 100%;
-    }
-
-    #console-container {
-        order: 3; 
-        width: 100%; 
-    }
-    }
-
-    /* Show icon on row hover */
-    table tr {
-        position: relative;
-    }
-
-    table tr:hover: td:last-child {
-        content: '';
-        position: absolute;
-        width: 20px; 
-        height: 20px; 
-        background-image: url('https://cdn-icons-png.flaticon.com/512/685/685844.png'); 
-        background-size: contain;
-        background-repeat: no-repeat;
-        right: 10px; 
-        top: 10px; 
-        animation: fade-in 0.3s; 
-    }
-
-    /* Fade-in animation */
-    @keyframes fade-in {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
+            .container {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
     </style>
+
     <script>
-        // JavaScript functions
-        async function loadLotName(lotId) {
-            if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
-            const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
-            return lotData ? lotData.name : 'N/A'; // Return the lot name if valid
-        }
-
-        async function loadActiveLots() {
-    try {
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const activeLotsData = await response.json();
-
-        // Create a mapping of lot IDs to lot names
-        const lotMapping = {};
-        const names = activeLotsData.names;
-        const reservedLots = activeLotsData.reservedLots;
-
-        reservedLots.forEach((id, index) => {
-            lotMapping[id] = names[index]; // Map each ID to its corresponding name
-        });
-
-        return lotMapping; // Return the mapping
-    } catch (error) {
-        console.error('Failed to load active lots:', error);
-        return {}; // Return an empty object on error
-    }
-}
-
-async function loadOnlinePlayers() {
-    try {
-
-        // Set the Sims Online title to "Loading..." while data is being fetched
-        const playersTitle = document.getElementById('players-title');
-        if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: Loading... <i class="fa-solid fa-hat-wizard"></i>`;
-        }
-        
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const onlineData = await response.json();
-        const playersContainer = document.getElementById('players');
-        playersContainer.innerHTML = ''; // Clear previous content
-
-        // Fetch active lots data and create a mapping
-        const lotMapping = await loadActiveLots();
-
-        // Sort the avatars alphabetically by name
-        const sortedAvatars = onlineData.avatars.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Prepare fetch requests for all avatars in parallel
-        const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
-            fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
-        );
-
-        // Wait for all player detail requests to complete
-        const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
-
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sim</th>
-                        <th class="hidden">ID</th>
-                        <th>Age</th>
-                        <th class="hidden">Location ID</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-        // Process sorted online players
-        sortedAvatars.forEach((avatar, index) => {
-            const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
-            const playerDetails = playerDetailsArray[index]; // Get the corresponding player details
-            
-            // Calculate player age from Unix timestamp (avatar.date)
-            const creationDate = new Date(playerDetails.date * 1000); // Convert to milliseconds
-            const currentDate = new Date();
-            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
-
-            tableHtml += `
-            <tr data-avatar-id="${avatar.avatar_id}">
-        <td>${avatar.name}</td>
-        <td class="hidden">${avatar.avatar_id}</td>
-        <td>${ageInDays} days</td>
-        <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
-        <td>${lotName}</td> <!-- This should be the visible Location name -->
-    </tr>`;
-        });
-
-        tableHtml += `
-                </tbody>
-            </table>`;
-
-        playersContainer.innerHTML = tableHtml; // Update the container with the table
-
-        // Add event listeners to each row in Sims Online table
-        const playerRows = playersContainer.querySelectorAll('tr[data-avatar-id]');
-        playerRows.forEach(row => {
-            row.addEventListener('click', () => {
-                const avatarId = row.dataset.avatarId; // Get the avatar ID
-                displayPlayerInfo(avatarId); // Fetch and display player info
-            });
-        });
-
-        // Update the title with the online player count
-        if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-wizard"></i>`;
-        }
-
-} catch (error) {
-        console.error('Failed to load online players:', error);
-        document.getElementById('players').innerHTML = 'Error loading online players.';
-        // If there is an error, reset the title to show 0
-        if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i>`;
-        }
-    }
-}
-       // Mapping for lot categories
-        const categoryMapping = {
-            1: 'Money',
-            2: 'Money',
-            3: 'Romance',
-            4: 'Service',
-            5: 'Store',
-            6: 'Skills',
-            7: 'Welcome',
-            8: 'Games',
-            9: 'Entertainment',
-            10: 'Residential',
-            11: 'Community'
-        };
-        
-        async function loadLots() {
-    try {
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
-        const jsonData = await response.json();
-
-        const activeLots = jsonData.activeLots;
-        const onlineCounts = jsonData.onlineCount;
-        const lotMapping = {};
-        for (let i = 0; i < jsonData.reservedLots.length; i++) {
-            lotMapping[jsonData.reservedLots[i]] = jsonData.names[i];
-        }
-
-        const lotsContainer = document.getElementById('lots');
-        lotsContainer.innerHTML = ''; // Clear previous content
-
-        let lotsData = activeLots.map((lotID, index) => {
-            return {
-                name: lotMapping[lotID] || lotID, // Fallback to ID if name not found
-                count: onlineCounts[index],
-                id: lotID // Add ID for later use
-            };
-        });
-
-        // Sort lots by Sims count (busiest first)
-        lotsData.sort((a, b) => b.count - a.count);
-
-        const fetchLotDetailsPromises = lotsData.map(lot =>
-            fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
-        );
-
-        // Wait for all lot detail requests to complete
-        const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
-
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Sims Inside</th>
-                        <th>Lot Type</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
- // Process active lots and display them along with their types
-        lotsData.forEach((lot, index) => {
-            if (lot.count > 0) {
-                const lotDetails = lotDetailsArray[index];
-                const lotType = categoryMapping[lotDetails.category] || 'Unknown'; // Map category to lot type
-                
-                tableHtml += `
-                    <tr data-lot-id="${lot.id}"> <!-- Store lot ID in a data attribute -->
-                        <td>${lot.name}</td>
-                        <td>${lot.count}</td>
-                        <td>${lotType}</td> <!-- Display Lot Type -->
-                    </tr>`;
-            }
-        });
-
-        tableHtml += `
-                </tbody>
-            </table>`;
-
-        lotsContainer.innerHTML = tableHtml;
-
-        // Add event listeners to each row
-        const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
-        rows.forEach(row => {
-            row.addEventListener('click', () => {
-                const lotId = row.dataset.lotId; // Get the lot ID
-                displayLotInfo(lotId); // Fetch and display lot info
-            });
-        });
-
-    } catch (error) {
-        console.error('Error loading lots:', error);
-        document.getElementById('lots').innerHTML = 'Error loading lots.';
-    }
-}
-
-        async function displayLotInfo(lotId) {
-    // Use Railway proxy for fetching lot data
-    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json(); 
-        const lotData = data; 
-
-         // Mapping for admit modes
-        const admitModeMapping = {
-            0: 'Admit All',
-            1: 'Admit List',
-            2: 'Ban List',
-            3: 'Ban All',
-            4: 'Admit All'
-        };
-
-        // Fetch owner's name using owner_id
-        const ownerNameUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`;
-        const ownerResponse = await fetch(ownerNameUrl);
-        if (!ownerResponse.ok) {
-            throw new Error('Failed to fetch owner name');
-        }
-        const ownerData = await ownerResponse.json();
-        const ownerName = ownerData.name; // Get the owner's name
-
-        // Filter out the owner from the roommates list
-        const roommatesWithoutOwner = lotData.roommates.filter(id => id !== lotData.owner_id);
-
-        // Fetch roommates' names (excluding the owner)
-        const roommateNames = await Promise.all(
-            roommatesWithoutOwner.map(async (roommateId) => {
-                const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
-                const roommateResponse = await fetch(roommateUrl);
-                if (!roommateResponse.ok) {
-                    console.error(`Failed to fetch roommate with id ${roommateId}`);
-                    return 'Unknown'; // Fallback if roommate fetch fails
-                }
-                const roommateData = await roommateResponse.json();
-                return roommateData.name || 'Unknown'; // Return roommate's name or fallback
-            })
-        );
-
-        // Replace \r\n with <br> in description
-        const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
-
-        // Find known Sims inside the lot (from the Sims Online table)
-        const playersContainer = document.getElementById('players');
-        const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
-
-        const knownSims = playersRows
-            .filter(row => {
-                const locationCell = row.querySelector('.hidden:nth-child(4)');
-                return locationCell && locationCell.textContent === lotId.toString(); // Ensure cell exists and matches lot ID
-            })
-            .map(row => row.querySelector('td').textContent); // Get the player's name
-
-        // Display lot information in Console
-        const consoleContent = document.getElementById('console-content');
-        consoleContent.innerHTML = `
-            <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
-                ${lotData.name}
-            </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto; background: #d3d3d3;">
-            <p><strong>Description:</strong></p>
-            <div class="description-container">${formattedDescription}</div>
-            <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
-            <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
-            <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
-            <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
-            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
-            <p><em>There may be sims inside with their location hidden.</em></p>
-        `;
-    } catch (error) {
-        console.error('Failed to fetch lot details:', error);
-        document.getElementById('console-content').innerHTML = 'Error loading lot details.';
-    }
-}
-
-async function displayPlayerInfo(avatarId) {
-
-    // Remove placeholder text
-    const consoleContent = document.getElementById('console-content');
-    consoleContent.innerHTML = ''; // Clear existing content
-    
-    // Use Railway proxy for fetching player data
-    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const playerData = await response.json(); 
-
-        // Calculate player age from Unix timestamp
-        const creationDate = new Date(playerData.date * 1000); // Convert to milliseconds
-        const currentDate = new Date();
-        const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Calculate age in days
-
-        // Get the player's location from the Sims Online table
-        const playersContainer = document.getElementById('players');
-        const locationRow = Array.from(playersContainer.querySelectorAll('tr'))
-            .find(row => row.querySelector('.hidden:nth-child(2)').textContent === avatarId.toString()); // Match avatar ID
-        const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(5)').textContent : 'Unknown'; // Get location name
-
-        // Replace \r\n with <br> in description
-        const formattedDescription = (playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
-
-        // Display all information in the Console
-        consoleContent.innerHTML = `
-            <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
-                ${playerData.name}
-            </div>
-            <p><strong>Description:</strong></p>
-            <div class="description-container">${formattedDescription}</div>
-            <p><strong>Age:</strong> ${ageInDays} days old</p>
-            <p><strong>Location:</strong> ${playerLocation}</p>
-        `;
-    } catch (error) {
-        console.error('Failed to fetch player details:', error);
-        document.getElementById('console-content').innerHTML = 'Error loading player details.';
-    }
-}
-        
-        function tempoSim() {
-            var currenttime = new Date();
-            var hours = currenttime.getUTCHours();
-            var minutes = currenttime.getUTCMinutes();
-            var seconds = currenttime.getUTCSeconds();
-            var timesuffix = "AM";
-            var cycle = 0;
-            if (hours % 2 == 1) {
-                cycle = 3600;
-                timesuffix = "PM";
-            }
-            cycle = cycle + minutes * 60 + seconds;
-            var tsohours = Math.floor(cycle / 300);
-            if (tsohours > 12) {
-                tsohours = tsohours - 12;
-            }
-            if (tsohours == 0) {
-                tsohours = 12;
-            }
-            var tsomins = Math.floor((cycle % 300) / 5);
-            if (tsomins < 10) {
-                tsomins = "0" + tsomins;
-            }
-
-            document.getElementById('tempoSim').innerHTML = "Time in Eldorado: " + tsohours + ":" + tsomins + " " + timesuffix;
-
-            setTimeout(tempoSim, 1000);
-        }
-
-        // Rewards fetching and displaying logic
-        const rewardsUrl = 'https://makinmagic.github.io/SimNation/rewards.json'; // URL for rewards
-
-        async function fetchRewards() {
-            try {
-                const response = await fetch(rewardsUrl);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                populateRewards(data.contents); // Adjusted based on JSON structure
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-                document.getElementById('rewards').textContent = 'Failed to load rewards.';
-            }
-        }
-
-        function populateRewards(htmlContent) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(htmlContent, 'text/html');
-    const options = doc.querySelectorAll('#giftSelection option');
-    const rewardsContainer = document.getElementById('rewards-table').getElementsByTagName('tbody')[0];
-    rewardsContainer.innerHTML = ''; // Clear existing content
-
-    // Create table rows for rewards
-    options.forEach(option => {
-        const imageUrl = 'https://images.weserv.nl/?url=simnationserver.com/redeem/' + option.dataset.image; // Use root URL for images
-        const row = rewardsContainer.insertRow();
-        row.innerHTML = `
-            <td>${option.text}</td>
-            <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/></td>
-        `;
-
-        // Add event listener for row click
-        row.addEventListener('click', () => {
-            displayRewardInfo(option.text, imageUrl); // Display reward name and image in console
-        });
-    });
-}
-
-// Function to display reward details in the Console
-function displayRewardInfo(rewardName, rewardImage) {
-    const consoleContent = document.getElementById('console-content');
-    consoleContent.innerHTML = `
-        <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
-            ${rewardName}
-        </div>
-        <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
-    `;
-}
-
-        // Initialize the dashboard
-        async function init() {
-            tempoSim();
-            await loadOnlinePlayers();
-            await loadLots();
-            await fetchRewards(); // Load rewards data
-        }
-
-                function sortTable(tableId, colIndex, isNumeric) {
+        function sortTable(tableId, colIndex, isNumeric) {
             const table = document.getElementById(tableId);
             const rowsArray = Array.from(table.querySelector("tbody").rows);
 
@@ -616,22 +115,189 @@ function displayRewardInfo(rewardName, rewardImage) {
             document.querySelector("#lotsTable th:nth-child(3)").onclick = () => sortTable("lotsTable", 2, false); // Lot Type
         });
 
-        async function init() {
-            await loadOnlinePlayers();
-            await loadLots();
+        async function loadLotName(lotId) {
+            if (lotId === 0) return 'Unknown';
+            const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+            return lotData ? lotData.name : 'N/A';
         }
 
-        window.onload = init; // Initialize on window load
+        async function loadActiveLots() {
+            try {
+                const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+                const activeLotsData = await response.json();
+                const lotMapping = {};
+                const names = activeLotsData.names;
+                const reservedLots = activeLotsData.reservedLots;
+
+                reservedLots.forEach((id, index) => {
+                    lotMapping[id] = names[index];
+                });
+
+                return lotMapping;
+            } catch (error) {
+                console.error('Failed to load active lots:', error);
+                return {};
+            }
+        }
+
+        async function loadOnlinePlayers() {
+            try {
+                const playersTitle = document.getElementById('players-title');
+                if (playersTitle) {
+                    playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: Loading... <i class="fa-solid fa-hat-wizard"></i>`;
+                }
+
+                const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
+                const onlineData = await response.json();
+                const playersContainer = document.getElementById('players');
+                playersContainer.innerHTML = '';
+
+                const lotMapping = await loadActiveLots();
+                const sortedAvatars = onlineData.avatars.sort((a, b) => a.name.localeCompare(b.name));
+
+                const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
+                    fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
+                );
+
+                const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
+
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sim</th>
+                                <th class="hidden">ID</th>
+                                <th>Age</th>
+                                <th class="hidden">Location ID</th>
+                                <th>Location</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                sortedAvatars.forEach((avatar, index) => {
+                    const lotName = lotMapping[avatar.location] || 'Unknown';
+                    const playerDetails = playerDetailsArray[index];
+                    const creationDate = new Date(playerDetails.date * 1000);
+                    const currentDate = new Date();
+                    const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24));
+
+                    tableHtml += `
+                    <tr data-avatar-id="${avatar.avatar_id}">
+                        <td>${avatar.name}</td>
+                        <td class="hidden">${avatar.avatar_id}</td>
+                        <td>${ageInDays} days</td>
+                        <td class="hidden">${avatar.location}</td>
+                        <td>${lotName}</td>
+                    </tr>`;
+                });
+
+                tableHtml += `
+                        </tbody>
+                    </table>`;
+                playersContainer.innerHTML = tableHtml;
+
+                if (playersTitle) {
+                    playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-wizard"></i>`;
+                }
+
+            } catch (error) {
+                console.error('Failed to load online players:', error);
+                document.getElementById('players').innerHTML = 'Error loading online players.';
+            }
+        }
+
+        const categoryMapping = {
+            1: 'Money',
+            2: 'Money',
+            3: 'Romance',
+            4: 'Service',
+            5: 'Store',
+            6: 'Skills',
+            7: 'Welcome',
+            8: 'Games',
+            9: 'Entertainment',
+            10: 'Residential',
+            11: 'Community'
+        };
+
+        async function loadLots() {
+            try {
+                const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+                const jsonData = await response.json();
+
+                const activeLots = jsonData.activeLots;
+                const onlineCounts = jsonData.onlineCount;
+                const lotMapping = {};
+                for (let i = 0; i < jsonData.reservedLots.length; i++) {
+                    lotMapping[jsonData.reservedLots[i]] = jsonData.names[i];
+                }
+
+                const lotsContainer = document.getElementById('lots');
+                lotsContainer.innerHTML = '';
+
+                let lotsData = activeLots.map((lotID, index) => {
+                    return {
+                        name: lotMapping[lotID] || lotID,
+                        count: onlineCounts[index],
+                        id: lotID
+                    };
+                });
+
+                lotsData.sort((a, b) => b.count - a.count);
+
+                const fetchLotDetailsPromises = lotsData.map(lot =>
+                    fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
+                );
+
+                const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
+
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Sims Inside</th>
+                                <th>Lot Type</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+
+                lotsData.forEach((lot, index) => {
+                    if (lot.count > 0) {
+                        const lotDetails = lotDetailsArray[index];
+                        const lotType = categoryMapping[lotDetails.category] || 'Unknown';
+
+                        tableHtml += `
+                            <tr data-lot-id="${lot.id}">
+                                <td>${lot.name}</td>
+                                <td>${lot.count}</td>
+                                <td>${lotType}</td>
+                            </tr>`;
+                    }
+                });
+
+                tableHtml += `
+                        </tbody>
+                    </table>`;
+                lotsContainer.innerHTML = tableHtml;
+
+            } catch (error) {
+                console.error('Error loading lots:', error);
+                document.getElementById('lots').innerHTML = 'Error loading lots.';
+            }
+        }
     </script>
 </head>
 <body>
     <h1><i class="fa-solid fa-ghost"></i> SimNation Dashboard - Halloween Version <i class="fa-solid fa-ghost"></i></h1>
     <div id="tempoSim">Time in Eldorado: Loading time...</div>
+
     <div id="main-container">
+        <!-- Sims Online Container -->
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
-            <div class="scrollable" id="players"></div>
-            <table id="playersTable">
+            <div class="scrollable" id="players">
+                <table id="playersTable">
                     <thead>
                         <tr>
                             <th>Sim</th>
@@ -642,15 +308,17 @@ function displayRewardInfo(rewardName, rewardImage) {
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamic table rows... -->
+                        <!-- Dynamic table rows for players will be inserted here -->
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <!-- Active Lots Container -->
         <div class="container">
             <h3 id="lots-title"><i class="fa-solid fa-spider"></i> Active Lots <i class="fa-solid fa-spider"></i></h3>
-            <div class="scrollable" id="lots"></div>
-            <table id="lotsTable">
+            <div class="scrollable" id="lots">
+                <table id="lotsTable">
                     <thead>
                         <tr>
                             <th>Location</th>
@@ -659,37 +327,120 @@ function displayRewardInfo(rewardName, rewardImage) {
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Dynamic table rows... -->
+                        <!-- Dynamic table rows for lots will be inserted here -->
                     </tbody>
                 </table>
+            </div>
         </div>
     </div>
 
-    <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
-    <div id="rewards-container" class="container">
-        <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
-        <div class="scrollable">
-            <!-- Rewards table will be populated here -->
-            <table id="rewards-table">
-                <thead>
-                    <tr>
-                        <th>Reward Name</th>
-                        <th>Image</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Content will be populated dynamically by JavaScript -->
-                </tbody>
-            </table>
+    <div id="bottom-container">
+        <!-- Current Patreon Rewards Container -->
+        <div id="rewards-container" class="container">
+            <h3><i class="fa-solid fa-wand-sparkles"></i> Current Patreon Rewards <i class="fa-solid fa-wand-sparkles"></i></h3>
+            <div class="scrollable">
+                <table id="rewards-table">
+                    <thead>
+                        <tr>
+                            <th>Reward Name</th>
+                            <th>Image</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic table rows for rewards will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Console Container -->
+        <div id="console-container" class="container">
+            <h3><i class="fa-solid fa-book-skull"></i> Console <i class="fa-solid fa-book-skull"></i></h3>
+            <div id="console-content">
+                <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
+                <!-- Content for Console will go here -->
+            </div>
         </div>
     </div>
-    <div id="console-container" class="container">
-        <h3><i class="fa-solid fa-book-skull"></i> Console <i class="fa-solid fa-book-skull"></i></h3>
-        <div id="console-content">
-            <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
-            <!-- Content for Console will go here -->
-        </div>
-    </div>
-</div>
+
+    <script>
+        // Mapping and display for rewards table
+        const rewardsUrl = 'https://makinmagic.github.io/SimNation/rewards.json';
+
+        async function fetchRewards() {
+            try {
+                const response = await fetch(rewardsUrl);
+                const data = await response.json();
+                populateRewards(data.contents);
+            } catch (error) {
+                console.error('Failed to load rewards:', error);
+                document.getElementById('rewards-table').innerHTML = 'Failed to load rewards.';
+            }
+        }
+
+        function populateRewards(htmlContent) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlContent, 'text/html');
+            const options = doc.querySelectorAll('#giftSelection option');
+            const rewardsContainer = document.getElementById('rewards-table').getElementsByTagName('tbody')[0];
+            rewardsContainer.innerHTML = ''; // Clear existing content
+
+            // Create rows for rewards
+            options.forEach(option => {
+                const imageUrl = 'https://images.weserv.nl/?url=simnationserver.com/redeem/' + option.dataset.image;
+                const row = rewardsContainer.insertRow();
+                row.innerHTML = `
+                    <td>${option.text}</td>
+                    <td><img src="${imageUrl}" alt="${option.text}" style="width: 50px; height: 50px;"/></td>
+                `;
+
+                // Display reward details on click
+                row.addEventListener('click', () => {
+                    displayRewardInfo(option.text, imageUrl);
+                });
+            });
+        }
+
+        function displayRewardInfo(rewardName, rewardImage) {
+            const consoleContent = document.getElementById('console-content');
+            consoleContent.innerHTML = `
+                <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
+                    ${rewardName}
+                </div>
+                <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
+            `;
+        }
+
+        // Update Eldorado time display
+        function tempoSim() {
+            const currenttime = new Date();
+            const hours = currenttime.getUTCHours();
+            const minutes = currenttime.getUTCMinutes();
+            const seconds = currenttime.getUTCSeconds();
+            let timesuffix = "AM";
+            let cycle = 0;
+            if (hours % 2 === 1) {
+                cycle = 3600;
+                timesuffix = "PM";
+            }
+            cycle = cycle + minutes * 60 + seconds;
+            const tsohours = Math.floor(cycle / 300) % 12 || 12;
+            const tsomins = String(Math.floor((cycle % 300) / 5)).padStart(2, '0');
+
+            document.getElementById('tempoSim').innerHTML = `Time in Eldorado: ${tsohours}:${tsomins} ${timesuffix}`;
+
+            setTimeout(tempoSim, 1000);
+        }
+
+        // Initialize the dashboard with all components
+        async function init() {
+            tempoSim();
+            await loadOnlinePlayers();
+            await loadLots();
+            await fetchRewards();
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
