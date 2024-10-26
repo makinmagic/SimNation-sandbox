@@ -44,7 +44,6 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
-        table-layout: auto
     }
 
     th, td {
@@ -57,12 +56,12 @@
         background-color: #ff7518; 
         color: white;
     }
-     
-        /* Adjust table column widths */
+
+                /* Adjust table column widths */
         #playersTable th:nth-child(1), #lotsTable th:nth-child(1) { width: 30%; }
         #playersTable th:nth-child(3), #lotsTable th:nth-child(2) { width: 20%; }
         #playersTable th:nth-child(5), #lotsTable th:nth-child(3) { width: 25%; }
-        
+
     tr:hover {
         background-color: #444; 
         color: #ff7518; 
@@ -130,13 +129,14 @@
         order: 3; 
         width: 100%; 
     }
+    }
 
     /* Show icon on row hover */
     table tr {
         position: relative;
     }
 
-    table tr:hover td:last-child {
+    table tr:hover: td:last-child {
         content: '';
         position: absolute;
         width: 20px; 
@@ -596,9 +596,7 @@ function displayRewardInfo(rewardName, rewardImage) {
             await fetchRewards(); // Load rewards data
         }
 
-        window.onload = init; // Initialize on window load
-
-function sortTable(tableId, colIndex, isNumeric) {
+                function sortTable(tableId, colIndex, isNumeric) {
             const table = document.getElementById(tableId);
             const rowsArray = Array.from(table.querySelector("tbody").rows);
 
@@ -617,7 +615,13 @@ function sortTable(tableId, colIndex, isNumeric) {
             document.querySelector("#lotsTable th:nth-child(2)").onclick = () => sortTable("lotsTable", 1, true); // Sims Inside
             document.querySelector("#lotsTable th:nth-child(3)").onclick = () => sortTable("lotsTable", 2, false); // Lot Type
         });
-        
+
+        async function init() {
+            await loadOnlinePlayers();
+            await loadLots();
+        }
+
+        window.onload = init; // Initialize on window load
     </script>
 </head>
 <body>
@@ -628,11 +632,36 @@ function sortTable(tableId, colIndex, isNumeric) {
             <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
             <div class="scrollable" id="players"></div>
             <table id="playersTable">
+                    <thead>
+                        <tr>
+                            <th>Sim</th>
+                            <th class="hidden">ID</th>
+                            <th>Age</th>
+                            <th class="hidden">Location ID</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic table rows... -->
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="container">
             <h3 id="lots-title"><i class="fa-solid fa-spider"></i> Active Lots <i class="fa-solid fa-spider"></i></h3>
             <div class="scrollable" id="lots"></div>
             <table id="lotsTable">
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Sims Inside</th>
+                            <th>Lot Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic table rows... -->
+                    </tbody>
+                </table>
         </div>
     </div>
 
