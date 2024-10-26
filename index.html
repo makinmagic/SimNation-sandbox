@@ -59,7 +59,7 @@
 
     tr:hover {
         background-color: #f1f1f1; 
-        color: #0056b3; 
+        color: #c4e1ff; 
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -437,7 +437,7 @@ async function loadOnlinePlayers() {
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
-            <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            <div style="background-color: ##007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${lotData.name}
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #d3d3d3;">
@@ -489,7 +489,7 @@ async function displayPlayerInfo(avatarId) {
 
         // Display all information in the Console
         consoleContent.innerHTML = `
-            <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            <div style="background-color: ##007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
@@ -576,7 +576,7 @@ async function displayPlayerInfo(avatarId) {
 function displayRewardInfo(rewardName, rewardImage) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
-        <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
+        <div style="background-color: ##007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${rewardName}
         </div>
         <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
@@ -595,7 +595,7 @@ function displayRewardInfo(rewardName, rewardImage) {
     </script>
 </head>
 <body>
-    <h1><i class="fa-solid fa-diamond"></i> SimNation Dashboard<i class="fa-solid fa-diamond"></i></h1>
+    <h1><i class="fa-solid fa-diamond"></i> SimNation Dashboard <i class="fa-solid fa-diamond"></i></h1>
     <div id="tempoSim">Time in Eldorado: Loading time...</div>
     <div id="main-container">
         <div class="container">
@@ -629,7 +629,7 @@ function displayRewardInfo(rewardName, rewardImage) {
     <div id="console-container" class="container">
         <h3><i class="fa-solid fa-circle-info"></i> Console <i class="fa-solid fa-circle-info"></i></h3>
         <div id="console-content">
-            <p style="text-align: center; color: #ccc;">Select a Sim or a Lot to see more information.</p>
+            <p style="text-align: center; color: #black;">Select a Sim or a Lot to see more information.</p>
             <!-- Content for Console will go here -->
         </div>
     </div>
