@@ -59,7 +59,7 @@
 
     tr:hover {
         background-color: #f1f1f1; 
-        color: #ff7518; 
+        color: #0056b3; 
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -73,7 +73,7 @@
         text-align: center;
         font-size: 18px;
         margin-bottom: 20px;
-        color: #ff7518; 
+        color: #0056b3; 
     }
 
     #rewards {
@@ -437,10 +437,10 @@ async function loadOnlinePlayers() {
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
-            <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${lotData.name}
             </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ff7518; display: block; margin: 10px auto; background: #d3d3d3;">
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #d3d3d3;">
             <p><strong>Description:</strong></p>
             <div class="description-container">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
@@ -489,7 +489,7 @@ async function displayPlayerInfo(avatarId) {
 
         // Display all information in the Console
         consoleContent.innerHTML = `
-            <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
@@ -576,7 +576,7 @@ async function displayPlayerInfo(avatarId) {
 function displayRewardInfo(rewardName, rewardImage) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
-        <div style="background-color: #ff7518; padding: 10px; color: white; text-align: center; font-size: 20px;">
+        <div style="background-color: #0056b3; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${rewardName}
         </div>
         <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
