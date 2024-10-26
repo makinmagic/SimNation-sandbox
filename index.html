@@ -44,22 +44,8 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
+        table-layout: auto
     }
-
-            /* Ensure columns have defined maximum widths */
-#players th:nth-child(1), #lots th:nth-child(1) { /* Sim/Location */
-    width: 30%;
-}
-#players th:nth-child(3), #lots th:nth-child(2) { /* Age/Sims Inside */
-    width: 20%;
-}
-#players th:nth-child(5), #lots th:nth-child(3) { /* Location/Lot Type */
-    width: 25%;
-}
-
-table {
-    table-layout: auto;
-}
 
     th, td {
         padding: 10px;
@@ -71,7 +57,12 @@ table {
         background-color: #ff7518; 
         color: white;
     }
-
+     
+        /* Adjust table column widths */
+        #playersTable th:nth-child(1), #lotsTable th:nth-child(1) { width: 30%; }
+        #playersTable th:nth-child(3), #lotsTable th:nth-child(2) { width: 20%; }
+        #playersTable th:nth-child(5), #lotsTable th:nth-child(3) { width: 25%; }
+        
     tr:hover {
         background-color: #444; 
         color: #ff7518; 
@@ -139,14 +130,13 @@ table {
         order: 3; 
         width: 100%; 
     }
-    }
 
     /* Show icon on row hover */
     table tr {
         position: relative;
     }
 
-    table tr:hover::after {
+    table tr:hover td:last-child {
         content: '';
         position: absolute;
         width: 20px; 
@@ -608,36 +598,25 @@ function displayRewardInfo(rewardName, rewardImage) {
 
         window.onload = init; // Initialize on window load
 
-// Utility function for sorting tables
 function sortTable(tableId, colIndex, isNumeric) {
-    const table = document.getElementById(tableId);
-    const rowsArray = Array.from(table.getElementsByTagName("tbody")[0].rows);
+            const table = document.getElementById(tableId);
+            const rowsArray = Array.from(table.querySelector("tbody").rows);
 
-    rowsArray.sort((a, b) => {
-        const aVal = a.cells[colIndex].textContent.trim();
-        const bVal = b.cells[colIndex].textContent.trim();
-        return isNumeric
-            ? parseFloat(aVal) - parseFloat(bVal)
-            : aVal.localeCompare(bVal);
-    });
+            rowsArray.sort((a, b) => {
+                const aVal = a.cells[colIndex].textContent.trim();
+                const bVal = b.cells[colIndex].textContent.trim();
+                return isNumeric ? parseFloat(aVal) - parseFloat(bVal) : aVal.localeCompare(bVal);
+            });
 
-    // Reorder table rows
-    rowsArray.forEach(row => table.getElementsByTagName("tbody")[0].appendChild(row));
-}
+            rowsArray.forEach(row => table.querySelector("tbody").appendChild(row));
+        }
 
-// Add sort event listeners for tables
-document.addEventListener("DOMContentLoaded", () => {
-    const simsOnlineTable = document.querySelector("#players table");
-    const activeLotsTable = document.querySelector("#lots table");
-
-    // Sims Online sortable columns
-    simsOnlineTable.querySelector("th:nth-child(3)").onclick = () => sortTable("players", 2, true); // Sort by Age
-    simsOnlineTable.querySelector("th:nth-child(5)").onclick = () => sortTable("players", 4, false); // Sort by Location
-
-    // Active Lots sortable columns
-    activeLotsTable.querySelector("th:nth-child(2)").onclick = () => sortTable("lots", 1, true); // Sort by Sims Inside
-    activeLotsTable.querySelector("th:nth-child(3)").onclick = () => sortTable("lots", 2, false); // Sort by Lot Type
-});
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelector("#playersTable th:nth-child(3)").onclick = () => sortTable("playersTable", 2, true); // Age
+            document.querySelector("#playersTable th:nth-child(5)").onclick = () => sortTable("playersTable", 4, false); // Location
+            document.querySelector("#lotsTable th:nth-child(2)").onclick = () => sortTable("lotsTable", 1, true); // Sims Inside
+            document.querySelector("#lotsTable th:nth-child(3)").onclick = () => sortTable("lotsTable", 2, false); // Lot Type
+        });
         
     </script>
 </head>
@@ -648,10 +627,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i></h3>
             <div class="scrollable" id="players"></div>
+            <table id="playersTable">
         </div>
         <div class="container">
             <h3 id="lots-title"><i class="fa-solid fa-spider"></i> Active Lots <i class="fa-solid fa-spider"></i></h3>
             <div class="scrollable" id="lots"></div>
+            <table id="lotsTable">
         </div>
     </div>
 
