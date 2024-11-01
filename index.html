@@ -172,6 +172,10 @@
     color: #0056b3;
 }
 
+#dark-mode-toggle i {
+    font-size: 24px;
+}
+
 body.dark-mode {
     background-color: #1c1c1c;
     color: #f1f1f1;
@@ -695,9 +699,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = document.getElementById('darkModeIcon');
         if (document.body.classList.contains('dark-mode')) {
             icon.classList.remove('fa-moon');
-            icon.classList.add('fa-sun');
+            icon.classList.add('fa-sun-bright');
         } else {
-            icon.classList.remove('fa-sun');
+            icon.classList.remove('fa-sun-bright');
             icon.classList.add('fa-moon');
         }
     });
