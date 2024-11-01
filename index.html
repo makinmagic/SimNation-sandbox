@@ -172,9 +172,45 @@
     color: #0056b3;
 }
 
+body.dark-mode {
+    background-color: #1c1c1c;
+    color: #f1f1f1;
+}
+
+.dark-mode .container {
+    background-color: #333;
+    color: #f1f1f1;
+}
+
+.dark-mode th {
+    background-color: #444;
+}
+
+.dark-mode tr:hover {
+    background-color: #555;
+}
+
+.dark-mode h1, .dark-mode h3, .dark-mode #tempoSim {
+    color: #f1f1f1;
+}
+        
     </style>
     <script>
         // JavaScript functions
+
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    
+    // Toggle icon between moon and sun
+    const icon = document.getElementById('darkModeIcon');
+    if (document.body.classList.contains('dark-mode')) {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+    } else {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+    }
+});
         
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
@@ -640,6 +676,9 @@ function displayRewardInfo(rewardName, rewardImage) {
     </script>
 </head>
 <body>
+    <div id="dark-mode-toggle" style="position: absolute; top: 20px; right: 20px; cursor: pointer;">
+    <i id="darkModeIcon" class="fa-solid fa-moon"></i>
+    </div>
     <h1><i class="fa-sharp fa-solid fa-rhombus"></i> SimNation Dashboard <i class="fa-sharp fa-solid fa-rhombus"></i></h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
     <div id="main-container">
