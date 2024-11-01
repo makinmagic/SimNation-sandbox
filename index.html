@@ -153,8 +153,8 @@
     #lot-filter {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
-    color: #ff7518;
+    margin: 5px 0;
+    color: #0056b3;
 }
 #lot-filter i {
     cursor: pointer;
@@ -163,24 +163,12 @@
 }
 #lot-filter i:hover {
     transform: scale(1.2);
-    color: #fff;
+    color: #c4e1ff;
 }
 
     </style>
     <script>
         // JavaScript functions
-
-        function filterLots(type) {
-    const rows = document.querySelectorAll('#lots tbody tr');
-    rows.forEach(row => {
-        const lotTypeCell = row.querySelector('td:nth-child(3)'); 
-        if (lotTypeCell && lotTypeCell.textContent.trim() === type) {
-            row.style.display = ''; // Show matching type
-        } else {
-            row.style.display = 'none'; // Hide non-matching types
-        }
-    });
-}
         
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
@@ -320,6 +308,28 @@ async function loadOnlinePlayers() {
             10: 'Residential',
             11: 'Community'
         };
+
+let currentFilter = ''; // Track the current filter
+
+function filterLots(type) {
+    // Check if the clicked filter is already active to toggle
+    if (currentFilter === type) {
+        type = ''; // Clear filter if clicked again
+        currentFilter = ''; // Reset the current filter
+    } else {
+        currentFilter = type; // Set new filter as active
+    }
+
+    const rows = document.querySelectorAll('#lots tbody tr');
+    rows.forEach(row => {
+        const lotTypeCell = row.querySelector('td:nth-child(3)');
+        if (!type || (lotTypeCell && lotTypeCell.textContent.trim() === type)) {
+            row.style.display = ''; // Show matching type or all if no type
+        } else {
+            row.style.display = 'none'; // Hide non-matching types
+        }
+    });
+}
         
         async function loadLots() {
     try {
