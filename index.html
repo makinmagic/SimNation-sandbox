@@ -150,9 +150,38 @@
         to { opacity: 1; }
     }
 
+    #lot-filter {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+    color: #ff7518;
+}
+#lot-filter i {
+    cursor: pointer;
+    font-size: 20px;
+    transition: transform 0.2s ease;
+}
+#lot-filter i:hover {
+    transform: scale(1.2);
+    color: #fff;
+}
+
     </style>
     <script>
         // JavaScript functions
+
+        function filterLots(type) {
+    const rows = document.querySelectorAll('#lots tbody tr');
+    rows.forEach(row => {
+        const lotTypeCell = row.querySelector('td:nth-child(3)'); 
+        if (lotTypeCell && lotTypeCell.textContent.trim() === type) {
+            row.style.display = ''; // Show matching type
+        } else {
+            row.style.display = 'none'; // Hide non-matching types
+        }
+    });
+}
+        
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
             const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
@@ -604,6 +633,19 @@ function displayRewardInfo(rewardName, rewardImage) {
         </div>
         <div class="container">
             <h3 id="lots-title"><i class="fa-solid fa-house"></i> Active Lots <i class="fa-solid fa-house"></i></h3>
+            <div id="lot-filter">
+    <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
+    <i class="fa-solid fa-hammer" title="Skills" onclick="filterLots('Skills')"></i>
+    <i class="fa-solid fa-dollar-sign" title="Money" onclick="filterLots('Money')"></i>
+    <i class="fa-solid fa-handshake" title="Welcome" onclick="filterLots('Welcome')"></i>
+    <i class="fa-solid fa-masks-theater" title="Entertainment" onclick="filterLots('Entertainment')"></i>
+    <i class="fa-solid fa-gift" title="Store" onclick="filterLots('Store')"></i>
+    <i class="fa-solid fa-heart" title="Romance" onclick="filterLots('Romance')"></i>
+    <i class="fa-solid fa-house-chimney" title="Residential" onclick="filterLots('Residential')"></i>
+    <i class="fa-solid fa-dice-three" title="Games" onclick="filterLots('Games')"></i>
+    <i class="fa-solid fa-building" title="Community" onclick="filterLots('Community')"></i>
+    <i class="fa-solid fa-arrow-rotate-left" title="Show All" onclick="filterLots('')"></i>
+            </div>
             <div class="scrollable" id="lots"></div>
         </div>
     </div>
