@@ -11,16 +11,16 @@
     <style>
 
     body {
-        font-family: Arial, sans-serif;
-        background-color: #e6f1fc; 
-        color: #333; 
-        margin: 0;
-        padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #e0f7fa;
+    color: #003300;
+    margin: 0;
+    padding: 20px;
     }
 
     h1, h3 {
         text-align: center;
-        color: #0056b3; 
+        color: #B22222; 
         font-size: 32px;
     }
 
@@ -32,9 +32,10 @@
 
     .container {
         width: 49%;
-        background: #fff; 
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+        background: #fff;
+        border: 2px solid #FFD700;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+        border-radius: 8px; 
         padding: 10px;
         display: flex;
         flex-direction: column;
@@ -54,13 +55,13 @@
     }
 
     th {
-        background-color: #007bff; 
-        color: white;
+        background-color: #006400; 
+        color: #FFD700;
     }
 
     tr:hover {
-        background-color: #c4e1ff; 
-        color: #0056b3; 
+        background-color: #FFFAF0; 
+        color: #B22222; 
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -74,7 +75,7 @@
         text-align: center;
         font-size: 18px;
         margin-bottom: 30px;
-        color: #0056b3; 
+        color: #B22222; 
     }
 
     #rewards {
@@ -92,6 +93,12 @@
         margin: 0 auto;
     }
 
+        #rewards-table img {
+    border: 2px solid #B22222;
+    border-radius: 4px;
+    padding: 2px;
+}
+
     .hidden {
     display: none;
 }
@@ -102,15 +109,34 @@
         white-space: pre-wrap; 
     }
 
-    @media (max-width: 768px) {
+        /* Snowflakes*/
+@keyframes snow-fall {
+    0% { transform: translateY(-10px); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    left: calc(100% * var(--x)); /* Random horizontal position */
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: snow-fall 10s linear infinite;
+    animation-delay: calc(-10s * var(--i));
+}
+        
+@media (max-width: 768px) {
     #main-container, #bottom-container {
         flex-direction: column;
         align-items: center;
     }
 
     .container {
-        width: 95%; 
-        margin: 0 auto 20px auto; 
+        width: 95%;
+        margin: 0 auto 20px auto;
     }
     
     #bottom-container {
@@ -230,6 +256,25 @@ body.dark-mode {
     </style>
     <script>
         // JavaScript functions
+
+        function createSnowflakes() {
+    const snowflakeCount = 50; // Number of snowflakes
+    const snowflakeContainer = document.createDocumentFragment();
+
+    for (let i = 0; i < snowflakeCount; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.style.setProperty('--x', Math.random()); // Random horizontal position
+        snowflake.style.setProperty('--i', Math.random()); // Random delay
+        snowflakeContainer.appendChild(snowflake);
+    }
+
+    document.body.appendChild(snowflakeContainer);
+}
+
+window.onload = () => {
+    createSnowflakes();
+};
         
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
@@ -267,7 +312,7 @@ async function loadOnlinePlayers() {
         // Set the Sims Online title to "Loading..." while data is being fetched
         const playersTitle = document.getElementById('players-title');
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-person"></i> Sims Online: Loading... <i class="fa-solid fa-person-dress"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-snowman"></i> Sims Online: Loading... <i class="fa-solid fa-snowman"></i>`;
         }
         
         const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
@@ -728,15 +773,16 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="dark-mode-toggle" style="position: absolute; top: 20px; right: 20px; cursor: pointer;">
     <i id="darkModeIcon" class="fa-solid fa-moon"></i>
     </div>
-    <h1><i class="fa-sharp fa-solid fa-rhombus"></i> SimNation Dashboard <i class="fa-sharp fa-solid fa-rhombus"></i></h1>
+    <div class="snowflake"></div>
+    <h1><i class="fa-solid fa-star"></i> SimNation Dashboard <i class="fa-solid fa-tree"></i></h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
     <div id="main-container">
         <div class="container">
-            <h3 id="players-title"><i class="fa-solid fa-person"></i></i> Sims Online: 0 <i class="fa-solid fa-person-dress"></i></h3>
+            <h3 id="players-title"><i class="fa-solid fa-snowman"></i></i> Sims Online: 0 <i class="fa-solid fa-snowman"></i></h3>
             <div class="scrollable" id="players"></div>
         </div>
         <div class="container">
-            <h3 id="lots-title"><i class="fa-solid fa-house"></i> Active Lots <i class="fa-solid fa-house"></i></h3>
+            <h3 id="lots-title"><i class="fa-solid fa-snowflake"></i> Active Lots <i class="fa-solid fa-snowflake"></i></h3>
             <div id="lot-filter">
     <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
     <i class="fa-solid fa-hammer" title="Skills" onclick="filterLots('Skills')"></i>
