@@ -8,126 +8,99 @@
     <title>SimNation Dashboard</title>
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/all.css">
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.6.0/css/sharp-solid.css">
-    <style>
-
-    body {
+   <style>
+       
+body {
     font-family: Arial, sans-serif;
-    background-color: #e0f7fa;
-    color: #003300;
+    background-color: #fff8e1;
+    color: #2e2e2e; 
     margin: 0;
     padding: 20px;
-    }
-
-    h1, h3 {
-        text-align: center;
-        color: #B22222; 
-        font-size: 32px;
-    }
-
-    #main-container {
-        display: flex;
-        justify-content: space-between;
-        gap: 1%;
-    }
-
-    .container {
-        width: 49%;
-        background: #fff;
-        border: 2px solid #FFD700;
-        box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
-        border-radius: 8px; 
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px; /* Add spacing between rows */
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #eee; 
-        text-align: left;
-    }
-
-    th {
-        background-color: #006400; 
-        color: #FFD700;
-    }
-
-    tr:hover {
-        background-color: #FFFAF0; 
-        color: #B22222; 
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    .scrollable {
-        height: 400px;
-        overflow-y: auto;
-        flex-grow: 1;
-    }
-
-    #tempoSim {
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 30px;
-        color: #B22222; 
-    }
-
-    #rewards {
-        margin-top: 30px;
-        text-align: center;
-    }
-
-    #rewards-dropdown {
-        background: #white; 
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        overflow-y: auto;
-        max-height: 400px;
-        width: 80%;
-        margin: 0 auto;
-    }
-
-        #rewards-table img {
-    border: 2px solid #B22222;
-    border-radius: 4px;
-    padding: 2px;
+    position: relative; 
+    overflow: hidden; 
 }
 
-    .hidden {
+h1, h3 {
+    text-align: center;
+    color: #B22222; 
+    font-size: 32px;
+}
+
+.container {
+    width: 49%;
+    background: #fff; 
+    border-radius: 8px;
+    border: 2px solid #FFD700; 
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); 
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    position: relative; 
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd; 
+    text-align: left;
+}
+
+th {
+    background-color: #006400; 
+    color: #FFD700; 
+}
+
+tr:hover {
+    background-color: #f1f1f1; 
+    color: #B22222; 
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.scrollable {
+    height: 400px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+#tempoSim {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: #B22222; 
+    font-weight: bold;
+}
+
+#rewards {
+    margin-top: 30px;
+    text-align: center;
+}
+
+#rewards-dropdown {
+    background: #ffffff; 
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    overflow-y: auto;
+    max-height: 400px;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.hidden {
     display: none;
 }
 
-    .description-container {
-        max-width: 260px; 
-        word-wrap: break-word; 
-        white-space: pre-wrap; 
-    }
-
-        /* Snowflakes*/
-@keyframes snow-fall {
-    0% { transform: translateY(-10px); opacity: 1; }
-    100% { transform: translateY(100vh); opacity: 0; }
+.description-container {
+    max-width: 260px; 
+    word-wrap: break-word; 
+    white-space: pre-wrap; 
 }
 
-.snowflake {
-    position: absolute;
-    top: -10px;
-    left: calc(100% * var(--x)); /* Random horizontal position */
-    width: 8px;
-    height: 8px;
-    background-color: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: snow-fall 10s linear infinite;
-    animation-delay: calc(-10s * var(--i));
-}
-        
 @media (max-width: 768px) {
     #main-container, #bottom-container {
         flex-direction: column;
@@ -145,7 +118,6 @@
         align-items: center;
     }
 
-    /* Adjust order on mobile */
     #console-container {
         order: 1; /* Console first in mobile view */
     }
@@ -155,51 +127,7 @@
     }
 }
 
-    /* Show icon on row hover */
-    table tr {
-        position: relative;
-    }
-
-    table tr:hover::after {
-        content: '';
-        position: absolute;
-        width: 20px; 
-        height: 20px; 
-        background-image: url('https://www.pngmart.com/files/23/Plumbob-Download-PNG-Image.png'); 
-        background-size: contain;
-        background-repeat: no-repeat;
-        right: 10px; 
-        top: 10px; 
-        animation: fade-in 0.3s; 
-    }
-
-    /* Fade-in animation */
-    @keyframes fade-in {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-#lots-title {
-    margin-bottom: 10px;
-    margin-top: 20px;
-}
-
-    #lot-filter {
-    display: flex;
-    justify-content: space-around;
-    margin: 10px;
-    color: #0056b3;
-}
-#lot-filter i {
-    cursor: pointer;
-    font-size: 20px;
-    transition: transform 0.2s ease;
-}
-#lot-filter i:hover {
-    transform: scale(1.2);
-    color: #0056b3;
-}
-
+/* Dark Mode Styles */
 #dark-mode-toggle i {
     font-size: 24px;
 }
@@ -231,7 +159,7 @@ body.dark-mode {
 }
 
 .dark-mode #lot-filter i:hover {
-    color: ##f1f1f1; 
+    color: #f1f1f1; 
 }
 
 .dark-mode tr:hover {
@@ -252,29 +180,39 @@ body.dark-mode {
 .dark-mode #console-content img {
     border-color: #888 !important;
 }
-        
-    </style>
-    <script>
-        // JavaScript functions
 
-        function createSnowflakes() {
-    const snowflakeCount = 50; // Number of snowflakes
-    const snowflakeContainer = document.createDocumentFragment();
-
-    for (let i = 0; i < snowflakeCount; i++) {
-        const snowflake = document.createElement('div');
-        snowflake.classList.add('snowflake');
-        snowflake.style.setProperty('--x', Math.random()); // Random horizontal position
-        snowflake.style.setProperty('--i', Math.random()); // Random delay
-        snowflakeContainer.appendChild(snowflake);
-    }
-
-    document.body.appendChild(snowflakeContainer);
+/* Snowflakes*/
+@keyframes snow-fall {
+    0% { transform: translateY(-10px); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
 }
 
-window.onload = () => {
-    createSnowflakes();
-};
+.snowflake {
+    position: absolute;
+    top: -10px;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    pointer-events: none;
+    animation: snow-fall linear infinite;
+}
+
+/* Snowflake Variations*/
+.snowflake:nth-of-type(1) { left: 10%; animation-duration: 10s; }
+.snowflake:nth-of-type(2) { left: 20%; animation-duration: 12s; }
+.snowflake:nth-of-type(3) { left: 30%; animation-duration: 8s; }
+.snowflake:nth-of-type(4) { left: 40%; animation-duration: 15s; }
+.snowflake:nth-of-type(5) { left: 50%; animation-duration: 9s; }
+.snowflake:nth-of-type(6) { left: 60%; animation-duration: 11s; }
+.snowflake:nth-of-type(7) { left: 70%; animation-duration: 7s; }
+.snowflake:nth-of-type(8) { left: 80%; animation-duration: 14s; }
+.snowflake:nth-of-type(9) { left: 90%; animation-duration: 10s; }
+.snowflake:nth-of-type(10) { left: 100%; animation-duration: 13s; }
+</style>
+    <script>
+        // JavaScript functions
         
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
@@ -735,8 +673,32 @@ function displayRewardInfo(rewardName, rewardImage) {
     `;
 }
 
+        function createSnowflakes() {
+    const snowflakeCount = 50; // Number of snowflakes
+    const snowflakeContainer = document.createDocumentFragment();
+
+    for (let i = 0; i < snowflakeCount; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        // Randomize the horizontal position
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        // Randomize the animation duration between 5s and 15s
+        snowflake.style.animationDuration = (Math.random() * 10 + 5) + 's';
+        // Randomize the animation delay
+        snowflake.style.animationDelay = '-' + (Math.random() * 15) + 's';
+        // Randomize the size of snowflakes
+        const size = Math.random() * 5 + 5; // 5px to 10px
+        snowflake.style.width = size + 'px';
+        snowflake.style.height = size + 'px';
+        snowflakeContainer.appendChild(snowflake);
+    }
+
+    document.body.appendChild(snowflakeContainer);
+}
+
         // Initialize the dashboard
         async function init() {
+            createSnowflakes();
             tempoSim();
             await loadOnlinePlayers();
             await loadLots();
