@@ -578,7 +578,7 @@ function filterLots(type) {
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
-            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px;">
+            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
                 ${lotData.name}
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #FFD700; display: block; margin: 10px auto; background: #f2f5f5;">
@@ -630,7 +630,7 @@ async function displayPlayerInfo(avatarId) {
 
         // Display all information in the Console
         consoleContent.innerHTML = `
-            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px;">
+            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
@@ -724,7 +724,7 @@ function populateRewardsFromHTML(htmlContent) {
 function displayRewardInfo(rewardName, rewardImage) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
-        <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px;">
+        <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
             ${rewardName}
         </div>
         <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
