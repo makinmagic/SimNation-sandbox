@@ -215,7 +215,7 @@
 
 #dark-mode-toggle i {
     font-size: 24px;
-    color: black;
+    color: #333;
 }
 
 body.dark-mode {
@@ -385,7 +385,7 @@ async function loadOnlinePlayers() {
 
         // Update the title with the online player count
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-person"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-person-dress"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-santa"></i>`;
         }
 
 } catch (error) {
