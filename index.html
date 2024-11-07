@@ -754,10 +754,41 @@ function displayRewardInfo(rewardName, rewardImage) {
     document.body.appendChild(snowflakeContainer);
 }
 
+// Function to calculate and display countdown to 23:00 BRT today
+function updateCountdown() {
+    const countdownElement = document.getElementById('zombieCountdown');
+    const now = new Date();
+
+    // Set the target time for 23:00 BRT (UTC-3) today
+    const targetTime = new Date();
+    targetTime.setUTCHours(23 - 3, 0, 0, 0); // BRT is UTC-3
+
+    // Calculate the time difference
+    const timeLeft = targetTime - now;
+
+    // If time has passed 23:00 BRT, show "0h 0m 0s"
+    if (timeLeft <= 0) {
+        countdownElement.innerHTML = "Time left to vanquish zombies: 0h 0m 0s";
+        return; // Stop updating after 23:00 BRT
+    }
+
+    // Calculate hours, minutes, and seconds remaining
+    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+    const seconds = Math.floor((timeLeft / 1000) % 60);
+
+    // Display the countdown
+    countdownElement.innerHTML = `Time left to vanquish zombies: ${hours}h ${minutes}m ${seconds}s`;
+
+    // Update every second
+    setTimeout(updateCountdown, 1000);
+}
+
         // Initialize the dashboard
         async function init() {
             createSnowflakes();
             tempoSim();
+            updateCountdown();
             await loadOnlinePlayers();
             await loadLots();
             await fetchRewards(); // Load rewards data
@@ -803,6 +834,9 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     <h1><i class="fa-sharp fa-solid fa-tree-christmas"></i> SimNation Dashboard - Christmas Version <i class="fa-sharp fa-solid fa-tree-christmas"></i></h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
+    <div id="zombieCountdown" style="font-weight: bold; text-align: center; margin-top: 10px;">
+    Time left to vanquish zombies: Loading...
+</div>
     <div id="main-container">
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-santa"></i></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
