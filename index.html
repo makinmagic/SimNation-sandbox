@@ -754,48 +754,10 @@ function displayRewardInfo(rewardName, rewardImage) {
     document.body.appendChild(snowflakeContainer);
 }
 
-function updateCountdown() {
-    const countdownElement = document.getElementById('zombieCountdown');
-    const now = new Date();
-
-    // Calculate current time offset in hours from UTC
-    const currentOffset = now.getTimezoneOffset() * 60000;
-
-    // Set target time to 23:00 BRT today (UTC-3)
-    const targetTime = new Date();
-    targetTime.setUTCHours(23 + 3, 0, 0, 0); // 23:00 BRT is UTC-3
-
-    // Calculate time difference
-    const timeLeft = targetTime.getTime() - (now.getTime() + currentOffset);
-
-    // If the target time has passed, show 0h 0m 0s
-    if (timeLeft <= 0) {
-        countdownElement.innerHTML = "Time left to vanquish zombies: 0h 0m 0s<br>";
-        return;
-    }
-
-    // Calculate hours, minutes, and seconds remaining
-    const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
-    const seconds = Math.floor((timeLeft / 1000) % 60);
-
-    // Display countdown
-    countdownElement.innerHTML = `Time left to vanquish zombies: ${hours}h ${minutes}m ${seconds}s<br>`;
-
-    // Update every second
-    setTimeout(updateCountdown, 1000);
-}
-
-// Initialize countdown on page load
-document.addEventListener('DOMContentLoaded', () => {
-    updateCountdown();
-});
-
         // Initialize the dashboard
         async function init() {
             createSnowflakes();
             tempoSim();
-            updateCountdown();
             await loadOnlinePlayers();
             await loadLots();
             await fetchRewards(); // Load rewards data
@@ -841,7 +803,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     <h1><i class="fa-sharp fa-solid fa-tree-christmas"></i> SimNation Dashboard - Christmas Version <i class="fa-sharp fa-solid fa-tree-christmas"></i></h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-    <div id="zombieCountdown" style="font-weight: bold; text-align: center; margin-top: 10px; margin-bottom: 10px;">Time left to vanquish zombies: Loading...</div>
     <div id="main-container">
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-santa"></i></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
