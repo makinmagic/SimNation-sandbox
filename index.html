@@ -776,7 +776,7 @@ function updateCountdown() {
     const seconds = Math.floor((timeLeft / 1000) % 60);
 
     // Format and display the countdown
-    countdownElement.innerHTML = `Time left to vanquish zombies: ${hours}h ${minutes}m ${seconds}s<br>`;
+    countdownElement.innerHTML = `Time left to vanquish zombies: ${hours}h ${minutes}m ${seconds}s`;
 
     // Update every second
     setTimeout(updateCountdown, 1000);
@@ -832,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
     <h1><i class="fa-sharp fa-solid fa-tree-christmas"></i> SimNation Dashboard - Christmas Version <i class="fa-sharp fa-solid fa-tree-christmas"></i></h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-    <div id="zombieCountdown" style="font-weight: bold; text-align: center; margin-top: 10px;">Time left to vanquish zombies: Loading...</div>
+    <div id="zombieCountdown" style="font-weight: bold; text-align: center; margin-top: 10px; margin-bottom: 10px;">Time left to vanquish zombies: Loading...</div>
     <div id="main-container">
         <div class="container">
             <h3 id="players-title"><i class="fa-solid fa-hat-santa"></i></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
