@@ -482,7 +482,10 @@ async function searchLotByName(lotName) {
 
         const lotData = await response.json();
         console.log("Fetched lot data by name:", lotData); // Log fetched data
+
+        // Call displayLotDetails here directly with lotData, not displayLotInfo
         await displayLotDetails(lotData); 
+
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading lot data: ${error.message}</p>`;
     }
