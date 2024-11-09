@@ -446,7 +446,7 @@ function filterLots(type) {
     });
 }
 
-async function displayLotInfo(lotData, isOnline) {
+async function displayLotInfo(lotId, isOnline) {
     const consoleContent = document.getElementById('console-content');
     const onlineStatus = isOnline ? 'Yes' : 'No';
 
@@ -490,7 +490,7 @@ async function displayLotInfo(lotData, isOnline) {
         const knownSims = playersRows
             .filter(row => {
                 const locationCell = row.querySelector('.hidden:nth-child(4)');
-                return locationCell && locationCell.textContent === lotId.toString(); // Ensure cell exists and matches lot ID
+                return locationCell && locationCell.textContent === lotData.id.toString(); // Ensure cell exists and matches lot ID
             })
             .map(row => row.querySelector('td').textContent); // Get the player's name
 
@@ -576,8 +576,8 @@ async function displayLotInfo(lotData, isOnline) {
 const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
 rows.forEach((row, index) => {
     row.addEventListener('click', () => {
-        const lotData = lotDetailsArray[index]; 
-        displayLotInfo(lotData, true); 
+        const lotId = row.dataset.lotId;
+        displayLotInfo(lotId);
     });
 });
 
