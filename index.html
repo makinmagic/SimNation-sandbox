@@ -818,7 +818,7 @@ async function displayLotInfo(lotData, isOnline) {
         }
     }
 
-    // Filter out the owner from the roommates list
+    // Retrieve roommate names, excluding the owner
     const roommatesWithoutOwner = (lotData.roommates || []).filter(id => id !== lotData.owner_id);
     const roommateNames = await Promise.all(roommatesWithoutOwner.map(async (roommateId) => {
         try {
@@ -833,18 +833,18 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-    // Find known Sims inside the lot (from the Sims Online table)
+    // Retrieve known Sims inside this lot directly from the Sims Online table
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
     const knownSims = playersRows
         .filter(row => {
             const locationCell = row.querySelector('.hidden:nth-child(4)');
-            return locationCell && locationCell.textContent === lotData.id.toString(); // Ensure cell exists and matches lot ID
+            return locationCell && locationCell.textContent === lotData.id.toString();
         })
-        .map(row => row.querySelector('td').textContent); // Get the player's name
+        .map(row => row.querySelector('td').textContent);
 
-    // Display lot information in Console
+    // Display all lot information in the Console
     consoleContent.innerHTML = `
         <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${lotData.name || 'Unknown'}
