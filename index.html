@@ -445,18 +445,6 @@ function filterLots(type) {
         }
     });
 }
-
-function getKnownSimsInside(lotId) {
-    const playersContainer = document.getElementById('players');
-    const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
-
-    return playersRows
-        .filter(row => {
-            const locationCell = row.querySelector('.hidden:nth-child(4)');
-            return locationCell && locationCell.textContent === lotId.toString();
-        })
-        .map(row => row.querySelector('td').textContent); // Get the player's name
-}
         
         async function loadLots() {
     try {
@@ -811,7 +799,7 @@ function displaySimInfo(simData, isOnline) {
 async function displayLotInfo(lotData, isOnline) {
     const consoleContent = document.getElementById('console-content');
     const onlineStatus = isOnline ? 'Yes' : 'No';
-    
+
     const formattedDescription = formatDescription(lotData.description || 'No description available');
     const lotType = categoryMapping[lotData.category] || 'Unknown';
     const admitMode = admitModeMapping[lotData.admit_mode] || 'Unknown';
@@ -845,10 +833,18 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-    // Get known Sims inside the lot using the helper function
-    const knownSims = getKnownSimsInside(lotData.lot_id);
+    // Find known Sims inside the lot (from the Sims Online table)
+    const playersContainer = document.getElementById('players');
+    const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
-    // Display the formatted information in the Console
+    const knownSims = playersRows
+        .filter(row => {
+            const locationCell = row.querySelector('.hidden:nth-child(4)');
+            return locationCell && locationCell.textContent === lotData.lot_id.toString();
+        })
+        .map(row => row.querySelector('td').textContent);
+
+    // Display lot information in Console
     consoleContent.innerHTML = `
         <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${lotData.name || 'Unknown'}
