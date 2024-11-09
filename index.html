@@ -564,17 +564,6 @@ rows.forEach((row, index) => {
         // Replace \r\n with <br> in description
         const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
 
-        // Find known Sims inside the lot (from the Sims Online table)
-        const playersContainer = document.getElementById('players');
-        const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
-
-        const knownSims = playersRows
-            .filter(row => {
-                const locationCell = row.querySelector('.hidden:nth-child(4)');
-                return locationCell && locationCell.textContent === lotId.toString(); // Ensure cell exists and matches lot ID
-            })
-            .map(row => row.querySelector('td').textContent); // Get the player's name
-
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
@@ -834,15 +823,12 @@ async function displayLotInfo(lotData, isOnline) {
     }));
 
 // Find known Sims inside the lot (from the Sims Online table)
-        const playersContainer = document.getElementById('players');
-        const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
-
-        const knownSims = playersRows
-            .filter(row => {
-                const locationCell = row.querySelector('.hidden:nth-child(4)');
-                return locationCell && locationCell.textContent === lotId.toString(); // Ensure cell exists and matches lot ID
-            })
-            .map(row => row.querySelector('td').textContent); // Get the player's name
+const knownSims = playersRows
+    .filter(row => {
+        const locationCell = row.querySelector('.hidden:nth-child(4)');
+        return locationCell && locationCell.textContent === lotData.id.toString(); // Matches lot ID
+    })
+    .map(row => row.querySelector('td').textContent.trim()); // Retrieves the Sim name
 
     // Display lot information in Console
     consoleContent.innerHTML = `
