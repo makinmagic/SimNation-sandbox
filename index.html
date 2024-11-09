@@ -705,7 +705,7 @@ function displayCurrentEvent() {
     }
 }
 
-        // Function to toggle the event icon for the event lot
+// Function to toggle the event icon for the event lot
 function toggleEventIcon() {
     const now = new Date();
     const lotsTable = document.getElementById("lots");
@@ -733,19 +733,18 @@ function toggleEventIcon() {
 }
 
 // Initialize the dashboard
-        async function init() {
-            tempoSim();
-            displayCurrentEvent();
-            await loadOnlinePlayers();
-            await loadLots();
-            await fetchRewards(); // Load rewards data
-        }
-        
+async function init() {
+    tempoSim();
+    displayCurrentEvent();
+    await loadOnlinePlayers();
+    await loadLots();
+    toggleEventIcon(); // Ensure this runs only after lots have loaded
+    await fetchRewards(); // Load rewards data
+}
+
 // Initialize the event display and update it periodically
 window.onload = () => {
     init();
-    displayCurrentEvent();
-    toggleEventIcon(); // Run on page load
     setInterval(() => {
         displayCurrentEvent();
         toggleEventIcon(); // Update the icon every minute
