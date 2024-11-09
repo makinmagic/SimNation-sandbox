@@ -483,16 +483,16 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-    // Retrieve "Known Sims Inside" by filtering Sims Online based on lot ID
-    const playersContainer = document.getElementById('players');
-    const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
+// Retrieve "Known Sims Inside" by filtering Sims Online based on lot ID
+const playersContainer = document.getElementById('players');
+const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
-    const knownSims = playersRows
-        .filter(row => {
-            const locationCell = row.querySelector('td:nth-child(4)'); // Fourth cell for Location ID
-            return locationCell && locationCell.textContent.trim() === lotData.id.toString();
-        })
-        .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim name in the first cell
+const knownSims = playersRows
+    .filter(row => {
+        const locationCell = row.querySelector('td:nth-child(4)'); // Fourth cell for Location ID
+        return locationCell && locationCell.textContent.trim() === lotData.id.toString();
+    })
+    .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim name in the first cell
 
     // Display lot information in Console
     consoleContent.innerHTML = `
