@@ -610,7 +610,7 @@ rows.forEach(row => {
     }
 }
 
-function displayLotDetails(lotData) {
+async function displayLotDetails(lotData) {
     const consoleContent = document.getElementById('console-content');
     const formattedDescription = formatDescription(lotData.description || 'No description available');
     const lotType = categoryMapping[lotData.category] || 'Unknown';
