@@ -452,7 +452,11 @@ async function displayLotInfo(lotId, isOnline) {
     // Fetch the lotData using lotId
     let lotData;
     try {
-        const response = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/lots/${lotId}`);
+        const response = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/lots/${lotId}`, {
+    headers: {
+        'x-requested-with': 'XMLHttpRequest'
+    }
+});
         if (!response.ok) throw new Error("Failed to fetch lot data");
         lotData = await response.json();
     } catch (error) {
