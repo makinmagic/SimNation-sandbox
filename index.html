@@ -588,10 +588,10 @@ async function displayLotInfo(lotId, isOnline) {
         lotsContainer.innerHTML = tableHtml;
 
 const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
-rows.forEach((row, index) => {
+rows.forEach(row => {
     row.addEventListener('click', () => {
         const lotId = row.dataset.lotId;
-        displayLotInfo(lotId);
+        displayLotInfo(lotId);  
     });
 });
 
