@@ -833,13 +833,13 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-    // Retrieve known Sims inside this lot directly from the Sims Online table
+    // Find known Sims inside the lot (from the Sims Online table)
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
     const knownSims = playersRows
         .filter(row => {
-            const locationCell = row.querySelector('.hidden:nth-child(4)');
+            const locationCell = row.querySelector('.hidden:nth-child(4)') || row.querySelector('td:nth-child(4)');
             return locationCell && locationCell.textContent === lotData.id.toString();
         })
         .map(row => row.querySelector('td').textContent);
