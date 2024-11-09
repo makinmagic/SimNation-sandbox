@@ -453,7 +453,7 @@ async function displayLotInfo(lotId) {
         if (!response.ok) throw new Error("Failed to fetch lot data by ID");
         
         const lotData = await response.json();
-        displayLotDetails(lotData);
+        await displayLotDetails(lotData); 
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading lot data: ${error.message}</p>`;
     }
@@ -466,8 +466,7 @@ async function searchLotByName(lotName) {
         if (!response.ok) throw new Error("Failed to fetch lot data by name");
 
         const lotData = await response.json();
-        // Display lot data in the console
-        displayLotDetails(lotData);
+        await displayLotDetails(lotData); 
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading lot data: ${error.message}</p>`;
     }
@@ -610,13 +609,13 @@ rows.forEach(row => {
     }
 }
 
-async function displayLotDetails(lotData) {
+async function displayLotDetails(lotData) { 
     const consoleContent = document.getElementById('console-content');
     const formattedDescription = formatDescription(lotData.description || 'No description available');
     const lotType = categoryMapping[lotData.category] || 'Unknown';
     const admitMode = admitModeMapping[lotData.admit_mode] || 'Unknown';
 
-    // Fetch the owner's name if available
+    // Fetch the owner's name
     let ownerName = 'Unknown';
     if (lotData.owner_id) {
         try {
