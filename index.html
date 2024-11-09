@@ -818,7 +818,7 @@ async function displayLotInfo(lotData, isOnline) {
         }
     }
 
-    // Fetch roommates' names if roommates array exists
+    // Filter out the owner from the roommates list
     const roommatesWithoutOwner = (lotData.roommates || []).filter(id => id !== lotData.owner_id);
     const roommateNames = await Promise.all(roommatesWithoutOwner.map(async (roommateId) => {
         try {
@@ -840,9 +840,9 @@ async function displayLotInfo(lotData, isOnline) {
     const knownSims = playersRows
         .filter(row => {
             const locationCell = row.querySelector('.hidden:nth-child(4)');
-            return locationCell && locationCell.textContent === lotData.lot_id.toString();
+            return locationCell && locationCell.textContent === lotData.id.toString(); // Ensure cell exists and matches lot ID
         })
-        .map(row => row.querySelector('td').textContent);
+        .map(row => row.querySelector('td').textContent); // Get the player's name
 
     // Display lot information in Console
     consoleContent.innerHTML = `
