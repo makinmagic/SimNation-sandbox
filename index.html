@@ -833,18 +833,18 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-    // Find known Sims inside the lot (from the Sims Online table)
+    // Find known Sims inside the lot by matching the Location ID in the fourth cell
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
     const knownSims = playersRows
         .filter(row => {
-            const locationCell = row.querySelector('.hidden:nth-child(4)') || row.querySelector('td:nth-child(4)');
-            return locationCell && locationCell.textContent === lotData.id.toString();
+            const locationCell = row.querySelector('td:nth-child(4)'); // Fourth cell for Location ID
+            return locationCell && locationCell.textContent.trim() === lotData.id.toString();
         })
-        .map(row => row.querySelector('td').textContent);
+        .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim name in the first cell
 
-    // Display all lot information in the Console
+    // Display lot information in Console
     consoleContent.innerHTML = `
         <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${lotData.name || 'Unknown'}
