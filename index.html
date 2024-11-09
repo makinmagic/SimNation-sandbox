@@ -522,71 +522,6 @@ rows.forEach((row, index) => {
     }
 }
 
-        async function displayLotInfo(lotId) {
-    // Use Railway proxy for fetching lot data
-    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json(); 
-        const lotData = data; 
-
-        // Fetch owner's name using owner_id
-        const ownerNameUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`;
-        const ownerResponse = await fetch(ownerNameUrl);
-        if (!ownerResponse.ok) {
-            throw new Error('Failed to fetch owner name');
-        }
-        const ownerData = await ownerResponse.json();
-        const ownerName = ownerData.name; // Get the owner's name
-
-        // Filter out the owner from the roommates list
-        const roommatesWithoutOwner = lotData.roommates.filter(id => id !== lotData.owner_id);
-
-        // Fetch roommates' names (excluding the owner)
-        const roommateNames = await Promise.all(
-            roommatesWithoutOwner.map(async (roommateId) => {
-                const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
-                const roommateResponse = await fetch(roommateUrl);
-                if (!roommateResponse.ok) {
-                    console.error(`Failed to fetch roommate with id ${roommateId}`);
-                    return 'Unknown'; // Fallback if roommate fetch fails
-                }
-                const roommateData = await roommateResponse.json();
-                return roommateData.name || 'Unknown'; // Return roommate's name or fallback
-            })
-        );
-
-        // Replace \r\n with <br> in description
-        const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
-
-        // Display lot information in Console
-        const consoleContent = document.getElementById('console-content');
-        consoleContent.innerHTML = `
-            <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
-                ${lotData.name}
-            </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #f2f5f5;">
-            <p><strong>Currently Online:</strong> ${onlineStatus}</p>
-            <p><strong>Description:</strong></p>
-            <div class="description-container">${formattedDescription}</div>
-            <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
-            <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
-            <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
-            <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
-            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
-            <p><em>There may be sims inside with their location hidden.</em></p>
-        `;
-    } catch (error) {
-        console.error('Failed to fetch lot details:', error);
-        document.getElementById('console-content').innerHTML = 'Error loading lot details.';
-    }
-}
-
 async function displayPlayerInfo(avatarId) {
 
     // Remove placeholder text
@@ -822,7 +757,7 @@ async function displayLotInfo(lotData, isOnline) {
         return 'Unknown';
     }));
 
-// Retrieve "Known Sims Inside" by filtering Sims Online based on lot ID
+    // Retrieve "Known Sims Inside" by filtering Sims Online based on lot ID
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
@@ -849,7 +784,7 @@ async function displayLotInfo(lotData, isOnline) {
         <p><em>There may be sims inside with their location hidden.</em></p>
     `;
 }
-
+        
 function calculateAge(timestamp) {
     const creationDate = new Date(timestamp * 1000);
     const currentDate = new Date();
