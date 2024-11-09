@@ -243,7 +243,7 @@ body.dark-mode {
 
 function toggleSearch(type) {
     const searchInput = document.getElementById(`${type}-search`);
-    searchInput.style.display = searchInput.style.display === 'none' ? 'inline-block' : 'none';
+    searchInput.style.display = searchInput.style.display === 'none' ? 'inline' : 'none';
     searchInput.focus();
 }
 
@@ -748,19 +748,29 @@ async function displaySearchResult(type, name) {
 function checkIfOnline(type, data) {
     const container = document.getElementById(type === 'sim' ? 'players' : 'lots');
     const rows = Array.from(container.querySelectorAll('tr'));
-    return rows.some(row => row.dataset[type === 'sim' ? 'avatar-id' : 'lot-id'] === data[type === 'sim' ? 'avatar_id' : 'lot_id'].toString());
+
+    // Get the name to check based on the type
+    const nameToCheck = type === 'sim' ? data.name : data.name;
+
+    return rows.some(row => {
+        // For Sims, check the first column (Sim name); for Lots, check the Location column
+        const nameCell = row.querySelector(type === 'sim' ? 'td:first-child' : 'td:first-child');
+        return nameCell && nameCell.textContent.trim().toLowerCase() === nameToCheck.trim().toLowerCase();
+    });
 }
 
 function displaySimInfo(simData, isOnline) {
     const consoleContent = document.getElementById('console-content');
     const onlineStatus = isOnline ? 'Yes' : 'No';
+    const formattedDescription = formatDescription(simData.description);
+
     consoleContent.innerHTML = `
         <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${simData.name}
         </div>
         <p><strong>Currently Online:</strong> ${onlineStatus}</p>
         <p><strong>Age:</strong> ${calculateAge(simData.date)} days old</p>
-        <p><strong>Description:</strong> ${formatDescription(simData.description)}</p>
+        <p><strong>Description:</strong> ${formattedDescription}</p>
     `;
 }
 
@@ -889,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
     <h3 id="players-title"><i class="fa-solid fa-person"></i> Sims Online: 0 <i class="fa-solid fa-person-dress"></i></h3>
     <i class="fa-solid fa-search" onclick="toggleSearch('sim')"></i>
     <input type="text" id="sim-search" placeholder="Search Sim..." style="display:none; margin-left: 10px;" onkeyup="searchSim(event)">
@@ -897,7 +907,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="scrollable" id="players"></div>
         </div>
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
     <h3 id="lots-title"><i class="fa-solid fa-house"></i> Active Lots <i class="fa-solid fa-house"></i></h3>
     <i class="fa-solid fa-search" onclick="toggleSearch('lot')"></i>
     <input type="text" id="lot-search" placeholder="Search Lot..." style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
