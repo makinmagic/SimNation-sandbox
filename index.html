@@ -12,21 +12,15 @@
 
     body {
         font-family: Arial, sans-serif;
-        background-color: #7d121d; 
-        color: #fff;
+        background-color: #e6f1fc; 
+        color: #333; 
         margin: 0;
         padding: 20px;
     }
 
-    h1 {
+    h1, h3 {
         text-align: center;
-        color: #F1C75E; 
-        font-size: 32px;
-    }
-        
-    h3 {
-        text-align: center;
-        color: #fff; 
+        color: #0056b3; 
         font-size: 32px;
     }
 
@@ -38,10 +32,7 @@
 
     .container {
         width: 49%;
-        border-radius: 8px;
-        border: 2px solid #FFD700;
-        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-        background: #034f1b; 
+        background: #fff; 
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
         padding: 10px;
@@ -63,13 +54,13 @@
     }
 
     th {
-        background-color: #F1C75E; 
-        color: #000;
+        background-color: #007bff; 
+        color: white;
     }
 
     tr:hover {
-        background-color: #FFFAF0; 
-        color: #B22222; 
+        background-color: #c4e1ff; 
+        color: #0056b3; 
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
@@ -79,11 +70,11 @@
         flex-grow: 1;
     }
 
-    #tempoSim {
+    #tempoSim, #currentEvent {
         text-align: center;
         font-size: 18px;
         margin-bottom: 30px;
-        color: #fff; 
+        color: #0056b3; 
     }
 
     #rewards {
@@ -100,36 +91,6 @@
         width: 80%;
         margin: 0 auto;
     }
-
-/* Snowflakes*/
-@keyframes snow-fall {
-    0% { transform: translateY(-10px); opacity: 1; }
-    100% { transform: translateY(120vh); opacity: 0; }
-}
-
-.snowflake {
-    position: absolute;
-    top: -10px;
-    width: 10px;
-    height: 10px;
-    background-color: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    pointer-events: none;
-    animation: snow-fall linear infinite;
-}
-
-/* Snowflake Variations*/
-.snowflake:nth-of-type(1) { left: 10%; animation-duration: 10s; }
-.snowflake:nth-of-type(2) { left: 20%; animation-duration: 12s; }
-.snowflake:nth-of-type(3) { left: 30%; animation-duration: 8s; }
-.snowflake:nth-of-type(4) { left: 40%; animation-duration: 15s; }
-.snowflake:nth-of-type(5) { left: 50%; animation-duration: 9s; }
-.snowflake:nth-of-type(6) { left: 60%; animation-duration: 11s; }
-.snowflake:nth-of-type(7) { left: 70%; animation-duration: 7s; }
-.snowflake:nth-of-type(8) { left: 80%; animation-duration: 14s; }
-.snowflake:nth-of-type(9) { left: 90%; animation-duration: 10s; }
-.snowflake:nth-of-type(10) { left: 100%; animation-duration: 13s; }
 
     .hidden {
     display: none;
@@ -201,7 +162,7 @@
     display: flex;
     justify-content: space-around;
     margin: 10px;
-    color: #F1C75E;
+    color: #0056b3;
 }
 #lot-filter i {
     cursor: pointer;
@@ -210,7 +171,7 @@
 }
 #lot-filter i:hover {
     transform: scale(1.2);
-    color: #F1C75E;
+    color: #0056b3;
 }
 
 #dark-mode-toggle i {
@@ -225,19 +186,17 @@ body.dark-mode {
 .dark-mode .container {
     background-color: #333;
     color: #f1f1f1;
-    border: #888;
 }
 
 .dark-mode th {
     background-color: #444;
-    color: white;
 }
 
 .dark-mode tr:hover {
     background-color: #555;
 }
 
-.dark-mode h1, .dark-mode h3, .dark-mode #tempoSim {
+.dark-mode h1, .dark-mode h3, .dark-mode #tempoSim, .dark-mode #currentEvent {
     color: #f1f1f1;
 }
 
@@ -254,7 +213,7 @@ body.dark-mode {
     color: #f1f1f1; 
 }
 
-.dark-mode #console-content > div[style*="background-color: #F1C75E"] {
+.dark-mode #console-content > div[style*="background-color: #007bff"] {
     background-color: #444 !important; 
     color: #ffffff !important; 
 }
@@ -277,9 +236,34 @@ body.dark-mode {
 .mirrored {
     transform: scaleX(-1); 
 }
+        
     </style>
     <script>
         // JavaScript functions
+
+function toggleSearch(type) {
+    const searchInput = document.getElementById(`${type}-search`);
+    searchInput.style.display = searchInput.style.display === 'none' ? 'inline-block' : 'none';
+    searchInput.focus();
+}
+
+async function searchSim(event) {
+    if (event.key === 'Enter') {
+        const simName = event.target.value.trim();
+        if (simName) {
+            displaySearchResult('sim', simName);
+        }
+    }
+}
+
+async function searchLot(event) {
+    if (event.key === 'Enter') {
+        const lotName = event.target.value.trim();
+        if (lotName) {
+            displaySearchResult('lot', lotName);
+        }
+    }
+}
         
         async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
@@ -317,7 +301,7 @@ async function loadOnlinePlayers() {
         // Set the Sims Online title to "Loading..." while data is being fetched
         const playersTitle = document.getElementById('players-title');
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: Loading... <i class="fa-solid fa-hat-santa"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-person"></i> Sims Online: Loading... <i class="fa-solid fa-person-dress"></i>`;
         }
         
         const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
@@ -393,7 +377,7 @@ async function loadOnlinePlayers() {
 
         // Update the title with the online player count
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-santa"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-person"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-person-dress"></i>`;
         }
 
 } catch (error) {
@@ -459,20 +443,18 @@ function filterLots(type) {
 
         let lotsData = activeLots.map((lotID, index) => {
             return {
-                name: lotMapping[lotID] || lotID, // Fallback to ID if name not found
+                name: lotMapping[lotID] || lotID,
                 count: onlineCounts[index],
-                id: lotID // Add ID for later use
+                id: lotID
             };
         });
 
-        // Sort lots by Sims count (busiest first)
         lotsData.sort((a, b) => b.count - a.count);
 
         const fetchLotDetailsPromises = lotsData.map(lot =>
             fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
         );
 
-        // Wait for all lot detail requests to complete
         const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
 
         let tableHtml = `
@@ -486,17 +468,16 @@ function filterLots(type) {
                 </thead>
                 <tbody>`;
 
- // Process active lots and display them along with their types
         lotsData.forEach((lot, index) => {
             if (lot.count > 0) {
                 const lotDetails = lotDetailsArray[index];
-                const lotType = categoryMapping[lotDetails.category] || 'Unknown'; // Map category to lot type
-                
+                const lotType = categoryMapping[lotDetails.category] || 'Unknown';
+
                 tableHtml += `
-                    <tr data-lot-id="${lot.id}"> <!-- Store lot ID in a data attribute -->
+                    <tr data-lot-id="${lot.id}">
                         <td>${lot.name}</td>
                         <td>${lot.count}</td>
-                        <td>${lotType}</td> <!-- Display Lot Type -->
+                        <td>${lotType}</td>
                     </tr>`;
             }
         });
@@ -507,12 +488,11 @@ function filterLots(type) {
 
         lotsContainer.innerHTML = tableHtml;
 
-        // Add event listeners to each row
         const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
         rows.forEach(row => {
             row.addEventListener('click', () => {
-                const lotId = row.dataset.lotId; // Get the lot ID
-                displayLotInfo(lotId); // Fetch and display lot info
+                const lotId = row.dataset.lotId;
+                displayLotInfo(lotId);
             });
         });
 
@@ -587,10 +567,10 @@ function filterLots(type) {
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
-            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
+            <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${lotData.name}
             </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #FFD700; display: block; margin: 10px auto; background: #f2f5f5;">
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #f2f5f5;">
             <p><strong>Description:</strong></p>
             <div class="description-container">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
@@ -639,7 +619,7 @@ async function displayPlayerInfo(avatarId) {
 
         // Display all information in the Console
         consoleContent.innerHTML = `
-            <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
+            <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
                 ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
@@ -733,72 +713,162 @@ function populateRewardsFromHTML(htmlContent) {
 function displayRewardInfo(rewardName, rewardImage) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
-        <div style="background-color: #F1C75E; padding: 10px; color: black; text-align: center; font-size: 20px; font-weight: bold;">
+        <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
             ${rewardName}
         </div>
         <img src="${rewardImage}" alt="${rewardName}" style="width: 300px; height: 300px; display: block; margin: 20px auto;">
     `;
 }
 
-    function createSnowflakes() {
-    const snowflakeCount = 50; // Number of snowflakes
-    const snowflakeContainer = document.createDocumentFragment();
+async function displaySearchResult(type, name) {
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = '<p>Loading...</p>';
 
-    for (let i = 0; i < snowflakeCount; i++) {
-        const snowflake = document.createElement('div');
-        snowflake.classList.add('snowflake');
-        // Randomize the horizontal position
-        snowflake.style.left = Math.random() * 100 + 'vw';
-        // Randomize the animation duration between 5s and 15s
-        snowflake.style.animationDuration = (Math.random() * 10 + 5) + 's';
-        // Randomize the animation delay
-        snowflake.style.animationDelay = '-' + (Math.random() * 15) + 's';
-        // Randomize the size of snowflakes
-        const size = Math.random() * 5 + 5; // 5px to 10px
-        snowflake.style.width = size + 'px';
-        snowflake.style.height = size + 'px';
-        snowflakeContainer.appendChild(snowflake);
+    try {
+        const url = type === 'sim'
+            ? `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${name}`
+            : `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${name}`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch ${type} data`);
+        const data = await response.json();
+
+        const isOnline = checkIfOnline(type, data);
+
+        if (type === 'sim') {
+            displaySimInfo(data, isOnline);
+        } else {
+            displayLotInfo(data, isOnline);
+        }
+    } catch (error) {
+        consoleContent.innerHTML = `<p>Error loading ${type} data: ${error.message}</p>`;
     }
-
-    document.body.appendChild(snowflakeContainer);
 }
 
-        // Initialize the dashboard
-        async function init() {
-            createSnowflakes();
-            tempoSim();
-            await loadOnlinePlayers();
-            await loadLots();
-            await fetchRewards(); // Load rewards data
-        }
+function checkIfOnline(type, data) {
+    const container = document.getElementById(type === 'sim' ? 'players' : 'lots');
+    const rows = Array.from(container.querySelectorAll('tr'));
+    return rows.some(row => row.dataset[type === 'sim' ? 'avatar-id' : 'lot-id'] === data[type === 'sim' ? 'avatar_id' : 'lot_id'].toString());
+}
 
-        window.onload = init; // Initialize on window load
+function displaySimInfo(simData, isOnline) {
+    const consoleContent = document.getElementById('console-content');
+    const onlineStatus = isOnline ? 'Yes' : 'No';
+    consoleContent.innerHTML = `
+        <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            ${simData.name}
+        </div>
+        <p><strong>Currently Online:</strong> ${onlineStatus}</p>
+        <p><strong>Age:</strong> ${calculateAge(simData.date)} days old</p>
+        <p><strong>Description:</strong> ${formatDescription(simData.description)}</p>
+    `;
+}
 
+function displayLotInfo(lotData, isOnline) {
+    const consoleContent = document.getElementById('console-content');
+    const onlineStatus = isOnline ? 'Yes' : 'No';
+    consoleContent.innerHTML = `
+        <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            ${lotData.name}
+        </div>
+        <p><strong>Currently Online:</strong> ${onlineStatus}</p>
+        <p><strong>Description:</strong> ${formatDescription(lotData.description)}</p>
+        <p><strong>Owner ID:</strong> ${lotData.owner_id}</p>
+    `;
+}
+
+function calculateAge(timestamp) {
+    const creationDate = new Date(timestamp * 1000);
+    const currentDate = new Date();
+    return Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24));
+}
+
+function formatDescription(description) {
+    return (description || 'No description available').replace(/(\r\n|\n|\r)/g, '<br>');
+}
+
+const event = {
+    name: "Fire Bingo at THE PIGGY BANK",
+    lotName: "THE PIGGY BANK",
+    startTime: new Date("2024-11-08T20:00:00-05:00"),
+    endTime: new Date("2024-11-08T23:00:00-05:00")
+};
+
+// Function to display current event if it's ongoing
+function displayCurrentEvent() {
+    const now = new Date();
+    const eventContainer = document.getElementById("currentEvent");
+
+    if (now >= event.startTime && now <= event.endTime) {
+        eventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${event.name}!`;
+    } else {
+        eventContainer.innerHTML = ""; // Clear message outside event hours
+    }
+}
+
+// Function to toggle the event icon for the event lot
+function toggleEventIcon() {
+    const now = new Date();
+    const lotsTable = document.getElementById("lots");
+
+    // Ensure the table is loaded and find the event lot row
+    if (lotsTable) {
+        const rows = lotsTable.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+            const locationCell = row.querySelector("td:first-child");
+            if (locationCell && locationCell.textContent.includes(event.lotName)) {
+                // Check if the event is active and add/remove the icon
+                if (now >= event.startTime && now <= event.endTime) {
+                    if (!locationCell.querySelector(".fa-balloons")) {
+                        locationCell.innerHTML += ' <i class="fa-solid fa-balloons" title="Event is ongoing!"></i>';
+                    }
+                } else {
+                    const icon = locationCell.querySelector(".fa-balloons");
+                    if (icon) {
+                        icon.remove(); // Remove the icon when the event is over
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Initialize the dashboard
+async function init() {
+    tempoSim();
+    displayCurrentEvent();
+    await loadOnlinePlayers();
+    await loadLots();
+    toggleEventIcon(); // Ensure this runs only after lots have loaded
+    await fetchRewards(); // Load rewards data
+}
+
+// Initialize the event display and update it periodically
+window.onload = () => {
+    init();
+    setInterval(() => {
+        displayCurrentEvent();
+        toggleEventIcon(); // Update the icon every minute
+    }, 60000); // Update every minute
+};
+        
 document.addEventListener('DOMContentLoaded', () => {
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const icon = document.getElementById('darkModeIcon');
-
     // Check if dark mode was previously enabled
     if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
-        icon.classList.replace('fa-moon', 'fa-sun');
-        icon.style.color = '#f1f1f1'; 
-    } else {
-        icon.style.color = '#000'; 
+        document.getElementById('darkModeIcon').classList.replace('fa-moon', 'fa-sun');
     }
 
-    // Add the click event listener
-    darkModeToggle.addEventListener('click', () => {
+    document.getElementById('dark-mode-toggle').addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
 
         // Toggle icon between moon and sun
+        const icon = document.getElementById('darkModeIcon');
         if (document.body.classList.contains('dark-mode')) {
             icon.classList.replace('fa-moon', 'fa-sun');
-            icon.style.color = '#f1f1f1'; 
             localStorage.setItem('darkMode', 'enabled'); // Save preference
         } else {
             icon.classList.replace('fa-sun', 'fa-moon');
-            icon.style.color = '#000'; 
             localStorage.setItem('darkMode', 'disabled'); // Save preference
         }
     });
@@ -816,13 +886,22 @@ document.addEventListener('DOMContentLoaded', () => {
     <img src="https://blogimages6.wordpress.com/wp-content/uploads/2024/11/ursula.png" class="dashboard-icon mirrored" alt="Mirrored Icon">
 </h1>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
+    <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
         <div class="container">
-            <h3 id="players-title"><i class="fa-solid fa-hat-santa"></i></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 id="players-title"><i class="fa-solid fa-person"></i> Sims Online: 0 <i class="fa-solid fa-person-dress"></i></h3>
+    <i class="fa-solid fa-search" onclick="toggleSearch('sim')"></i>
+    <input type="text" id="sim-search" placeholder="Search Sim..." style="display:none; margin-left: 10px;" onkeyup="searchSim(event)">
+</div>
             <div class="scrollable" id="players"></div>
         </div>
         <div class="container">
-            <h3 id="lots-title"><i class="fa-solid fa-wreath"></i> Active Lots <i class="fa-solid fa-wreath"></i></h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 id="lots-title"><i class="fa-solid fa-house"></i> Active Lots <i class="fa-solid fa-house"></i></h3>
+    <i class="fa-solid fa-search" onclick="toggleSearch('lot')"></i>
+    <input type="text" id="lot-search" placeholder="Search Lot..." style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
+</div>
             <div id="lot-filter">
     <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
     <i class="fa-solid fa-hammer" title="Skills" onclick="filterLots('Skills')"></i>
@@ -842,7 +921,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
     <div id="rewards-container" class="container">
-        <h3><i class="fa-solid fa-gifts"></i> Current Patreon Rewards <i class="fa-solid fa-gifts"></i></h3>
+        <h3><i class="fa-solid fa-gift"></i> Current Patreon Rewards <i class="fa-solid fa-gift"></i></h3>
         <div class="scrollable">
             <!-- Rewards table will be populated here -->
             <table id="rewards-table">
@@ -859,9 +938,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     </div>
     <div id="console-container" class="container">
-        <h3><i class="fa-solid fa-snowflake"></i> Console <i class="fa-solid fa-snowflake"></i></h3>
+        <h3><i class="fa-solid fa-circle-info"></i> Console <i class="fa-solid fa-circle-info"></i></h3>
         <div id="console-content">
-            <p style="text-align: center; color: #black;">Select a Sim or a Lot to see more information.</p>
+            <p style="text-align: center; color: #000000;">Select a Sim or a Lot to see more information.</p>
             <!-- Content for Console will go here -->
         </div>
     </div>
