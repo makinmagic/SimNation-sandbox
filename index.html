@@ -508,13 +508,13 @@ function filterLots(type) {
 
         lotsContainer.innerHTML = tableHtml;
 
-        const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
-        rows.forEach(row => {
-            row.addEventListener('click', () => {
-                const lotId = row.dataset.lotId;
-                displayLotInfo(lotId);
-            });
-        });
+const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
+rows.forEach((row, index) => {
+    row.addEventListener('click', () => {
+        const lotData = lotDetailsArray[index]; 
+        displayLotInfo(lotData, true); 
+    });
+});
 
     } catch (error) {
         console.error('Error loading lots:', error);
@@ -975,7 +975,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; align-items: center;">
     <h3 id="players-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-person"></i> Sims Online: 0 <i class="fa-solid fa-person-dress"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('sim')" style="margin-left: 10px;"></i>
-    <input type="text" id="sim-search" placeholder="Search Sim..." style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
+    <input type="text" id="sim-search" placeholder="Search Sim..." autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
 </div>
             <div class="scrollable" id="players"></div>
         </div>
@@ -983,7 +983,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; align-items: center;">
     <h3 id="lots-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-house"></i> Active Lots <i class="fa-solid fa-house"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('lot')"></i>
-    <input type="text" id="lot-search" placeholder="Search Lot..." style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
+    <input type="text" id="lot-search" placeholder="Search Lot..." autocomplete="off" style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
 </div>
             <div id="lot-filter">
     <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
