@@ -606,12 +606,18 @@ async function displayLotDetails(lotData) {
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
-const knownSims = playersRows
-    .filter(row => {
-        const locationCell = row.querySelector('td.hidden:nth-child(4)'); // This should point to the hidden Location ID column
-        return locationCell && locationCell.textContent.trim() === lotData.lot_id.toString();
-    })
-    .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim's name in the first cell
+    const knownSims = playersRows
+        .filter(row => {
+            const locationCell = row.querySelector('td.hidden:nth-child(4)'); // This should point to the hidden Location ID column
+            if (locationCell && locationCell.textContent.trim() === lotData.lot_id.toString()) {
+                console.log(`Matched Sim in Lot ID: ${lotData.lot_id}`);
+                return true;
+            } else {
+                console.log(`No match for Sim in Lot ID: ${lotData.lot_id} - Sim Location ID: ${locationCell ? locationCell.textContent.trim() : 'None'}`);
+                return false;
+            }
+        })
+        .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim's name in the first cell
 
     // Display lot information in Console
     consoleContent.innerHTML = `
