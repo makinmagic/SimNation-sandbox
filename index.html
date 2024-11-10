@@ -762,7 +762,7 @@ async function searchSim(event) {
             const onlineStatus = isOnline ? 'Yes' : 'No';
             const playerLocation = isOnline
                 ? onlineRow.querySelector('td:nth-child(5)').textContent
-                : 'Unknown/Offline';
+                : 'Offline';
 
             // Display all information in the Console
             const consoleContent = document.getElementById('console-content');
