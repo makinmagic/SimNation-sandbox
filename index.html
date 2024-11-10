@@ -730,7 +730,6 @@ function toggleSearch(type) {
     }
 }
 
-// Handle search input for Sims
 async function searchSim(event) {
     if (event.key === 'Enter' || event.keyCode === 13) {
         const simName = event.target.value.trim();
@@ -749,10 +748,13 @@ async function searchSim(event) {
             const creationDate = new Date(playerData.date * 1000);
             const ageInDays = Math.floor((new Date() - creationDate) / (1000 * 60 * 60 * 24));
 
+            // Check if the player is online by searching in the Sims Online table
             const playersContainer = document.getElementById('players');
-            const locationRow = Array.from(playersContainer.querySelectorAll('tr'))
-                .find(row => row.querySelector('.hidden:nth-child(2)').textContent === playerData.avatar_id.toString());
-            const playerLocation = locationRow ? locationRow.querySelector('td:nth-child(5)').textContent : 'Unknown';
+            const isOnline = Array.from(playersContainer.querySelectorAll('tr')).some(row => 
+                row.querySelector('td').textContent === playerData.name
+            );
+
+            const onlineStatus = isOnline ? 'Yes' : 'No';
 
             // Display in Console
             const consoleContent = document.getElementById('console-content');
@@ -764,6 +766,7 @@ async function searchSim(event) {
                 <div class="description-container">${formattedDescription}</div>
                 <p><strong>Age:</strong> ${ageInDays} days old</p>
                 <p><strong>Location:</strong> ${playerLocation}</p>
+                <p><strong>Currently Online:</strong> ${onlineStatus}</p>
             `;
         } catch (error) {
             console.error('Failed to fetch sim details:', error);
