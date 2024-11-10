@@ -606,12 +606,12 @@ async function displayLotDetails(lotData) {
     const playersContainer = document.getElementById('players');
     const playersRows = Array.from(playersContainer.querySelectorAll('tr'));
 
-    const knownSims = playersRows
-        .filter(row => {
-            const locationCell = row.querySelector('.hidden:nth-child(4)');
-            return locationCell && locationCell.textContent === lotData.id.toString();
-        })
-        .map(row => row.querySelector('td').textContent); // Get the player's name
+const knownSims = playersRows
+    .filter(row => {
+        const locationCell = row.querySelector('.hidden:nth-child(4)');
+        return locationCell && locationCell.textContent === lotData.lot_id.toString(); // Match lot ID as in stable version
+    })
+    .map(row => row.querySelector('td').textContent); // Get the player's name
 
     // Display lot information in Console
     consoleContent.innerHTML = `
@@ -783,7 +783,7 @@ async function displaySearchResult(type, name) {
         if (type === 'sim') {
             displayPlayerInfo(data.avatar_id); // Fetches and displays complete player info
         } else {
-            displayLotInfo(data, isOnline); // Displays complete lot info
+            displayLotInfo(data.lot_id, isOnline); // Pass only lot_id
         }
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading ${type} data: ${error.message}</p>`;
