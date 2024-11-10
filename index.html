@@ -458,10 +458,10 @@ async function displayLotInfo(lotId) {
             }
         });
         if (!response.ok) throw new Error("Failed to fetch lot data by ID");
-        
+
         const lotData = await response.json();
         console.log("Fetched lot data by ID:", lotData); // Log fetched data
-        await displayLotDetails(lotData); 
+        await displayLotDetails(lotData);
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading lot data: ${error.message}</p>`;
     }
@@ -608,10 +608,10 @@ async function displayLotDetails(lotData) {
 
 const knownSims = playersRows
     .filter(row => {
-        const locationCell = row.querySelector('.hidden:nth-child(4)');
-        return locationCell && locationCell.textContent.trim() === lotData.lot_id.toString(); // Match the exact lot ID
+        const locationCell = row.querySelector('td.hidden:nth-child(4)'); // This should point to the hidden Location ID column
+        return locationCell && locationCell.textContent.trim() === lotData.lot_id.toString();
     })
-    .map(row => row.querySelector('td').textContent.trim()); // Get the player's name
+    .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim's name in the first cell
 
     // Display lot information in Console
     consoleContent.innerHTML = `
@@ -769,10 +769,11 @@ async function displaySearchResult(type, name) {
     consoleContent.innerHTML = '<p>Loading...</p>';
 
     try {
+        // Use different endpoints depending on type (sim or lot) and ensure it uses `name` for lots
         const url = type === 'sim'
             ? `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${encodeURIComponent(name)}`
             : `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${encodeURIComponent(name)}`;
-        
+
         const response = await fetch(url, {
             headers: {
                 'x-requested-with': 'XMLHttpRequest',
@@ -781,17 +782,17 @@ async function displaySearchResult(type, name) {
             }
         });
         if (!response.ok) throw new Error(`Failed to fetch ${type} data`);
-        
+
         const data = await response.json();
         console.log("Fetched data by name:", data);
 
         const isOnline = checkIfOnline(type, data);
 
-        // Call displayLotDetails directly with the data when searching by name
+        // Display lot details directly without converting `name` to `ID`
         if (type === 'sim') {
             displayPlayerInfo(data.avatar_id); // Display sim info
         } else {
-            await displayLotDetails(data); // Display lot details directly, not by ID
+            await displayLotDetails(data); // Directly display lot details by name
         }
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading ${type} data: ${error.message}</p>`;
