@@ -788,6 +788,30 @@ async function searchLot(event) {
 
             const lotData = await response.json();
 
+            // Mapping for admit modes
+            const admitModeMapping = {
+                0: 'Admit All',
+                1: 'Admit List',
+                2: 'Ban List',
+                3: 'Ban All',
+                4: 'Admit All'
+            };
+
+            // Mapping for lot categories
+            const categoryMapping = {
+                1: 'Money',
+                2: 'Money',
+                3: 'Romance',
+                4: 'Service',
+                5: 'Store',
+                6: 'Skills',
+                7: 'Welcome',
+                8: 'Games',
+                9: 'Entertainment',
+                10: 'Residential',
+                11: 'Community'
+            };
+
             // Format description and create date
             const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
             const creationDate = new Date(lotData.created_date * 1000).toLocaleDateString();
