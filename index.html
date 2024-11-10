@@ -483,7 +483,7 @@ async function searchLotByName(lotName) {
         const lotData = await response.json();
         console.log("Fetched lot data by name:", lotData); // Log fetched data
 
-        // Call displayLotDetails here directly with lotData, not displayLotInfo
+        // Directly display the lot details with displayLotDetails
         await displayLotDetails(lotData); 
 
     } catch (error) {
@@ -556,8 +556,8 @@ async function searchLotByName(lotName) {
 const rows = lotsContainer.querySelectorAll('tr[data-lot-id]');
 rows.forEach(row => {
     row.addEventListener('click', () => {
-        const lotId = row.dataset.lotId;
-        displayLotInfo(lotId);  
+        const lotId = row.dataset.lotId; // Extract lotId directly
+        displayLotInfo(lotId); // Only pass lotId
     });
 });
 
