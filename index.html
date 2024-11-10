@@ -609,9 +609,9 @@ async function displayLotDetails(lotData) {
 const knownSims = playersRows
     .filter(row => {
         const locationCell = row.querySelector('.hidden:nth-child(4)');
-        return locationCell && locationCell.textContent === lotData.lot_id.toString(); // Match lot ID as in stable version
+        return locationCell && locationCell.textContent.trim() === lotData.lot_id.toString(); // Match the exact lot ID
     })
-    .map(row => row.querySelector('td').textContent); // Get the player's name
+    .map(row => row.querySelector('td').textContent.trim()); // Get the player's name
 
     // Display lot information in Console
     consoleContent.innerHTML = `
@@ -770,20 +770,28 @@ async function displaySearchResult(type, name) {
 
     try {
         const url = type === 'sim'
-            ? `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${name}`
-            : `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${name}`;
+            ? `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${encodeURIComponent(name)}`
+            : `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${encodeURIComponent(name)}`;
         
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                'x-requested-with': 'XMLHttpRequest',
+                'origin': 'https://makinmagic.github.io/SimNation/',
+                'Content-Type': 'application/json'
+            }
+        });
         if (!response.ok) throw new Error(`Failed to fetch ${type} data`);
+        
         const data = await response.json();
+        console.log("Fetched data by name:", data);
 
         const isOnline = checkIfOnline(type, data);
 
-        // Call the appropriate function based on the type
+        // Call displayLotDetails directly with the data when searching by name
         if (type === 'sim') {
-            displayPlayerInfo(data.avatar_id); // Fetches and displays complete player info
+            displayPlayerInfo(data.avatar_id); // Display sim info
         } else {
-            displayLotInfo(data.lot_id, isOnline); // Pass only lot_id
+            await displayLotDetails(data); // Display lot details directly, not by ID
         }
     } catch (error) {
         consoleContent.innerHTML = `<p>Error loading ${type} data: ${error.message}</p>`;
