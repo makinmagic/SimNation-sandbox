@@ -569,8 +569,7 @@ rows.forEach(row => {
 
 async function displayLotDetails(lotData) { 
     const consoleContent = document.getElementById('console-content');
-    console.log("Received lotData in displayLotDetails:", lotData); // Log entire lotData for inspection
-    console.log("Using lot_id:", lotData.lot_id); // Log lot_id specifically
+    console.log("Received lotData in displayLotDetails:", lotData); // Log lotData for inspection
 
     // Check if lotData.lot_id is valid; if not, set an error message
     if (!lotData.lot_id || lotData.lot_id === 0) {
@@ -579,8 +578,22 @@ async function displayLotDetails(lotData) {
     }
     
     const formattedDescription = formatDescription(lotData.description || 'No description available');
-    // [Continue with the rest of the function]
-}
+    const lotType = categoryMapping[lotData.category] || 'Unknown';
+    const admitMode = admitModeMapping[lotData.admit_mode] || 'Unknown';
+
+    // Fetch the owner's name if available
+    let ownerName = 'Unknown';
+    if (lotData.owner_id) {
+        try {
+            const ownerResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`);
+            if (ownerResponse.ok) {
+                const ownerData = await ownerResponse.json();
+                ownerName = ownerData.name || 'Unknown';
+            }
+        } catch (error) {
+            console.error('Failed to fetch owner name:', error);
+        }
+    }
 
     // Retrieve roommate names, excluding the owner
     const roommatesWithoutOwner = (lotData.roommates || []).filter(id => id !== lotData.owner_id);
@@ -604,13 +617,7 @@ async function displayLotDetails(lotData) {
     const knownSims = playersRows
         .filter(row => {
             const locationCell = row.querySelector('td.hidden:nth-child(4)'); // This should point to the hidden Location ID column
-            if (locationCell && locationCell.textContent.trim() === lotData.lot_id.toString()) {
-                console.log(`Matched Sim in Lot ID: ${lotData.lot_id}`);
-                return true;
-            } else {
-                console.log(`No match for Sim in Lot ID: ${lotData.lot_id} - Sim Location ID: ${locationCell ? locationCell.textContent.trim() : 'None'}`);
-                return false;
-            }
+            return locationCell && locationCell.textContent.trim() === lotData.lot_id.toString();
         })
         .map(row => row.querySelector('td:first-child').textContent.trim()); // Get the Sim's name in the first cell
 
@@ -630,7 +637,7 @@ async function displayLotDetails(lotData) {
         <p><em>There may be sims inside with their location hidden.</em></p>
     `;
 }
-
+        
 async function displayPlayerInfo(avatarId) {
 
     // Remove placeholder text
