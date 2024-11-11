@@ -878,7 +878,7 @@ function displayEventInfo(event) {
     `;
 }
 
-// Function to display the current event at the top if one is ongoing
+// Function to display the current event at the top if one is ongoing and add the balloon icon to the lot location
 async function displayCurrentEvent() {
     try {
         const response = await fetch(eventsUrl);
@@ -904,7 +904,7 @@ async function displayCurrentEvent() {
         // Display the current event and add balloon icon if an event is ongoing
         if (currentEvent) {
             currentEventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${currentEvent.name}!`;
-            addEventIconToLocation(currentEvent.location); // Add balloon icon to the Active Lots location
+            addEventIconToLocation(currentEvent.location); // Add balloon icon to the specified Active Lots location
         } else {
             currentEventContainer.innerHTML = ""; // Clear if no event is ongoing
         }
