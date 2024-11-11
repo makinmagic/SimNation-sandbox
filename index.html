@@ -936,21 +936,37 @@ function displayEventInfo(event) {
     `;
 }
 
-function displayCurrentEvent() {
-    const now = new Date();
-    const eventContainer = document.getElementById("currentEvent");
-
-    events.forEach(event => {
-        const startTime = new Date(event.startTime);
-        const endTime = new Date(event.endTime);
-
-        if (now >= startTime && now <= endTime) {
-            eventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${event.name}!`;
-            addEventIconToLocation(event.location); // Add balloon icon to location in Active Lots
-        } else {
-            eventContainer.innerHTML = ""; // Clear message if no event is ongoing
+async function displayCurrentEvent() {
+    try {
+        const response = await fetch(eventsUrl);
+        if (!response.ok) {
+            throw new Error('Failed to load events.json');
         }
-    });
+        const events = await response.json();
+
+        const now = new Date(); // Local current time
+
+        const currentEventContainer = document.getElementById("currentEvent");
+        let currentEvent = null;
+
+        events.forEach(event => {
+            const startTime = new Date(event.startTime);
+            const endTime = new Date(event.endTime);
+
+            if (now >= startTime && now <= endTime) {
+                currentEvent = event;
+            }
+        });
+
+        if (currentEvent) {
+            currentEventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${currentEvent.name}!`;
+            addEventIconToLocation(currentEvent.location); // Display the balloons icon in the Active Lots
+        } else {
+            currentEventContainer.innerHTML = ""; // Clear the message if no event is ongoing
+        }
+    } catch (error) {
+        console.error('Failed to fetch current events:', error);
+    }
 }
 
 function addEventIconToLocation(locationName) {
@@ -969,8 +985,11 @@ function addEventIconToLocation(locationName) {
 
 // Initialize events and check periodically for updates
 window.onload = () => {
-    fetchEvents();
-    setInterval(displayCurrentEvent, 60000); // Update every minute to check for ongoing events
+    fetchEvents(); // Load and display upcoming events initially
+    displayCurrentEvent(); // Initial check for any ongoing event
+
+    // Set up periodic checks every minute for "Current Event" status
+    setInterval(displayCurrentEvent, 60000); // Update every minute
 };
 
 const event = {
