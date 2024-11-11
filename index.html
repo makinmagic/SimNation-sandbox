@@ -887,6 +887,84 @@ async function searchLot(event) {
     }
 }
 
+const eventsUrl = 'https://makinmagic.github.io/SimNation/events.json';
+
+async function fetchEvents() {
+    try {
+        const response = await fetch(eventsUrl);
+        const events = await response.json();
+
+        const eventsContainer = document.getElementById('events-table').getElementsByTagName('tbody')[0];
+        eventsContainer.innerHTML = ''; // Clear any existing events
+
+        const now = new Date();
+
+        events
+            .filter(event => new Date(event.startTime) > now) // Only show upcoming events
+            .forEach(event => {
+                const row = eventsContainer.insertRow();
+                row.innerHTML = `
+                    <td>${event.name}</td>
+                    <td>${new Date(event.date).toLocaleDateString()}</td>
+                `;
+                row.addEventListener('click', () => {
+                    displayEventInfo(event); // Show details in the Console when clicked
+                });
+            });
+    } catch (error) {
+        console.error('Failed to fetch events:', error);
+    }
+}
+
+function displayEventInfo(event) {
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = `
+        <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            ${event.name}
+        </div>
+        <p><strong>Description:</strong> ${event.description}</p>
+        <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+    `;
+}
+
+function displayCurrentEvent() {
+    const now = new Date();
+    const eventContainer = document.getElementById("currentEvent");
+
+    events.forEach(event => {
+        const startTime = new Date(event.startTime);
+        const endTime = new Date(event.endTime);
+
+        if (now >= startTime && now <= endTime) {
+            eventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${event.name}!`;
+            addEventIconToLocation(event.location); // Add balloon icon to location in Active Lots
+        } else {
+            eventContainer.innerHTML = ""; // Clear message if no event is ongoing
+        }
+    });
+}
+
+function addEventIconToLocation(locationName) {
+    const lotsTable = document.getElementById("lots");
+    const rows = lotsTable.querySelectorAll("tbody tr");
+
+    rows.forEach(row => {
+        const locationCell = row.querySelector("td:first-child");
+        if (locationCell && locationCell.textContent.includes(locationName)) {
+            if (!locationCell.querySelector(".fa-balloons")) {
+                locationCell.innerHTML += ' <i class="fa-solid fa-balloons" title="Event is ongoing!"></i>';
+            }
+        }
+    });
+}
+
+// Initialize events and check periodically for updates
+window.onload = () => {
+    fetchEvents();
+    setInterval(displayCurrentEvent, 60000); // Update every minute to check for ongoing events
+};
+
 const event = {
     name: "Fire Bingo at THE PIGGY BANK",
     lotName: "THE PIGGY BANK",
@@ -1025,13 +1103,22 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
-    <div id="rewards-container" class="container">
-        <h3><i class="fa-solid fa-gift"></i> Current Patreon Rewards <i class="fa-solid fa-gift"></i></h3>
-        <div class="scrollable">
-            <script src="https://static.elfsight.com/platform/platform.js" async></script>
-<div class="elfsight-app-fd22ff03-95ff-4483-a111-01cbb335f093" data-elfsight-app-lazy></div>
-        </div>
+    <div id="events-container" class="container">
+    <h3><i class="fa-solid fa-calendar-day"></i> Upcoming Events <i class="fa-solid fa-calendar-day"></i></h3>
+    <div class="scrollable">
+        <table id="events-table">
+            <thead>
+                <tr>
+                    <th>Event Name</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Events will be populated dynamically -->
+            </tbody>
+        </table>
     </div>
+</div>
     <div id="console-container" class="container">
         <h3><i class="fa-solid fa-circle-info"></i> Console <i class="fa-solid fa-circle-info"></i></h3>
         <div id="console-content">
