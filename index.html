@@ -870,19 +870,7 @@ async function fetchEvents() {
                 row.addEventListener('click', () => {
                     displayEventInfo(event); // Show details in the Console when clicked
                 });
-            });
-
-        // Add a row for the "Add your event" link
-        const linkRow = eventsContainer.insertRow();
-        const linkCell = linkRow.insertCell();
-        linkCell.colSpan = 3;
-        linkCell.style.textAlign = 'center';
-        linkCell.innerHTML = `
-            <a href="https://forms.gle/LgcNWCMhwdFu8w2T9" target="_blank" style="text-decoration: underline; font-weight: bold;">
-                Click here to add your event!
-            </a>
-        `;
-        
+            });   
     } catch (error) {
         console.error('Failed to fetch events:', error);
     }
@@ -1043,7 +1031,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
     <div id="events-container" class="container">
     <h3><i class="fa-solid fa-calendar-day"></i> Upcoming Events <i class="fa-solid fa-calendar-day"></i></h3>
-    <div class="scrollable">
+    <div style="text-align: center; margin-top: 5px; margin-bottom: 10px;">
+            <a href="https://forms.gle/LgcNWCMhwdFu8w2T9" target="_blank" style="text-decoration: underline; font-weight: bold;">
+                Click here to add your event!
+            </a>
+        </div>
+        <div class="scrollable">
         <table id="events-table">
             <thead>
                 <tr>
