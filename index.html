@@ -924,6 +924,18 @@ async function fetchEvents() {
     }
 }
 
+function displayEventInfo(event) {
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = `
+        <div style="background-color: #007bff; padding: 10px; color: white; text-align: center; font-size: 20px;">
+            ${event.name}
+        </div>
+        <p><strong>Description:</strong> ${event.description}</p>
+        <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+    `;
+}
+
 function displayCurrentEvent() {
     const now = new Date();
     const eventContainer = document.getElementById("currentEvent");
