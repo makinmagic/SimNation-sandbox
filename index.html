@@ -621,7 +621,7 @@ function filterLots(type) {
             <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
                 ${lotData.name}
             </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #f2f5f5;">
+            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
             <p><strong>Description:</strong></p>
             <div class="description-container">${formattedDescription}</div>
             <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
@@ -885,7 +885,7 @@ async function searchLot(event) {
                 <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
                     ${lotData.name}
                 </div>
-                <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #0056b3; display: block; margin: 10px auto; background: #f2f5f5;">
+                <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${formattedDescription}</div>
                 <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
