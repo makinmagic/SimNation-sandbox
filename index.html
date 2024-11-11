@@ -941,9 +941,8 @@ async function init() {
     displayCurrentEvent(); // Initial check for any ongoing event and add balloon icon
 }
 
-// Consolidated window.onload to handle all initialization
 window.onload = () => {
-    init(); // Run the initialization function
+    init();
     setInterval(displayCurrentEvent, 60000); // Update "Current Event" status every minute
 };
         
@@ -1035,12 +1034,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <!-- Events will be populated dynamically -->
             </tbody>
         </table>
+                </div>
         <div style="text-align: center; margin-top: 10px;">
             <a href="https://forms.gle/LgcNWCMhwdFu8w2T9" target="_blank" style="text-decoration: underline; font-weight: bold;">
                 Click here to add your event!
             </a>
+        </div>
     </div>
-</div>
     <div id="console-container" class="container">
         <h3><i class="fa-solid fa-circle-info"></i> Console <i class="fa-solid fa-circle-info"></i></h3>
         <div id="console-content">
