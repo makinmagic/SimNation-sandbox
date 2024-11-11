@@ -873,12 +873,12 @@ function displayEventInfo(event) {
             ${event.name}
         </div>
         <p><strong>Description:</strong> ${event.description}</p>
-        <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+        <p><strong>Date:</strong> ${new Date(event.startTime).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+        <p><strong>Time:</strong> ${event.time}</p>
         <p><strong>Location:</strong> ${event.location}</p>
     `;
 }
 
-// Function to display the current event at the top if one is ongoing and add the balloon icon to the lot location
 async function displayCurrentEvent() {
     try {
         const response = await fetch(eventsUrl);
@@ -889,22 +889,25 @@ async function displayCurrentEvent() {
 
         const now = new Date();
         const currentEventContainer = document.getElementById("currentEvent");
-        let currentEvent = null;
+        let currentEvents = []; // Array to store all currently ongoing events
 
-        // Check if any event is currently ongoing
+        // Check if any events are currently ongoing
         events.forEach(event => {
             const startTime = new Date(event.startTime);
             const endTime = new Date(event.endTime);
 
             if (now >= startTime && now <= endTime) {
-                currentEvent = event;
+                currentEvents.push(event); // Add ongoing event to the list
             }
         });
 
-        // Display the current event and add balloon icon if an event is ongoing
-        if (currentEvent) {
-            currentEventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${currentEvent.name}!`;
-            addEventIconToLocation(currentEvent.location); // Add balloon icon to the specified Active Lots location
+        // Display all overlapping events
+        if (currentEvents.length > 0) {
+            currentEventContainer.innerHTML = currentEvents
+                .map(event => `<i class="fa-solid fa-balloons"></i> Current Event: ${event.name} at ${event.location}!`)
+                .join('<br>'); // Join with line breaks for multiple events
+
+            currentEvents.forEach(event => addEventIconToLocation(event.location)); // Add balloon icon for each location
         } else {
             currentEventContainer.innerHTML = ""; // Clear if no event is ongoing
         }
