@@ -925,32 +925,19 @@ function addEventIconToLocation(locationName) {
     });
 }
 
-// Initialize events and check periodically for updates
-window.onload = () => {
-    fetchEvents(); // Load and display upcoming events initially
-    displayCurrentEvent(); // Initial check for any ongoing event
-
-    // Set up periodic checks every minute for "Current Event" status
-    setInterval(displayCurrentEvent, 60000); // Update every minute
-};
-
-// Initialize the dashboard
+// Initialize the dashboard and set up periodic checks
 async function init() {
-    tempoSim();
-    displayCurrentEvent();
-    await loadOnlinePlayers();
-    await loadLots();
-    toggleEventIcon();
-    fetchEvents(); // Fetch events independently
+    tempoSim(); // Start simulation timing
+    displayCurrentEvent(); // Initial check for any ongoing event
+    fetchEvents(); // Load and display upcoming events
+    await loadOnlinePlayers(); // Load online players
+    await loadLots(); // Load active lots
 }
 
-// Initialize the event display and update it periodically
+// Consolidated window.onload to handle all initialization
 window.onload = () => {
-    init();
-    setInterval(() => {
-        displayCurrentEvent();
-        toggleEventIcon(); // Update the icon every minute
-    }, 60000); // Update every minute
+    init(); // Run the initialization function
+    setInterval(displayCurrentEvent, 60000); // Update "Current Event" status every minute
 };
         
 document.addEventListener('DOMContentLoaded', () => {
