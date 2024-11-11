@@ -920,7 +920,8 @@ function addEventIconToLocation(locationName) {
 
     rows.forEach(row => {
         const locationCell = row.querySelector("td:first-child");
-        if (locationCell && locationCell.textContent.trim() === locationName) {
+        if (locationCell && locationCell.textContent.trim().toLowerCase() === locationName.trim().toLowerCase()) {
+            // Check if the balloon icon is already present to avoid duplicates
             if (!locationCell.querySelector(".fa-balloons")) {
                 locationCell.innerHTML += ' <i class="fa-solid fa-balloons" title="Event is ongoing!"></i>';
             }
