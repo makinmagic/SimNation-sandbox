@@ -878,6 +878,7 @@ function displayEventInfo(event) {
     `;
 }
 
+// Function to display the current event at the top if one is ongoing
 async function displayCurrentEvent() {
     try {
         const response = await fetch(eventsUrl);
@@ -886,38 +887,40 @@ async function displayCurrentEvent() {
         }
         const events = await response.json();
 
-        const now = new Date(); // Current time in local timezone
+        const now = new Date();
         const currentEventContainer = document.getElementById("currentEvent");
         let currentEvent = null;
 
+        // Check if any event is currently ongoing
         events.forEach(event => {
             const startTime = new Date(event.startTime);
             const endTime = new Date(event.endTime);
 
-            // Check if the current time falls within the event's time range
             if (now >= startTime && now <= endTime) {
                 currentEvent = event;
             }
         });
 
+        // Display the current event and add balloon icon if an event is ongoing
         if (currentEvent) {
             currentEventContainer.innerHTML = `<i class="fa-solid fa-balloons"></i> Current event: ${currentEvent.name}!`;
-            addEventIconToLocation(currentEvent.location); // Display the balloons icon in the Active Lots
+            addEventIconToLocation(currentEvent.location); // Add balloon icon to the Active Lots location
         } else {
-            currentEventContainer.innerHTML = ""; // Clear the message if no event is ongoing
+            currentEventContainer.innerHTML = ""; // Clear if no event is ongoing
         }
     } catch (error) {
         console.error('Failed to fetch current events:', error);
     }
 }
 
+// Function to add the balloon icon to the active event's location in the Active Lots
 function addEventIconToLocation(locationName) {
     const lotsTable = document.getElementById("lots");
     const rows = lotsTable.querySelectorAll("tbody tr");
 
     rows.forEach(row => {
         const locationCell = row.querySelector("td:first-child");
-        if (locationCell && locationCell.textContent.includes(locationName)) {
+        if (locationCell && locationCell.textContent.trim() === locationName) {
             if (!locationCell.querySelector(".fa-balloons")) {
                 locationCell.innerHTML += ' <i class="fa-solid fa-balloons" title="Event is ongoing!"></i>';
             }
