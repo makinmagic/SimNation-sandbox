@@ -935,7 +935,7 @@ async function fetchEvents() {
                 const row = eventsContainer.insertRow();
                 const eventDate = new Date(event.startTime);
                 const formattedDate = eventDate.toLocaleDateString(undefined, {
-                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                    weekday: 'long', month: 'long', day: 'numeric'
                 });
                 const formattedTime = `${eventDate.toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric', hour12: true })}`;
 
@@ -959,7 +959,7 @@ function displayEventInfo(event) {
     const eventStartDate = new Date(event.startTime);
     const eventEndDate = new Date(event.endTime);
     const formattedDate = eventStartDate.toLocaleDateString(undefined, {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        weekday: 'long', month: 'long', day: 'numeric'
     });
     const formattedTime = `${eventStartDate.toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric', hour12: true })} to ${eventEndDate.toLocaleTimeString(undefined, { hour: 'numeric', minute: 'numeric', hour12: true })} (${Intl.DateTimeFormat().resolvedOptions().timeZone})`;
 
