@@ -393,7 +393,7 @@ function addFavoriteIcons(type) {
 }
 
 async function loadOnlinePlayers() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         try {
             const playersContainer = document.getElementById('players');
             let tableHtml = `
@@ -418,7 +418,7 @@ async function loadOnlinePlayers() {
 
             console.log("Players table populated.");
             addFavoriteIcons('players'); // Call only after rows are added
-            resolve(); // Resolve when done
+            resolve(); // Resolve the promise
         } catch (error) {
             console.error('Error loading online players:', error);
             reject(error);
@@ -427,7 +427,7 @@ async function loadOnlinePlayers() {
 }
 
 async function loadLots() {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         try {
             const lotsContainer = document.getElementById('lots');
             let tableHtml = `
@@ -452,7 +452,7 @@ async function loadLots() {
 
             console.log("Lots table populated.");
             addFavoriteIcons('lots'); // Call only after rows are added
-            resolve(); // Resolve when done
+            resolve(); // Resolve the promise
         } catch (error) {
             console.error('Error loading lots:', error);
             reject(error);
