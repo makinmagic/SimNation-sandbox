@@ -336,11 +336,13 @@ function toggleFavorite(type, id, name) {
         star.classList.toggle('fa-regular');
     }
 
+    console.log(`Updated favorites for ${type}:`, favorites);
+
     // Reflect the update in the table on the next refresh
     updateTableWithFavorites(type);
 }
 
-// Display details in the console with a bookmark option
+// Display Sim or Lot details in the console with a bookmark option
 function displayFavoriteInConsole(type, id, name) {
     const consoleContent = document.getElementById('console-content');
     if (!consoleContent) {
@@ -360,9 +362,10 @@ function displayFavoriteInConsole(type, id, name) {
 
     // Attach the click event to toggle the bookmark
     star.addEventListener('click', () => toggleFavorite(type, id, name));
+    console.log(`Displayed in console: ${type} ID=${id}, Name=${name}`);
 }
 
-// Update the table to reflect bookmarks on refresh
+// Update the table to reflect bookmarks
 function updateTableWithFavorites(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
@@ -387,13 +390,23 @@ function updateTableWithFavorites(type) {
         table.appendChild(row);
     });
     otherRows.forEach(row => table.appendChild(row));
+    console.log(`Updated table for ${type} with favorites.`);
 }
 
 // Initialize the dashboard
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Initializing dashboard...");
-    updateTableWithFavorites('players');
-    updateTableWithFavorites('lots');
+    const interval = setInterval(() => {
+        const playersTable = document.querySelector('#players tbody');
+        const lotsTable = document.querySelector('#lots tbody');
+
+        if (playersTable && lotsTable) {
+            clearInterval(interval);
+            console.log("Tables detected. Updating with bookmarks...");
+            updateTableWithFavorites('players');
+            updateTableWithFavorites('lots');
+        }
+    }, 100); // Check every 100ms
 });
 
         // JavaScript functions
