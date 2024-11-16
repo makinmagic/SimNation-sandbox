@@ -361,6 +361,12 @@ function updateFavorites(type) {
 // Initialize stars and attach click events
 function initializeFavorites(type) {
     const tableBody = document.querySelector(`#${type} tbody`);
+    if (!tableBody) {
+        console.error(`Table body for ${type} not found during initializeFavorites.`);
+        return; // Prevent execution if tableBody is not available
+    }
+
+    console.log(`Initializing favorites for ${type}`);
     const rows = Array.from(tableBody.rows);
 
     rows.forEach(row => {
@@ -374,11 +380,74 @@ function initializeFavorites(type) {
     updateFavorites(type); // Sort rows and update stars
 }
 
-// Run this when the tables are ready
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Initializing favorites...");
-    initializeFavorites('players'); // Players table
-    initializeFavorites('lots');    // Lots table
+async function loadOnlinePlayers() {
+    try {
+        const playersContainer = document.getElementById('players');
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sim</th>
+                        <th>Age</th>
+                        <th>Location</th>
+                        <th>Favorite</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>`;
+        playersContainer.innerHTML = tableHtml;
+
+        // Simulate population of table rows
+        const tbody = playersContainer.querySelector('tbody');
+        tbody.innerHTML = `
+            <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>
+            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
+
+        console.log("Players table populated.");
+        initializeFavorites('players'); // Call after rows are populated
+    } catch (error) {
+        console.error('Error loading online players:', error);
+    }
+}
+
+async function loadLots() {
+    try {
+        const lotsContainer = document.getElementById('lots');
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Sims Inside</th>
+                        <th>Lot Type</th>
+                        <th>Favorite</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>`;
+        lotsContainer.innerHTML = tableHtml;
+
+        // Simulate population of table rows
+        const tbody = lotsContainer.querySelector('tbody');
+        tbody.innerHTML = `
+            <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>
+            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
+
+        console.log("Lots table populated.");
+        initializeFavorites('lots'); // Call after rows are populated
+    } catch (error) {
+        console.error('Error loading lots:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Page loaded. Loading tables...");
+
+    // Load tables and populate them
+    await loadOnlinePlayers();
+    await loadLots();
+
+    console.log("All tables loaded and favorites initialized.");
 });
 
         // JavaScript functions
