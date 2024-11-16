@@ -34,6 +34,7 @@
         display: flex;
         justify-content: space-between;
         gap: 1%;
+        margin-top: 30px;
     }
 
     .container {
@@ -82,7 +83,7 @@
     #tempoSim, #currentEvent, #guideLink, #countdown {
         text-align: center;
         font-size: 18px;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         color: #fff; 
     }
 
@@ -388,6 +389,7 @@ async function loadOnlinePlayers() {
                         <th>Age</th>
                         <th class="hidden">Location ID</th>
                         <th>Location</th>
+                        <th>Favorite</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -516,6 +518,7 @@ function filterLots(type) {
                         <th>Location</th>
                         <th>Sims Inside</th>
                         <th>Lot Type</th>
+                        <th>Favorite</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1028,6 +1031,78 @@ function addEventIconToLocation(locationName) {
     });
 }
 
+// Utility function to toggle favorites
+function toggleFavorite(type, id) {
+    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
+    const index = favorites.indexOf(id);
+
+    if (index === -1) {
+        favorites.push(id); // Add to favorites
+    } else {
+        favorites.splice(index, 1); // Remove from favorites
+    }
+
+    localStorage.setItem(`${type}Favorites`, JSON.stringify(favorites));
+    updateFavorites(type); // Update UI
+}
+
+// Function to update table rows based on favorites
+function updateFavorites(type) {
+    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
+    const tableBody = document.querySelector(`#${type} tbody`);
+    const rows = Array.from(tableBody.rows);
+
+    // Separate favorites and non-favorites
+    const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
+    const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
+
+    // Sort rows: favorites first
+    tableBody.innerHTML = ''; // Clear the table
+    favoriteRows.forEach(row => tableBody.appendChild(row));
+    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
+
+    // Update star icons
+    rows.forEach(row => {
+        const starIcon = row.querySelector('.favorite-icon');
+        const id = row.dataset.id;
+        if (favorites.includes(id)) {
+            starIcon.classList.replace('fa-regular', 'fa-solid');
+        } else {
+            starIcon.classList.replace('fa-solid', 'fa-regular');
+        }
+    });
+}
+
+// Add favorite icons and listeners
+function addFavoriteIcons(type) {
+    const tableBody = document.querySelector(`#${type} tbody`);
+    const rows = Array.from(tableBody.rows);
+
+    rows.forEach(row => {
+        const id = row.dataset.id; // Unique ID for Sim or Lot
+        const starIcon = document.createElement('i');
+        starIcon.classList.add('fa-regular', 'fa-star', 'favorite-icon');
+        starIcon.style.cursor = 'pointer';
+
+        // Add click event
+        starIcon.addEventListener('click', () => toggleFavorite(type, id));
+
+        // Append to the row
+        const td = document.createElement('td');
+        td.appendChild(starIcon);
+        row.appendChild(td);
+    });
+
+    // Update favorites on initial load
+    updateFavorites(type);
+}
+
+// Initialize favorites on page load
+document.addEventListener('DOMContentLoaded', () => {
+    addFavoriteIcons('players'); // For Sims Online
+    addFavoriteIcons('lots'); // For Active Lots
+});
+
 function updateCountdown() {
     const endTime = new Date("November 15, 2024 02:00:00 UTC").getTime();
     const now = new Date().getTime();
@@ -1102,11 +1177,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <i class="fa-solid fa-circle-question"></i> Game Guide <i class="fa-solid fa-circle-question"></i>
     </a>
 </div>
-    <div style="display: flex; flex-direction: column; align-items: center;">
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
     <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div>
-</div>
-</div>
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
 <div class="container">
