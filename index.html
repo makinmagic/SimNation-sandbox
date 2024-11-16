@@ -334,16 +334,18 @@ function toggleFavorite(type, id) {
 function updateFavorites(type) {
     const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
     const tableBody = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(tableBody.rows);
+    const rows = Array.from(tableBody ? tableBody.rows : []);
 
     // Separate favorites and non-favorites
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
     const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
 
     // Sort rows: favorites first
-    tableBody.innerHTML = ''; // Clear the table
-    favoriteRows.forEach(row => tableBody.appendChild(row));
-    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
+    if (tableBody) {
+        tableBody.innerHTML = ''; // Clear the table
+        favoriteRows.forEach(row => tableBody.appendChild(row));
+        nonFavoriteRows.forEach(row => tableBody.appendChild(row));
+    }
 
     // Update star icons
     rows.forEach(row => {
@@ -357,44 +359,74 @@ function updateFavorites(type) {
     });
 }
 
-function loadOnlinePlayers() {
-    // Your existing code to load online players.
-    // Modified to include the "Favorite" column dynamically.
-    // ...
-    // Example (inside your existing loop for generating table rows):
-    const isFavorited = JSON.parse(localStorage.getItem('playersFavorites') || '[]').includes(player.avatar_id);
-    tableHtml += `
-    <tr data-id="${player.avatar_id}">
-        <td>${player.name}</td>
-        <td>${player.age} days</td>
-        <td>${player.location}</td>
-        <td>
-            <i class="favorite-icon fa-${isFavorited ? 'solid' : 'regular'} fa-star" 
-               style="cursor: pointer;" 
-               onclick="toggleFavorite('players', '${player.avatar_id}')">
-            </i>
-        </td>
-    </tr>`;
+function addFavoriteIcons(type) {
+    const tableBody = document.querySelector(`#${type} tbody`);
+    if (!tableBody) return; // Avoid null reference errors
+    const rows = Array.from(tableBody.rows);
+
+    rows.forEach(row => {
+        const id = row.dataset.id; // Unique ID for Sim or Lot
+        const starIcon = document.createElement('i');
+        starIcon.classList.add('fa-regular', 'fa-star', 'favorite-icon');
+        starIcon.style.cursor = 'pointer';
+
+        // Add click event
+        starIcon.addEventListener('click', () => toggleFavorite(type, id));
+
+        // Append to the row
+        const td = document.createElement('td');
+        td.appendChild(starIcon);
+        row.appendChild(td);
+    });
+
+    // Update favorites on initial load
+    updateFavorites(type);
 }
 
-function loadLots() {
+async function loadOnlinePlayers() {
+    // Your existing code to load online players.
+    // Modified to include the "Favorite" column dynamically.
+    const playersContainer = document.getElementById('players');
+    let tableHtml = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Sim</th>
+                    <th>Age</th>
+                    <th>Location</th>
+                    <th>Favorite</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>`;
+
+    playersContainer.innerHTML = tableHtml; // Populate table structure
+    addFavoriteIcons('players'); // Add favorite icons once table is built
+}
+
+async function loadLots() {
     // Your existing code to load active lots.
     // Modified to include the "Favorite" column dynamically.
-    // ...
-    // Example (inside your existing loop for generating table rows):
-    const isFavorited = JSON.parse(localStorage.getItem('lotsFavorites') || '[]').includes(lot.id);
-    tableHtml += `
-    <tr data-id="${lot.id}">
-        <td>${lot.name}</td>
-        <td>${lot.count}</td>
-        <td>${lot.type}</td>
-        <td>
-            <i class="favorite-icon fa-${isFavorited ? 'solid' : 'regular'} fa-star" 
-               style="cursor: pointer;" 
-               onclick="toggleFavorite('lots', '${lot.id}')">
-            </i>
-        </td>
-    </tr>`;
+    const lotsContainer = document.getElementById('lots');
+    let tableHtml = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Sims Inside</th>
+                    <th>Lot Type</th>
+                    <th>Favorite</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>`;
+
+    lotsContainer.innerHTML = tableHtml; // Populate table structure
+    addFavoriteIcons('lots'); // Add favorite icons once table is built
 }
 
         // JavaScript functions
