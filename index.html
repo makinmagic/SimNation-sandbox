@@ -352,6 +352,10 @@ function updateFavoritesUI(type) {
     // Update star icons
     rows.forEach(row => {
         const star = row.querySelector('.favorite-icon');
+        if (!star) {
+            console.warn(`Missing star icon in row. Skipping.`);
+            return;
+        }
         if (favorites.includes(row.dataset.id)) {
             star.classList.replace('fa-regular', 'fa-solid');
         } else {
@@ -374,24 +378,27 @@ function initializeFavorites(type) {
     rows.forEach(row => {
         const id = row.dataset.id;
         if (!id) {
-            console.error(`Row missing data-id for ${type}. Skipping.`);
-            return;
+            console.warn(`Row missing data-id for ${type}. Skipping.`);
+            return; // Skip rows without a unique identifier
         }
 
-        const star = document.createElement('i');
-        star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
-        star.style.cursor = 'pointer';
+        let star = row.querySelector('.favorite-icon');
+        if (!star) {
+            star = document.createElement('i');
+            star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
+            star.style.cursor = 'pointer';
 
-        // Attach click event
-        star.addEventListener('click', () => {
-            console.log(`Star clicked for ${type} ID: ${id}`);
-            toggleFavorite(type, id);
-        });
+            // Attach click event
+            star.addEventListener('click', () => {
+                console.log(`Star clicked for ${type} ID: ${id}`);
+                toggleFavorite(type, id);
+            });
 
-        // Append the star to the last column
-        const cell = document.createElement('td');
-        cell.appendChild(star);
-        row.appendChild(cell);
+            // Append the star to the last column
+            const cell = document.createElement('td');
+            cell.appendChild(star);
+            row.appendChild(cell);
+        }
     });
 
     updateFavoritesUI(type);
@@ -401,7 +408,6 @@ function initializeFavorites(type) {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Page loaded. Waiting for tables to render...");
 
-    // Poll until both tables are ready
     const interval = setInterval(() => {
         const playersTable = document.querySelector('#players tbody');
         const lotsTable = document.querySelector('#lots tbody');
