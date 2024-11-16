@@ -318,150 +318,83 @@ body.dark-mode #events-container a {
     <script>
 // Handle toggling of favorites
 function toggleFavorite(type, id) {
-    const favoritesKey = `${type}Favorites`;
-    const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-    const index = favorites.indexOf(id);
+    const key = `${type}Favorites`;
+    let favorites = JSON.parse(localStorage.getItem(key)) || [];
 
-    if (index === -1) {
-        favorites.push(id); // Add to favorites
+    if (favorites.includes(id)) {
+        // Remove from favorites
+        favorites = favorites.filter(fav => fav !== id);
     } else {
-        favorites.splice(index, 1); // Remove from favorites
+        // Add to favorites
+        favorites.push(id);
     }
 
-    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
-    updateFavorites(type); // Refresh the table
+    localStorage.setItem(key, JSON.stringify(favorites));
+    updateFavoritesUI(type);
 }
 
-// Sort rows and update stars
-function updateFavorites(type) {
-    const favoritesKey = `${type}Favorites`;
-    const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-    const tableBody = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(tableBody.rows);
+// Update the table UI based on favorites
+function updateFavoritesUI(type) {
+    const key = `${type}Favorites`;
+    const favorites = JSON.parse(localStorage.getItem(key)) || [];
+    const table = document.querySelector(`#${type} tbody`);
+    const rows = Array.from(table.rows);
 
     // Sort rows: favorites first
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
-    const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
-    tableBody.innerHTML = ''; // Clear the table
-    favoriteRows.forEach(row => tableBody.appendChild(row));
-    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
+    const otherRows = rows.filter(row => !favorites.includes(row.dataset.id));
+
+    table.innerHTML = ''; // Clear the table
+    favoriteRows.forEach(row => table.appendChild(row));
+    otherRows.forEach(row => table.appendChild(row));
 
     // Update star icons
     rows.forEach(row => {
-        const starIcon = row.querySelector('.favorite-icon');
-        const id = row.dataset.id;
-        if (favorites.includes(id)) {
-            starIcon.classList.replace('fa-regular', 'fa-solid');
+        const star = row.querySelector('.favorite-icon');
+        if (favorites.includes(row.dataset.id)) {
+            star.classList.replace('fa-regular', 'fa-solid');
         } else {
-            starIcon.classList.replace('fa-solid', 'fa-regular');
+            star.classList.replace('fa-solid', 'fa-regular');
         }
     });
 }
 
-// Initialize stars and attach click events
+// Initialize favorites on page load
 function initializeFavorites(type) {
-    const tableBody = document.querySelector(`#${type} tbody`);
-    if (!tableBody) {
-        console.error(`Table body for ${type} not found during initializeFavorites.`);
-        return; // Prevent execution if tableBody is not available
-    }
-
-    console.log(`Initializing favorites for ${type}`);
-    const rows = Array.from(tableBody.rows);
+    const table = document.querySelector(`#${type} tbody`);
+    const rows = Array.from(table.rows);
 
     rows.forEach(row => {
-        const starIcon = row.querySelector('.favorite-icon');
         const id = row.dataset.id;
+        const star = document.createElement('i');
+        star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
+        star.style.cursor = 'pointer';
 
         // Attach click event to toggle favorite
-        starIcon.addEventListener('click', () => toggleFavorite(type, id));
+        star.addEventListener('click', () => toggleFavorite(type, id));
+
+        // Append the star to the last column
+        const cell = document.createElement('td');
+        cell.appendChild(star);
+        row.appendChild(cell);
     });
 
-    updateFavorites(type); // Sort rows and update stars
+    updateFavoritesUI(type);
 }
 
-// Poll until table rows are ready, then initialize favorites
-function initializeFavoritesWhenReady(type) {
+// Initialize both tables
+document.addEventListener('DOMContentLoaded', () => {
+    // Poll until tables are ready
     const interval = setInterval(() => {
-        const tableBody = document.querySelector(`#${type} tbody`);
-        if (tableBody && tableBody.rows.length > 0) {
-            clearInterval(interval); // Stop polling once rows exist
-            console.log(`Initializing favorites for ${type}`);
-            initializeFavorites(type);
+        const playersTable = document.querySelector('#players tbody');
+        const lotsTable = document.querySelector('#lots tbody');
+
+        if (playersTable && lotsTable) {
+            clearInterval(interval);
+            initializeFavorites('players');
+            initializeFavorites('lots');
         }
     }, 100); // Check every 100ms
-}
-
-async function loadOnlinePlayers() {
-    try {
-        const playersContainer = document.getElementById('players');
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sim</th>
-                        <th>Age</th>
-                        <th>Location</th>
-                        <th>Favorite</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>`;
-        playersContainer.innerHTML = tableHtml;
-
-        // Simulate population of table rows
-        const tbody = playersContainer.querySelector('tbody');
-        tbody.innerHTML = `
-            <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>
-            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
-
-        console.log("Players table populated.");
-    } catch (error) {
-        console.error('Error loading online players:', error);
-    }
-}
-
-async function loadLots() {
-    try {
-        const lotsContainer = document.getElementById('lots');
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Sims Inside</th>
-                        <th>Lot Type</th>
-                        <th>Favorite</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>`;
-        lotsContainer.innerHTML = tableHtml;
-
-        // Simulate population of table rows
-        const tbody = lotsContainer.querySelector('tbody');
-        tbody.innerHTML = `
-            <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>
-            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
-
-        console.log("Lots table populated.");
-    } catch (error) {
-        console.error('Error loading lots:', error);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Page loaded. Loading tables...");
-
-    // Load tables (simulate asynchronous table rendering)
-    await loadOnlinePlayers();
-    await loadLots();
-
-    // Initialize favorites after confirming rows exist
-    initializeFavoritesWhenReady('players');
-    initializeFavoritesWhenReady('lots');
-
-    console.log("All tables loaded and favorites initialized.");
 });
 
         // JavaScript functions
