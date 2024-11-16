@@ -409,11 +409,11 @@ async function loadOnlinePlayers() {
             </table>`;
         playersContainer.innerHTML = tableHtml;
 
-        // Simulate row population for debugging
+        // Simulate population of table rows
         const tbody = playersContainer.querySelector('tbody');
         tbody.innerHTML = `
             <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td></tr>
-            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td></tr>`;
+            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td>`;
 
         console.log("Players table populated.");
         addFavoriteIcons('players'); // Call only after rows are added
@@ -439,11 +439,11 @@ async function loadLots() {
             </table>`;
         lotsContainer.innerHTML = tableHtml;
 
-        // Simulate row population for debugging
+        // Simulate population of table rows
         const tbody = lotsContainer.querySelector('tbody');
         tbody.innerHTML = `
             <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td></tr>
-            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`;
+            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`; 
 
         console.log("Lots table populated.");
         addFavoriteIcons('lots'); // Call only after rows are added
@@ -453,6 +453,7 @@ async function loadLots() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("Page loaded, starting table population...");
     await loadOnlinePlayers(); // Ensure players are loaded
     await loadLots(); // Ensure lots are loaded
 });
