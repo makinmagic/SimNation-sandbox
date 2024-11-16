@@ -336,13 +336,17 @@ function toggleFavorite(type, id, name) {
         star.classList.toggle('fa-regular');
     }
 
-    // Update the table to reflect bookmarks on the next refresh
+    // Reflect the update in the table on the next refresh
     updateTableWithFavorites(type);
 }
 
-// Display Sim or Lot details in the console with a bookmark option
+// Display details in the console with a bookmark option
 function displayFavoriteInConsole(type, id, name) {
     const consoleContent = document.getElementById('console-content');
+    if (!consoleContent) {
+        console.error("Console container not found.");
+        return;
+    }
     consoleContent.innerHTML = `
         <div style="text-align: center; font-size: 20px; font-weight: bold;">${name}</div>
         <i id="console-star" class="fa-regular fa-star" style="cursor: pointer;"></i>
@@ -354,16 +358,19 @@ function displayFavoriteInConsole(type, id, name) {
         star.classList.replace('fa-regular', 'fa-solid');
     }
 
-    // Add click event to toggle bookmark
+    // Attach the click event to toggle the bookmark
     star.addEventListener('click', () => toggleFavorite(type, id, name));
 }
 
-// Update the table to reflect bookmarks
+// Update the table to reflect bookmarks on refresh
 function updateTableWithFavorites(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
     const table = document.querySelector(`#${type} tbody`);
-    if (!table) return;
+    if (!table) {
+        console.error(`Table for ${type} not found.`);
+        return;
+    }
 
     const rows = Array.from(table.rows);
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
@@ -382,8 +389,9 @@ function updateTableWithFavorites(type) {
     otherRows.forEach(row => table.appendChild(row));
 }
 
-// Initialize dashboard to load bookmarks on refresh
+// Initialize the dashboard
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("Initializing dashboard...");
     updateTableWithFavorites('players');
     updateTableWithFavorites('lots');
 });
