@@ -1243,6 +1243,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 </script>
 
+
+<script>
+    // Update star icon based on favorite status
+    function updateFavoriteStar(type, id) {
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const star = document.getElementById(`${type}-star-${id}`);
+        if (favorites[type] && favorites[type][id]) {
+            star.classList.remove('fa-star-o');
+            star.classList.add('fa-star');
+        } else {
+            star.classList.remove('fa-star');
+            star.classList.add('fa-star-o');
+        }
+    }
+
+    // Toggle favorite status and update localStorage
+    async function toggleFavorite(type, id, name) {
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        if (!favorites[type]) favorites[type] = {};
+
+        if (favorites[type][id]) {
+            delete favorites[type][id]; // Remove from favorites
+        } else {
+            favorites[type][id] = name; // Add to favorites
+        }
+        localStorage.setItem('favorites', JSON.stringify(favorites));
+        updateFavoriteStar(type, id);
+    }
+
+    // Example function to ensure star icons render properly
+    function ensureStarIconsRender(type, id) {
+        const star = document.getElementById(`${type}-star-${id}`);
+        if (star) {
+            console.log(`Star icon for ${type} ${id} is visible and rendering.`);
+        } else {
+            console.warn(`Star icon for ${type} ${id} is missing or not rendering.`);
+        }
+    }
+</script>
+
 </head>
 <body>
     <div id="dark-mode-toggle" style="position: absolute; top: 20px; right: 20px; cursor: pointer;">
