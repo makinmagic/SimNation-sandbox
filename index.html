@@ -380,6 +380,18 @@ function initializeFavorites(type) {
     updateFavorites(type); // Sort rows and update stars
 }
 
+// Poll until table rows are ready, then initialize favorites
+function initializeFavoritesWhenReady(type) {
+    const interval = setInterval(() => {
+        const tableBody = document.querySelector(`#${type} tbody`);
+        if (tableBody && tableBody.rows.length > 0) {
+            clearInterval(interval); // Stop polling once rows exist
+            console.log(`Initializing favorites for ${type}`);
+            initializeFavorites(type);
+        }
+    }, 100); // Check every 100ms
+}
+
 async function loadOnlinePlayers() {
     try {
         const playersContainer = document.getElementById('players');
@@ -404,7 +416,6 @@ async function loadOnlinePlayers() {
             <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
 
         console.log("Players table populated.");
-        initializeFavorites('players'); // Call after rows are populated
     } catch (error) {
         console.error('Error loading online players:', error);
     }
@@ -434,7 +445,6 @@ async function loadLots() {
             <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td><td><i class="fa-regular fa-star favorite-icon" style="cursor: pointer;"></i></td></tr>`;
 
         console.log("Lots table populated.");
-        initializeFavorites('lots'); // Call after rows are populated
     } catch (error) {
         console.error('Error loading lots:', error);
     }
@@ -443,9 +453,13 @@ async function loadLots() {
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Page loaded. Loading tables...");
 
-    // Load tables and populate them
+    // Load tables (simulate asynchronous table rendering)
     await loadOnlinePlayers();
     await loadLots();
+
+    // Initialize favorites after confirming rows exist
+    initializeFavoritesWhenReady('players');
+    initializeFavoritesWhenReady('lots');
 
     console.log("All tables loaded and favorites initialized.");
 });
