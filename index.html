@@ -1144,54 +1144,68 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Sort items to bring favorites to the top
-    function sortFavorites(type, items) {
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        if (!favorites[type]) return items;
-
-        return items.sort((a, b) => {
-            const isFavoriteA = favorites[type][a.id || a.avatar_id] ? -1 : 1;
-            const isFavoriteB = favorites[type][b.id || b.avatar_id] ? -1 : 1;
-            return isFavoriteA - isFavoriteB;
-        });
-    }
-
     // Include favorite functionality in displayPlayerInfo
     async function displayPlayerInfo(avatarId) {
-        // (Fetch player data logic here)
+        const consoleContent = document.getElementById('console-content'); // Define consoleContent
+        consoleContent.innerHTML = ''; // Clear existing content
 
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const isFavorite = favorites.sims && favorites.sims[avatarId];
+        try {
+            // Fetch player data logic
+            const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch player details.');
 
-        consoleContent.innerHTML = `
-            <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
-                ${playerData.name}
-                <i id="sims-star-${avatarId}" class="fa fa-star-o" style="cursor: pointer;"
-                   onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}')"></i>
-            </div>
-            <!-- More content -->
-        `;
+            const playerData = await response.json();
 
-        updateFavoriteStar('sims', avatarId);
+            // Example player data display
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+            consoleContent.innerHTML = `
+                <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
+                    ${playerData.name}
+                    <i id="sims-star-${avatarId}" class="fa fa-star-o" style="cursor: pointer;"
+                       onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}')"></i>
+                </div>
+                <p><strong>Description:</strong> ${playerData.description || 'No description available.'}</p>
+                <p><strong>Age:</strong> ${Math.floor((Date.now() / 1000 - playerData.date) / 86400)} days</p>
+            `;
+
+            updateFavoriteStar('sims', avatarId);
+        } catch (error) {
+            console.error(error);
+            consoleContent.innerHTML = '<p>Error loading player details.</p>';
+        }
     }
 
     // Include favorite functionality in displayLotInfo
     async function displayLotInfo(lotId) {
-        // (Fetch lot data logic here)
+        const consoleContent = document.getElementById('console-content'); // Define consoleContent
+        consoleContent.innerHTML = ''; // Clear existing content
 
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const isFavorite = favorites.lots && favorites.lots[lotId];
+        try {
+            // Fetch lot data logic
+            const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch lot details.');
 
-        consoleContent.innerHTML = `
-            <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
-                ${lotData.name}
-                <i id="lots-star-${lotId}" class="fa fa-star-o" style="cursor: pointer;"
-                   onclick="toggleFavorite('lots', '${lotId}', '${lotData.name}')"></i>
-            </div>
-            <!-- More content -->
-        `;
+            const lotData = await response.json();
 
-        updateFavoriteStar('lots', lotId);
+            // Example lot data display
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+            consoleContent.innerHTML = `
+                <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
+                    ${lotData.name}
+                    <i id="lots-star-${lotId}" class="fa fa-star-o" style="cursor: pointer;"
+                       onclick="toggleFavorite('lots', '${lotId}', '${lotData.name}')"></i>
+                </div>
+                <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
+                <p><strong>Lot Type:</strong> ${lotData.type || 'Unknown'}</p>
+            `;
+
+            updateFavoriteStar('lots', lotId);
+        } catch (error) {
+            console.error(error);
+            consoleContent.innerHTML = '<p>Error loading lot details.</p>';
+        }
     }
 </script>
 
