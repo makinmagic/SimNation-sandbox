@@ -1167,7 +1167,7 @@ function updateFavorites(type) {
 }
 
 // Add favorite icons and listeners
-function addFavoriteIcons(type) {
+function (type) {
     const tableBody = document.querySelector(`#${type} tbody`);
     const rows = Array.from(tableBody.rows);
 
@@ -1192,8 +1192,8 @@ function addFavoriteIcons(type) {
 
 // Initialize favorites on page load
 document.addEventListener('DOMContentLoaded', () => {
-    addFavoriteIcons('players'); // For Sims Online
-    addFavoriteIcons('lots'); // For Active Lots
+    ('players'); // For Sims Online
+    ('lots'); // For Active Lots
 });
 
 function updateCountdown() {
