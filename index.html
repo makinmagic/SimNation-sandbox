@@ -339,23 +339,22 @@ function updateFavoritesUI(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
     const table = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(table.rows);
+    if (!table) {
+        console.error(`Table body for ${type} not found.`);
+        return;
+    }
 
-    // Sort rows: favorites first
+    const rows = Array.from(table.rows);
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
     const otherRows = rows.filter(row => !favorites.includes(row.dataset.id));
 
-    table.innerHTML = ''; // Clear the table
+    table.innerHTML = '';
     favoriteRows.forEach(row => table.appendChild(row));
     otherRows.forEach(row => table.appendChild(row));
 
-    // Update star icons
     rows.forEach(row => {
         const star = row.querySelector('.favorite-icon');
-        if (!star) {
-            console.warn(`Missing star icon in row. Skipping.`);
-            return;
-        }
+        if (!star) return;
         if (favorites.includes(row.dataset.id)) {
             star.classList.replace('fa-regular', 'fa-solid');
         } else {
@@ -364,11 +363,11 @@ function updateFavoritesUI(type) {
     });
 }
 
-// Initialize stars and attach click events
+// Initialize favorites for a specific table type
 function initializeFavorites(type) {
     const table = document.querySelector(`#${type} tbody`);
     if (!table) {
-        console.error(`Table body for ${type} not found during initializeFavorites.`);
+        console.error(`Table body for ${type} not found.`);
         return;
     }
 
@@ -379,7 +378,7 @@ function initializeFavorites(type) {
         const id = row.dataset.id;
         if (!id) {
             console.warn(`Row missing data-id for ${type}. Skipping.`);
-            return; // Skip rows without a unique identifier
+            return;
         }
 
         let star = row.querySelector('.favorite-icon');
@@ -387,17 +386,10 @@ function initializeFavorites(type) {
             star = document.createElement('i');
             star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
             star.style.cursor = 'pointer';
+            star.addEventListener('click', () => toggleFavorite(type, id));
 
-            // Attach click event
-            star.addEventListener('click', () => {
-                console.log(`Star clicked for ${type} ID: ${id}`);
-                toggleFavorite(type, id);
-            });
-
-            // Append the star to the last column
-            const cell = document.createElement('td');
+            const cell = row.insertCell(-1); // Add a new cell at the end
             cell.appendChild(star);
-            row.appendChild(cell);
         }
     });
 
@@ -406,7 +398,7 @@ function initializeFavorites(type) {
 
 // Wait for tables to be ready and initialize favorites
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Page loaded. Waiting for tables to render...");
+    console.log("Page loaded. Waiting for tables...");
 
     const interval = setInterval(() => {
         const playersTable = document.querySelector('#players tbody');
@@ -418,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeFavorites('players');
             initializeFavorites('lots');
         }
-    }, 100); // Check every 100ms
+    }, 100);
 });
 
         // JavaScript functions
