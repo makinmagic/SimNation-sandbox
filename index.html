@@ -123,8 +123,8 @@
 
 /* Snowflakes*/
 @keyframes snow-fall {
-    0% { transform: translateY(-10px); opacity: 1; }
-    100% { transform: translateY(100%); opacity: 0; } /* End within the container */
+    0% { transform: translateY(-20px); opacity: 1; } /* Start slightly below the top */
+    100% { transform: translateY(100%); opacity: 0; } /* End at the bottom of the container */
 }
 
 .snowflake {
@@ -729,7 +729,10 @@ async function displayPlayerInfo(avatarId) {
 function createSnowflakes() {
     const snowflakeCount = 50; // Number of snowflakes
     const snowflakeContainer = document.createElement('div');
-    snowflakeContainer.classList.add('snowflake-container'); // Add the container class
+    snowflakeContainer.classList.add('snowflake-container');
+
+    // Dynamically set the container height
+    snowflakeContainer.style.height = document.body.scrollHeight + 'px';
     document.body.appendChild(snowflakeContainer);
 
     for (let i = 0; i < snowflakeCount; i++) {
