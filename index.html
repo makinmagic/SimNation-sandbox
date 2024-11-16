@@ -334,18 +334,17 @@ function toggleFavorite(type, id) {
 function updateFavorites(type) {
     const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
     const tableBody = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(tableBody ? tableBody.rows : []);
+    if (!tableBody) return; // Avoid null reference errors
+    const rows = Array.from(tableBody.rows);
 
     // Separate favorites and non-favorites
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
     const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
 
     // Sort rows: favorites first
-    if (tableBody) {
-        tableBody.innerHTML = ''; // Clear the table
-        favoriteRows.forEach(row => tableBody.appendChild(row));
-        nonFavoriteRows.forEach(row => tableBody.appendChild(row));
-    }
+    tableBody.innerHTML = ''; // Clear the table
+    favoriteRows.forEach(row => tableBody.appendChild(row));
+    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
 
     // Update star icons
     rows.forEach(row => {
@@ -361,7 +360,10 @@ function updateFavorites(type) {
 
 function addFavoriteIcons(type) {
     const tableBody = document.querySelector(`#${type} tbody`);
-    if (!tableBody) return; // Avoid null reference errors
+    if (!tableBody) {
+        console.error(`Table body for ${type} not found`);
+        return; // Exit the function to prevent further errors
+    }
     const rows = Array.from(tableBody.rows);
 
     rows.forEach(row => {
@@ -384,49 +386,29 @@ function addFavoriteIcons(type) {
 }
 
 async function loadOnlinePlayers() {
-    // Your existing code to load online players.
-    // Modified to include the "Favorite" column dynamically.
-    const playersContainer = document.getElementById('players');
-    let tableHtml = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Sim</th>
-                    <th>Age</th>
-                    <th>Location</th>
-                    <th>Favorite</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added dynamically -->
-            </tbody>
-        </table>`;
+    try {
+        // Existing code to fetch and populate the players table...
 
-    playersContainer.innerHTML = tableHtml; // Populate table structure
-    addFavoriteIcons('players'); // Add favorite icons once table is built
+        playersContainer.innerHTML = tableHtml; // Populate table structure
+
+        // Call addFavoriteIcons AFTER the table is populated
+        addFavoriteIcons('players');
+    } catch (error) {
+        console.error('Error loading online players:', error);
+    }
 }
 
 async function loadLots() {
-    // Your existing code to load active lots.
-    // Modified to include the "Favorite" column dynamically.
-    const lotsContainer = document.getElementById('lots');
-    let tableHtml = `
-        <table>
-            <thead>
-                <tr>
-                    <th>Location</th>
-                    <th>Sims Inside</th>
-                    <th>Lot Type</th>
-                    <th>Favorite</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Rows will be added dynamically -->
-            </tbody>
-        </table>`;
+    try {
+        // Existing code to fetch and populate the lots table...
 
-    lotsContainer.innerHTML = tableHtml; // Populate table structure
-    addFavoriteIcons('lots'); // Add favorite icons once table is built
+        lotsContainer.innerHTML = tableHtml; // Populate table structure
+
+        // Call addFavoriteIcons AFTER the table is populated
+        addFavoriteIcons('lots');
+    } catch (error) {
+        console.error('Error loading lots:', error);
+    }
 }
 
         // JavaScript functions
