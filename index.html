@@ -393,69 +393,80 @@ function addFavoriteIcons(type) {
 }
 
 async function loadOnlinePlayers() {
-    try {
-        const playersContainer = document.getElementById('players');
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Sim</th>
-                        <th>Age</th>
-                        <th>Location</th>
-                        <th>Favorite</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>`;
-        playersContainer.innerHTML = tableHtml;
+    return new Promise(async (resolve, reject) => {
+        try {
+            const playersContainer = document.getElementById('players');
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sim</th>
+                            <th>Age</th>
+                            <th>Location</th>
+                            <th>Favorite</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>`;
+            playersContainer.innerHTML = tableHtml;
 
-        // Simulate population of table rows
-        const tbody = playersContainer.querySelector('tbody');
-        tbody.innerHTML = `
-            <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td></tr>
-            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td>`;
+            // Simulate population of table rows
+            const tbody = playersContainer.querySelector('tbody');
+            tbody.innerHTML = `
+                <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td></tr>
+                <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td>`;
 
-        console.log("Players table populated.");
-        addFavoriteIcons('players'); // Call only after rows are added
-    } catch (error) {
-        console.error('Error loading online players:', error);
-    }
+            console.log("Players table populated.");
+            addFavoriteIcons('players'); // Call only after rows are added
+            resolve(); // Resolve when done
+        } catch (error) {
+            console.error('Error loading online players:', error);
+            reject(error);
+        }
+    });
 }
 
 async function loadLots() {
-    try {
-        const lotsContainer = document.getElementById('lots');
-        let tableHtml = `
-            <table>
-                <thead>
-                    <tr>
-                        <th>Location</th>
-                        <th>Sims Inside</th>
-                        <th>Lot Type</th>
-                        <th>Favorite</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>`;
-        lotsContainer.innerHTML = tableHtml;
+    return new Promise(async (resolve, reject) => {
+        try {
+            const lotsContainer = document.getElementById('lots');
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Sims Inside</th>
+                            <th>Lot Type</th>
+                            <th>Favorite</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>`;
+            lotsContainer.innerHTML = tableHtml;
 
-        // Simulate population of table rows
-        const tbody = lotsContainer.querySelector('tbody');
-        tbody.innerHTML = `
-            <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td></tr>
-            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`; 
+            // Simulate population of table rows
+            const tbody = lotsContainer.querySelector('tbody');
+            tbody.innerHTML = `
+                <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td></tr>
+                <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`; 
 
-        console.log("Lots table populated.");
-        addFavoriteIcons('lots'); // Call only after rows are added
-    } catch (error) {
-        console.error('Error loading lots:', error);
-    }
+            console.log("Lots table populated.");
+            addFavoriteIcons('lots'); // Call only after rows are added
+            resolve(); // Resolve when done
+        } catch (error) {
+            console.error('Error loading lots:', error);
+            reject(error);
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("Page loaded, starting table population...");
-    await loadOnlinePlayers(); // Ensure players are loaded
-    await loadLots(); // Ensure lots are loaded
+
+    // Wait for both functions to complete
+    await Promise.all([loadOnlinePlayers(), loadLots()]);
+
+    console.log("All tables are fully populated. Ready to use.");
 });
 
         // JavaScript functions
