@@ -318,14 +318,15 @@ body.dark-mode #events-container a {
     <script>
 // Handle toggling of favorites
 function toggleFavorite(type, id) {
+    console.log(`Toggling favorite for ${type} ID: ${id}`);
     const key = `${type}Favorites`;
     let favorites = JSON.parse(localStorage.getItem(key)) || [];
 
     if (favorites.includes(id)) {
-        // Remove from favorites
+        console.log(`Removing ID: ${id} from ${type} favorites.`);
         favorites = favorites.filter(fav => fav !== id);
     } else {
-        // Add to favorites
+        console.log(`Adding ID: ${id} to ${type} favorites.`);
         favorites.push(id);
     }
 
@@ -359,19 +360,33 @@ function updateFavoritesUI(type) {
     });
 }
 
-// Initialize favorites on page load
+// Initialize stars and attach click events
 function initializeFavorites(type) {
     const table = document.querySelector(`#${type} tbody`);
+    if (!table) {
+        console.error(`Table body for ${type} not found during initializeFavorites.`);
+        return;
+    }
+
+    console.log(`Initializing favorites for ${type}`);
     const rows = Array.from(table.rows);
 
     rows.forEach(row => {
         const id = row.dataset.id;
+        if (!id) {
+            console.error(`Row missing data-id for ${type}. Skipping.`);
+            return;
+        }
+
         const star = document.createElement('i');
         star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
         star.style.cursor = 'pointer';
 
-        // Attach click event to toggle favorite
-        star.addEventListener('click', () => toggleFavorite(type, id));
+        // Attach click event
+        star.addEventListener('click', () => {
+            console.log(`Star clicked for ${type} ID: ${id}`);
+            toggleFavorite(type, id);
+        });
 
         // Append the star to the last column
         const cell = document.createElement('td');
@@ -382,15 +397,18 @@ function initializeFavorites(type) {
     updateFavoritesUI(type);
 }
 
-// Initialize both tables
+// Wait for tables to be ready and initialize favorites
 document.addEventListener('DOMContentLoaded', () => {
-    // Poll until tables are ready
+    console.log("Page loaded. Waiting for tables to render...");
+
+    // Poll until both tables are ready
     const interval = setInterval(() => {
         const playersTable = document.querySelector('#players tbody');
         const lotsTable = document.querySelector('#lots tbody');
 
         if (playersTable && lotsTable) {
             clearInterval(interval);
+            console.log("Tables detected. Initializing favorites...");
             initializeFavorites('players');
             initializeFavorites('lots');
         }
