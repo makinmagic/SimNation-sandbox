@@ -366,11 +366,11 @@ function updateFavorites(type) {
 function addFavoriteIcons(type) {
     const tableBody = document.querySelector(`#${type} tbody`);
     if (!tableBody) {
-        console.error(`Table body for ${type} not found at the time of addFavoriteIcons call.`);
-        return; // Prevent further execution if tableBody is null
+        console.error(`Table body for ${type} not found when addFavoriteIcons was called.`);
+        return; // Prevent execution if tableBody is not available
     }
 
-    console.log(`Adding favorite icons for ${type} table`);
+    console.log(`Adding favorite icons for ${type}`);
 
     const rows = Array.from(tableBody.rows);
     rows.forEach(row => {
@@ -382,7 +382,7 @@ function addFavoriteIcons(type) {
         // Add click event
         starIcon.addEventListener('click', () => toggleFavorite(type, id));
 
-        // Append to the row
+        // Append the star icon to the last column
         const td = document.createElement('td');
         td.appendChild(starIcon);
         row.appendChild(td);
@@ -394,11 +394,29 @@ function addFavoriteIcons(type) {
 
 async function loadOnlinePlayers() {
     try {
-        // Existing code to fetch and populate the players table...
-        playersContainer.innerHTML = tableHtml; // Populate the table structure
+        const playersContainer = document.getElementById('players');
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sim</th>
+                        <th>Age</th>
+                        <th>Location</th>
+                        <th>Favorite</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>`;
+        playersContainer.innerHTML = tableHtml;
 
-        console.log("Players table populated. Adding favorite icons...");
-        addFavoriteIcons('players'); // Call AFTER the table is fully populated
+        // Simulate row population for debugging
+        const tbody = playersContainer.querySelector('tbody');
+        tbody.innerHTML = `
+            <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td></tr>
+            <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td></tr>`;
+
+        console.log("Players table populated.");
+        addFavoriteIcons('players'); // Call only after rows are added
     } catch (error) {
         console.error('Error loading online players:', error);
     }
@@ -406,15 +424,38 @@ async function loadOnlinePlayers() {
 
 async function loadLots() {
     try {
-        // Existing code to fetch and populate the lots table...
-        lotsContainer.innerHTML = tableHtml; // Populate the table structure
+        const lotsContainer = document.getElementById('lots');
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>Location</th>
+                        <th>Sims Inside</th>
+                        <th>Lot Type</th>
+                        <th>Favorite</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>`;
+        lotsContainer.innerHTML = tableHtml;
 
-        console.log("Lots table populated. Adding favorite icons...");
-        addFavoriteIcons('lots'); // Call AFTER the table is fully populated
+        // Simulate row population for debugging
+        const tbody = lotsContainer.querySelector('tbody');
+        tbody.innerHTML = `
+            <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td></tr>
+            <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`;
+
+        console.log("Lots table populated.");
+        addFavoriteIcons('lots'); // Call only after rows are added
     } catch (error) {
         console.error('Error loading lots:', error);
     }
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadOnlinePlayers(); // Ensure players are loaded
+    await loadLots(); // Ensure lots are loaded
+});
 
         // JavaScript functions
         
