@@ -1117,66 +1117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     </script>
 
 <script>
-    // Toggle favorite status and update localStorage
-    async function toggleFavorite(type, id, name) {
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        if (!favorites[type]) favorites[type] = {};
-
-        if (favorites[type][id]) {
-            delete favorites[type][id]; // Remove from favorites
-        } else {
-            favorites[type][id] = name; // Add to favorites
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-        updateFavoriteStar(type, id);
-    }
-
-    // Update star icon based on favorite status
-    function updateFavoriteStar(type, id) {
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const star = document.getElementById(`${type}-star-${id}`);
-        if (favorites[type] && favorites[type][id]) {
-            star.classList.remove('fa-star-o');
-            star.classList.add('fa-star');
-        } else {
-            star.classList.remove('fa-star');
-            star.classList.add('fa-star-o');
-        }
-    }
-
-    // Include favorite functionality in displayPlayerInfo
-    async function displayPlayerInfo(avatarId) {
-        const consoleContent = document.getElementById('console-content'); // Define consoleContent
-        consoleContent.innerHTML = ''; // Clear existing content
-
-        try {
-            // Fetch player data logic
-            const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch player details.');
-
-            const playerData = await response.json();
-
-            // Example player data display
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-            consoleContent.innerHTML = `
-                <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
-                    ${playerData.name}
-                    <i id="sims-star-${avatarId}" class="fa fa-star-o" style="cursor: pointer;"
-                       onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}')"></i>
-                </div>
-                <p><strong>Description:</strong> ${playerData.description || 'No description available.'}</p>
-                <p><strong>Age:</strong> ${Math.floor((Date.now() / 1000 - playerData.date) / 86400)} days</p>
-            `;
-
-            updateFavoriteStar('sims', avatarId);
-        } catch (error) {
-            console.error(error);
-            consoleContent.innerHTML = '<p>Error loading player details.</p>';
-        }
-    }
-
-    // Include favorite functionality in displayLotInfo
     async function displayLotInfo(lotId) {
         const consoleContent = document.getElementById('console-content'); // Define consoleContent
         consoleContent.innerHTML = ''; // Clear existing content
@@ -1189,16 +1129,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const lotData = await response.json();
 
-            // Example lot data display
+            // Fetch owner's name using owner_id
+            const ownerNameUrl = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${lotData.owner_id}`;
+            const ownerResponse = await fetch(ownerNameUrl);
+            const ownerData = ownerResponse.ok ? await ownerResponse.json() : { name: 'Unknown' };
+
+            // Fetch roommate names
+            const roommatesWithoutOwner = lotData.roommates.filter(id => id !== lotData.owner_id);
+            const roommateNames = await Promise.all(
+                roommatesWithoutOwner.map(async (roommateId) => {
+                    const roommateUrl = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${roommateId}`;
+                    const roommateResponse = await fetch(roommateUrl);
+                    if (!roommateResponse.ok) {
+                        console.error(`Failed to fetch roommate with id ${roommateId}`);
+                        return 'Unknown';
+                    }
+                    const roommateData = await roommateResponse.json();
+                    return roommateData.name || 'Unknown';
+                })
+            );
+
+            // Find known Sims inside the lot from the Sims Online table
+            const playersContainer = document.getElementById('players');
+            const knownSims = Array.from(playersContainer.querySelectorAll('tr'))
+                .filter(row => {
+                    const locationCell = row.querySelector('.hidden:nth-child(4)');
+                    return locationCell && locationCell.textContent == lotId.toString();
+                })
+                .map(row => row.querySelector('td').textContent);
+
+            // Properly format the description with line breaks
+            const formattedDescription = (lotData.description || 'No description available.')
+                .replace(/(
+|
+|
+)/g, '<br>');
+
+            // Display all details in the console
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+            const isFavorite = favorites.lots && favorites.lots[lotId];
+
             consoleContent.innerHTML = `
-                <div style="background-color: #f1c75e; padding: 10px; text-align: center;">
+                <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
                     ${lotData.name}
-                    <i id="lots-star-${lotId}" class="fa fa-star-o" style="cursor: pointer;"
+                    <i id="lots-star-${lotId}" class="fa ${isFavorite ? 'fa-star' : 'fa-star-o'}" style="cursor: pointer;"
                        onclick="toggleFavorite('lots', '${lotId}', '${lotData.name}')"></i>
                 </div>
-                <p><strong>Description:</strong> ${lotData.description || 'No description available.'}</p>
-                <p><strong>Lot Type:</strong> ${lotData.type || 'Unknown'}</p>
+                <p><strong>Description:</strong></p>
+                <div class="description-container">${formattedDescription}</div>
+                <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
+                <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
+                <p><strong>Owner:</strong> ${ownerData.name || 'Unknown'}</p>
+                <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
+                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
+                <p><em>There may be sims inside with their location hidden.</em></p>
             `;
 
             updateFavoriteStar('lots', lotId);
