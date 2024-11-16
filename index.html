@@ -316,49 +316,49 @@ body.dark-mode #events-container a {
         
     </style>
     <script>
-// Handle toggling of favorites
+// Toggle bookmark for a Sim or Lot
 function toggleFavorite(type, id, name) {
     const key = `${type}Favorites`;
     let favorites = JSON.parse(localStorage.getItem(key)) || [];
 
     if (favorites.includes(id)) {
-        favorites = favorites.filter(fav => fav !== id);
+        favorites = favorites.filter(fav => fav !== id); // Remove from favorites
     } else {
-        favorites.push(id);
+        favorites.push(id); // Add to favorites
     }
 
     localStorage.setItem(key, JSON.stringify(favorites));
 
-    // Update console star
+    // Update the star in the console dynamically
     const star = document.getElementById('console-star');
     if (star) {
         star.classList.toggle('fa-solid');
         star.classList.toggle('fa-regular');
     }
 
-    // Update the relevant table with favorites
+    // Update the respective table with new favorites
     updateTableWithFavorites(type);
 }
 
-// Display favorite icon in the console
+// Display details in the console with a bookmark option
 function displayFavoriteInConsole(type, id, name) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
-        <div style="text-align: center; font-weight: bold; font-size: 20px;">${name}</div>
+        <div style="text-align: center; font-size: 20px; font-weight: bold;">${name}</div>
         <i id="console-star" class="fa-regular fa-star" style="cursor: pointer;"></i>
     `;
 
-    const star = document.getElementById('console-star');
     const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
+    const star = document.getElementById('console-star');
     if (favorites.includes(id)) {
         star.classList.replace('fa-regular', 'fa-solid');
     }
 
-    // Attach toggle favorite functionality to the star
+    // Add click event to toggle bookmark
     star.addEventListener('click', () => toggleFavorite(type, id, name));
 }
 
-// Update the table to reflect favorites
+// Update the table to reflect bookmarks on refresh or dynamically
 function updateTableWithFavorites(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
@@ -382,7 +382,7 @@ function updateTableWithFavorites(type) {
     otherRows.forEach(row => table.appendChild(row));
 }
 
-// Initialize the dashboard to load favorites on refresh
+// Initialize dashboard to load and sort bookmarks on refresh
 document.addEventListener('DOMContentLoaded', () => {
     updateTableWithFavorites('players');
     updateTableWithFavorites('lots');
