@@ -1122,6 +1122,29 @@ document.addEventListener('DOMContentLoaded', () => {
         consoleContent.innerHTML = ''; // Clear existing content
 
         try {
+            // Define mappings for admit modes and lot categories
+            const admitModeMapping = {
+                0: 'Admit All',
+                1: 'Admit List',
+                2: 'Ban List',
+                3: 'Ban All',
+                4: 'Admit All'
+            };
+
+            const categoryMapping = {
+                1: 'Money',
+                2: 'Money',
+                3: 'Romance',
+                4: 'Service',
+                5: 'Store',
+                6: 'Skills',
+                7: 'Welcome',
+                8: 'Games',
+                9: 'Entertainment',
+                10: 'Residential',
+                11: 'Community'
+            };
+
             // Fetch lot data logic
             const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
             const response = await fetch(url);
