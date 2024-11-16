@@ -317,100 +317,75 @@ body.dark-mode #events-container a {
     </style>
     <script>
 // Handle toggling of favorites
-function toggleFavorite(type, id) {
-    console.log(`Toggling favorite for ${type} ID: ${id}`);
+function toggleFavorite(type, id, name) {
     const key = `${type}Favorites`;
     let favorites = JSON.parse(localStorage.getItem(key)) || [];
 
     if (favorites.includes(id)) {
-        console.log(`Removing ID: ${id} from ${type} favorites.`);
         favorites = favorites.filter(fav => fav !== id);
     } else {
-        console.log(`Adding ID: ${id} to ${type} favorites.`);
         favorites.push(id);
     }
 
     localStorage.setItem(key, JSON.stringify(favorites));
-    updateFavoritesUI(type);
+
+    // Update console star
+    const star = document.getElementById('console-star');
+    if (star) {
+        star.classList.toggle('fa-solid');
+        star.classList.toggle('fa-regular');
+    }
+
+    // Update the relevant table with favorites
+    updateTableWithFavorites(type);
 }
 
-// Update the table UI based on favorites
-function updateFavoritesUI(type) {
+// Display favorite icon in the console
+function displayFavoriteInConsole(type, id, name) {
+    const consoleContent = document.getElementById('console-content');
+    consoleContent.innerHTML = `
+        <div style="text-align: center; font-weight: bold; font-size: 20px;">${name}</div>
+        <i id="console-star" class="fa-regular fa-star" style="cursor: pointer;"></i>
+    `;
+
+    const star = document.getElementById('console-star');
+    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
+    if (favorites.includes(id)) {
+        star.classList.replace('fa-regular', 'fa-solid');
+    }
+
+    // Attach toggle favorite functionality to the star
+    star.addEventListener('click', () => toggleFavorite(type, id, name));
+}
+
+// Update the table to reflect favorites
+function updateTableWithFavorites(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
     const table = document.querySelector(`#${type} tbody`);
-    if (!table) {
-        console.error(`Table body for ${type} not found.`);
-        return;
-    }
+    if (!table) return;
 
     const rows = Array.from(table.rows);
     const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
     const otherRows = rows.filter(row => !favorites.includes(row.dataset.id));
 
-    table.innerHTML = '';
-    favoriteRows.forEach(row => table.appendChild(row));
-    otherRows.forEach(row => table.appendChild(row));
-
-    rows.forEach(row => {
-        const star = row.querySelector('.favorite-icon');
-        if (!star) return;
-        if (favorites.includes(row.dataset.id)) {
-            star.classList.replace('fa-regular', 'fa-solid');
-        } else {
-            star.classList.replace('fa-solid', 'fa-regular');
-        }
-    });
-}
-
-// Initialize favorites for a specific table type
-function initializeFavorites(type) {
-    const table = document.querySelector(`#${type} tbody`);
-    if (!table) {
-        console.error(`Table body for ${type} not found.`);
-        return;
-    }
-
-    console.log(`Initializing favorites for ${type}`);
-    const rows = Array.from(table.rows);
-
-    rows.forEach(row => {
-        const id = row.dataset.id;
-        if (!id) {
-            console.warn(`Row missing data-id for ${type}. Skipping.`);
-            return;
-        }
-
-        let star = row.querySelector('.favorite-icon');
-        if (!star) {
-            star = document.createElement('i');
-            star.classList.add('fa-regular', 'fa-star', 'favorite-icon');
-            star.style.cursor = 'pointer';
-            star.addEventListener('click', () => toggleFavorite(type, id));
-
-            const cell = row.insertCell(-1); // Add a new cell at the end
+    table.innerHTML = ''; // Clear the table
+    favoriteRows.forEach(row => {
+        if (!row.querySelector('.favorite-icon')) {
+            const star = document.createElement('i');
+            star.classList.add('fa-solid', 'fa-star', 'favorite-icon');
+            const cell = row.insertCell(-1);
             cell.appendChild(star);
         }
+        table.appendChild(row);
     });
-
-    updateFavoritesUI(type);
+    otherRows.forEach(row => table.appendChild(row));
 }
 
-// Wait for tables to be ready and initialize favorites
+// Initialize the dashboard to load favorites on refresh
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("Page loaded. Waiting for tables...");
-
-    const interval = setInterval(() => {
-        const playersTable = document.querySelector('#players tbody');
-        const lotsTable = document.querySelector('#lots tbody');
-
-        if (playersTable && lotsTable) {
-            clearInterval(interval);
-            console.log("Tables detected. Initializing favorites...");
-            initializeFavorites('players');
-            initializeFavorites('lots');
-        }
-    }, 100);
+    updateTableWithFavorites('players');
+    updateTableWithFavorites('lots');
 });
 
         // JavaScript functions
