@@ -16,6 +16,7 @@
         color: #fff;
         margin: 0;
         padding: 20px;
+        overflow-x: hidden;
     }
 
     h1 {
@@ -123,7 +124,7 @@
 /* Snowflakes*/
 @keyframes snow-fall {
     0% { transform: translateY(-10px); opacity: 1; }
-    100% { transform: translateY(120vh); opacity: 0; }
+    100% { transform: translateY(100%); opacity: 0; } /* End within the container */
 }
 
 .snowflake {
@@ -313,162 +314,19 @@ body.dark-mode #events-container a {
 .mirrored {
     transform: scaleX(-1); 
 }
+
+.snowflake-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; /* Ensure it spans the full height of the body */
+    overflow: hidden; /* Contain snowflakes within this container */
+    pointer-events: none; /* Prevent interaction with snowflakes */
+}
         
     </style>
     <script>
-function toggleFavorite(type, id) {
-    const favoritesKey = `${type}Favorites`;
-    const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
-    const index = favorites.indexOf(id);
-
-    if (index === -1) {
-        favorites.push(id); // Add to favorites
-    } else {
-        favorites.splice(index, 1); // Remove from favorites
-    }
-
-    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
-    updateFavorites(type); // Update the UI
-}
-
-function updateFavorites(type) {
-    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
-    const tableBody = document.querySelector(`#${type} tbody`);
-    if (!tableBody) {
-        console.error(`Table body for ${type} not found in updateFavorites.`);
-        return; // Prevent execution if tableBody is null
-    }
-    console.log(`Updating favorites for ${type}`);
-
-    const rows = Array.from(tableBody.rows);
-
-    // Separate favorites and non-favorites
-    const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
-    const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
-
-    // Sort rows: favorites first
-    tableBody.innerHTML = ''; // Clear the table
-    favoriteRows.forEach(row => tableBody.appendChild(row));
-    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
-
-    // Update star icons
-    rows.forEach(row => {
-        const starIcon = row.querySelector('.favorite-icon');
-        const id = row.dataset.id;
-        if (favorites.includes(id)) {
-            starIcon.classList.replace('fa-regular', 'fa-solid');
-        } else {
-            starIcon.classList.replace('fa-solid', 'fa-regular');
-        }
-    });
-}
-
-function addFavoriteIcons(type) {
-    const tableBody = document.querySelector(`#${type} tbody`);
-    if (!tableBody) {
-        console.error(`Table body for ${type} not found when addFavoriteIcons was called.`);
-        return; // Prevent execution if tableBody is not available
-    }
-
-    console.log(`Adding favorite icons for ${type}`);
-
-    const rows = Array.from(tableBody.rows);
-    rows.forEach(row => {
-        const id = row.dataset.id; // Unique ID for Sim or Lot
-        const starIcon = document.createElement('i');
-        starIcon.classList.add('fa-regular', 'fa-star', 'favorite-icon');
-        starIcon.style.cursor = 'pointer';
-
-        // Add click event
-        starIcon.addEventListener('click', () => toggleFavorite(type, id));
-
-        // Append the star icon to the last column
-        const td = document.createElement('td');
-        td.appendChild(starIcon);
-        row.appendChild(td);
-    });
-
-    // Update favorites on initial load
-    updateFavorites(type);
-}
-
-async function loadOnlinePlayers() {
-    return new Promise((resolve, reject) => {
-        try {
-            const playersContainer = document.getElementById('players');
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Sim</th>
-                            <th>Age</th>
-                            <th>Location</th>
-                            <th>Favorite</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>`;
-            playersContainer.innerHTML = tableHtml;
-
-            // Simulate population of table rows
-            const tbody = playersContainer.querySelector('tbody');
-            tbody.innerHTML = `
-                <tr data-id="1"><td>Sim1</td><td>10 days</td><td>Location1</td></tr>
-                <tr data-id="2"><td>Sim2</td><td>20 days</td><td>Location2</td>`;
-
-            console.log("Players table populated.");
-            addFavoriteIcons('players'); // Call only after rows are added
-            resolve(); // Resolve the promise
-        } catch (error) {
-            console.error('Error loading online players:', error);
-            reject(error);
-        }
-    });
-}
-
-async function loadLots() {
-    return new Promise((resolve, reject) => {
-        try {
-            const lotsContainer = document.getElementById('lots');
-            let tableHtml = `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Location</th>
-                            <th>Sims Inside</th>
-                            <th>Lot Type</th>
-                            <th>Favorite</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>`;
-            lotsContainer.innerHTML = tableHtml;
-
-            // Simulate population of table rows
-            const tbody = lotsContainer.querySelector('tbody');
-            tbody.innerHTML = `
-                <tr data-id="101"><td>Lot1</td><td>5</td><td>Type1</td></tr>
-                <tr data-id="102"><td>Lot2</td><td>10</td><td>Type2</td>`; 
-
-            console.log("Lots table populated.");
-            addFavoriteIcons('lots'); // Call only after rows are added
-            resolve(); // Resolve the promise
-        } catch (error) {
-            console.error('Error loading lots:', error);
-            reject(error);
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log("Page loaded, starting table population...");
-
-    // Wait for both functions to complete
-    await Promise.all([loadOnlinePlayers(), loadLots()]);
-
-    console.log("All tables are fully populated. Ready to use.");
-});
-
         // JavaScript functions
         
         async function loadLotName(lotId) {
@@ -542,7 +400,6 @@ async function loadOnlinePlayers() {
                         <th>Age</th>
                         <th class="hidden">Location ID</th>
                         <th>Location</th>
-                        <th>Favorite</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -671,7 +528,6 @@ function filterLots(type) {
                         <th>Location</th>
                         <th>Sims Inside</th>
                         <th>Lot Type</th>
-                        <th>Favorite</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -872,7 +728,9 @@ async function displayPlayerInfo(avatarId) {
 
 function createSnowflakes() {
     const snowflakeCount = 50; // Number of snowflakes
-    const snowflakeContainer = document.createDocumentFragment();
+    const snowflakeContainer = document.createElement('div');
+    snowflakeContainer.classList.add('snowflake-container'); // Add the container class
+    document.body.appendChild(snowflakeContainer);
 
     for (let i = 0; i < snowflakeCount; i++) {
         const snowflake = document.createElement('div');
@@ -889,8 +747,6 @@ function createSnowflakes() {
         snowflake.style.height = size + 'px';
         snowflakeContainer.appendChild(snowflake);
     }
-
-    document.body.appendChild(snowflakeContainer);
 }
 
 // Toggle search input visibility
@@ -1183,78 +1039,6 @@ function addEventIconToLocation(locationName) {
         }
     });
 }
-
-// Utility function to toggle favorites
-function toggleFavorite(type, id) {
-    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
-    const index = favorites.indexOf(id);
-
-    if (index === -1) {
-        favorites.push(id); // Add to favorites
-    } else {
-        favorites.splice(index, 1); // Remove from favorites
-    }
-
-    localStorage.setItem(`${type}Favorites`, JSON.stringify(favorites));
-    updateFavorites(type); // Update UI
-}
-
-// Function to update table rows based on favorites
-function updateFavorites(type) {
-    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
-    const tableBody = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(tableBody.rows);
-
-    // Separate favorites and non-favorites
-    const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
-    const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
-
-    // Sort rows: favorites first
-    tableBody.innerHTML = ''; // Clear the table
-    favoriteRows.forEach(row => tableBody.appendChild(row));
-    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
-
-    // Update star icons
-    rows.forEach(row => {
-        const starIcon = row.querySelector('.favorite-icon');
-        const id = row.dataset.id;
-        if (favorites.includes(id)) {
-            starIcon.classList.replace('fa-regular', 'fa-solid');
-        } else {
-            starIcon.classList.replace('fa-solid', 'fa-regular');
-        }
-    });
-}
-
-// Add favorite icons and listeners
-function addFavoriteIcons(type) {
-    const tableBody = document.querySelector(`#${type} tbody`);
-    const rows = Array.from(tableBody.rows);
-
-    rows.forEach(row => {
-        const id = row.dataset.id; // Unique ID for Sim or Lot
-        const starIcon = document.createElement('i');
-        starIcon.classList.add('fa-regular', 'fa-star', 'favorite-icon');
-        starIcon.style.cursor = 'pointer';
-
-        // Add click event
-        starIcon.addEventListener('click', () => toggleFavorite(type, id));
-
-        // Append to the row
-        const td = document.createElement('td');
-        td.appendChild(starIcon);
-        row.appendChild(td);
-    });
-
-    // Update favorites on initial load
-    updateFavorites(type);
-}
-
-// Initialize favorites on page load
-document.addEventListener('DOMContentLoaded', () => {
-    addFavoriteIcons('players'); // For Sims Online
-    addFavoriteIcons('lots'); // For Active Lots
-});
 
 function updateCountdown() {
     const endTime = new Date("November 15, 2024 02:00:00 UTC").getTime();
