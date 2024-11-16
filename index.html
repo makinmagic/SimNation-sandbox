@@ -1142,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <script>
         // Add favorite toggle logic
-        function toggleFavorite(type, id, name) {
+        async function toggleFavorite(type, id, name) {
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
             if (!favorites[type]) favorites[type] = {};
 
@@ -1155,7 +1155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateFavoriteStar(type, id);
         }
 
-        function updateFavoriteStar(type, id) {
+        async function updateFavoriteStar(type, id) {
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
             const star = document.getElementById(`${type}-star-${id}`);
             if (favorites[type] && favorites[type][id]) {
