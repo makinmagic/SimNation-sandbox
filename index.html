@@ -316,6 +316,87 @@ body.dark-mode #events-container a {
         
     </style>
     <script>
+function toggleFavorite(type, id) {
+    const favoritesKey = `${type}Favorites`;
+    const favorites = JSON.parse(localStorage.getItem(favoritesKey)) || [];
+    const index = favorites.indexOf(id);
+
+    if (index === -1) {
+        favorites.push(id); // Add to favorites
+    } else {
+        favorites.splice(index, 1); // Remove from favorites
+    }
+
+    localStorage.setItem(favoritesKey, JSON.stringify(favorites));
+    updateFavorites(type); // Update the UI
+}
+
+function updateFavorites(type) {
+    const favorites = JSON.parse(localStorage.getItem(`${type}Favorites`)) || [];
+    const tableBody = document.querySelector(`#${type} tbody`);
+    const rows = Array.from(tableBody.rows);
+
+    // Separate favorites and non-favorites
+    const favoriteRows = rows.filter(row => favorites.includes(row.dataset.id));
+    const nonFavoriteRows = rows.filter(row => !favorites.includes(row.dataset.id));
+
+    // Sort rows: favorites first
+    tableBody.innerHTML = ''; // Clear the table
+    favoriteRows.forEach(row => tableBody.appendChild(row));
+    nonFavoriteRows.forEach(row => tableBody.appendChild(row));
+
+    // Update star icons
+    rows.forEach(row => {
+        const starIcon = row.querySelector('.favorite-icon');
+        const id = row.dataset.id;
+        if (favorites.includes(id)) {
+            starIcon.classList.replace('fa-regular', 'fa-solid');
+        } else {
+            starIcon.classList.replace('fa-solid', 'fa-regular');
+        }
+    });
+}
+
+function loadOnlinePlayers() {
+    // Your existing code to load online players.
+    // Modified to include the "Favorite" column dynamically.
+    // ...
+    // Example (inside your existing loop for generating table rows):
+    const isFavorited = JSON.parse(localStorage.getItem('playersFavorites') || '[]').includes(player.avatar_id);
+    tableHtml += `
+    <tr data-id="${player.avatar_id}">
+        <td>${player.name}</td>
+        <td>${player.age} days</td>
+        <td>${player.location}</td>
+        <td>
+            <i class="favorite-icon fa-${isFavorited ? 'solid' : 'regular'} fa-star" 
+               style="cursor: pointer;" 
+               onclick="toggleFavorite('players', '${player.avatar_id}')">
+            </i>
+        </td>
+    </tr>`;
+}
+
+function loadLots() {
+    // Your existing code to load active lots.
+    // Modified to include the "Favorite" column dynamically.
+    // ...
+    // Example (inside your existing loop for generating table rows):
+    const isFavorited = JSON.parse(localStorage.getItem('lotsFavorites') || '[]').includes(lot.id);
+    tableHtml += `
+    <tr data-id="${lot.id}">
+        <td>${lot.name}</td>
+        <td>${lot.count}</td>
+        <td>${lot.type}</td>
+        <td>
+            <i class="favorite-icon fa-${isFavorited ? 'solid' : 'regular'} fa-star" 
+               style="cursor: pointer;" 
+               onclick="toggleFavorite('lots', '${lot.id}')">
+            </i>
+        </td>
+    </tr>`;
+}
+
         // JavaScript functions
         
         async function loadLotName(lotId) {
