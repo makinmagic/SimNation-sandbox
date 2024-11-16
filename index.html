@@ -336,11 +336,11 @@ function toggleFavorite(type, id, name) {
         star.classList.toggle('fa-regular');
     }
 
-    // Update the respective table with new favorites
+    // Update the table to reflect bookmarks on the next refresh
     updateTableWithFavorites(type);
 }
 
-// Display details in the console with a bookmark option
+// Display Sim or Lot details in the console with a bookmark option
 function displayFavoriteInConsole(type, id, name) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = `
@@ -358,7 +358,7 @@ function displayFavoriteInConsole(type, id, name) {
     star.addEventListener('click', () => toggleFavorite(type, id, name));
 }
 
-// Update the table to reflect bookmarks on refresh or dynamically
+// Update the table to reflect bookmarks
 function updateTableWithFavorites(type) {
     const key = `${type}Favorites`;
     const favorites = JSON.parse(localStorage.getItem(key)) || [];
@@ -382,7 +382,7 @@ function updateTableWithFavorites(type) {
     otherRows.forEach(row => table.appendChild(row));
 }
 
-// Initialize dashboard to load and sort bookmarks on refresh
+// Initialize dashboard to load bookmarks on refresh
 document.addEventListener('DOMContentLoaded', () => {
     updateTableWithFavorites('players');
     updateTableWithFavorites('lots');
