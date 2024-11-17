@@ -447,18 +447,17 @@ async function loadOnlinePlayers() {
            tableHtml += `
     <tr data-avatar-id="${avatar.avatar_id}">
         <td>
-            ${avatar.name} 
             <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
                title="Click to toggle favorite" 
                data-favorite-id="${avatar.avatar_id}" 
                onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
+            ${avatar.name}
         </td>
         <td class="hidden">${avatar.avatar_id}</td>
         <td>${ageInDays} days</td>
         <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
         <td>${lotName}</td> <!-- This should be the visible Location name -->
     </tr>`;
-        });
 
         tableHtml += `
                 </tbody>
@@ -585,19 +584,17 @@ function filterLots(type) {
                 const lotType = categoryMapping[lotDetails.category] || 'Unknown';
 
                 tableHtml += `
-                    <tr data-lot-id="${lot.id}">
-                        <td>
-                            ${lot.name} 
-                            <i class="${lot.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                               title="Click to toggle favorite" 
-                               data-favorite-id="${lot.id}" 
-                               onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
-                        </td>
-                        <td>${lot.count}</td>
-                        <td>${lotType}</td>
-                    </tr>`;
-            }
-        });
+    <tr data-lot-id="${lot.id}">
+        <td>
+            <i class="${lot.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+               title="Click to toggle favorite" 
+               data-favorite-id="${lot.id}" 
+               onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
+            ${lot.name}
+        </td>
+        <td>${lot.count}</td>
+        <td>${lotType}</td>
+    </tr>`;
 
         tableHtml += `
                 </tbody>
