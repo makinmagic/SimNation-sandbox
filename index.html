@@ -798,7 +798,7 @@ async function searchSim(event) {
         const simName = event.target.value.trim();
         if (!simName) return;
 
-        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/name/${simName}`;
+        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${simName}`;
 
         try {
             const response = await fetch(url);
@@ -814,6 +814,19 @@ async function searchSim(event) {
             // Check for favorites in localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
             const isFavorite = favorites.sims && favorites.sims[playerData.avatar_id];
+
+            // Check if the player is online by searching in the Sims Online table
+            const playersContainer = document.getElementById('players');
+            const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
+                const firstCell = row.querySelector('td');
+                return firstCell && firstCell.textContent === playerData.name;
+            });
+
+            const isOnline = Boolean(onlineRow);
+            const onlineStatus = isOnline ? 'Yes' : 'No';
+            const playerLocation = isOnline
+                ? onlineRow.querySelector('td:nth-child(5)').textContent
+                : 'Offline';
 
             // Display all information in the Console
             const consoleContent = document.getElementById('console-content');
