@@ -393,14 +393,12 @@ async function loadOnlinePlayers() {
         const playersContainer = document.getElementById('players');
         playersContainer.innerHTML = ''; // Clear previous content
 
-        // Fetch active lots data and create a mapping
-        const lotMapping = await loadActiveLots();
-
-        // Get favorites from localStorage
         const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
         const favoriteSims = favorites.sims || {};
 
-        // Sort Sims: Favorites first, then alphabetically
+        // Fetch active lots data and create a mapping
+        const lotMapping = await loadActiveLots();
+
         const sortedAvatars = onlineData.avatars.sort((a, b) => {
             const isAFavorite = favoriteSims[a.avatar_id] ? 1 : 0;
             const isBFavorite = favoriteSims[b.avatar_id] ? 1 : 0;
@@ -432,32 +430,25 @@ async function loadOnlinePlayers() {
                 <tbody>`;
 
         // Process sorted online players
-        sortedAvatars.forEach((avatar, index) => {
-            const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
-            const playerDetails = playerDetailsArray[index]; // Get the corresponding player details
-            
-            // Calculate player age from Unix timestamp (avatar.date)
-            const creationDate = new Date(playerDetails.date * 1000); // Convert to milliseconds
-            const currentDate = new Date();
-            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
-
-            // Check if this Sim is a favorite
+        sortedAvatars.forEach((avatar) => {
             const isFavorite = favoriteSims[avatar.avatar_id];
+            const ageInDays = Math.floor((Date.now() - avatar.date * 1000) / (1000 * 60 * 60 * 24));
+            const lotName = 'Unknown'; // Adjust as necessary
 
-           tableHtml += `
-    <tr data-avatar-id="${avatar.avatar_id}">
-        <td>
-            <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-               title="Click to toggle favorite" 
-               data-favorite-id="${avatar.avatar_id}" 
-               onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
-            ${avatar.name}
-        </td>
-        <td class="hidden">${avatar.avatar_id}</td>
-        <td>${ageInDays} days</td>
-        <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
-        <td>${lotName}</td> <!-- This should be the visible Location name -->
-    </tr>`;
+            tableHtml += `
+                <tr data-avatar-id="${avatar.avatar_id}">
+                    <td>
+                        <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                           title="Click to toggle favorite" 
+                           data-favorite-id="${avatar.avatar_id}" 
+                           onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
+                        ${avatar.name}
+                    </td>
+                    <td class="hidden">${avatar.avatar_id}</td>
+                    <td>${ageInDays} days</td>
+                    <td class="hidden">${avatar.location}</td>
+                    <td>${lotName}</td>
+                </tr>`;
         });
 
         tableHtml += `
@@ -532,6 +523,10 @@ function filterLots(type) {
         const jsonData = await response.json();
 
         const activeLots = jsonData.activeLots;
+        
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const favoriteLots = favorites.lots || {};
+        
         const onlineCounts = jsonData.onlineCount;
         const lotMapping = {};
         for (let i = 0; i < jsonData.reservedLots.length; i++) {
@@ -541,26 +536,13 @@ function filterLots(type) {
         const lotsContainer = document.getElementById('lots');
         lotsContainer.innerHTML = ''; // Clear previous content
 
-        // Retrieve favorites from localStorage
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const favoriteLots = favorites.lots || {};
+        let lotsData = activeLots.map((lotID, index) => ({
+            id: lotID,
+            name: jsonData.names[index],
+            isFavorite: !!favoriteLots[lotID],
+        }));
 
-        let lotsData = activeLots.map((lotID, index) => {
-            return {
-                name: lotMapping[lotID] || lotID,
-                count: onlineCounts[index],
-                id: lotID,
-                isFavorite: !!favoriteLots[lotID] // Mark if the lot is a favorite
-            };
-        });
-
-        // Sort Lots: Favorites first, then by Sims Inside (descending)
-        lotsData.sort((a, b) => {
-            if (b.isFavorite !== a.isFavorite) {
-                return b.isFavorite - a.isFavorite; // Favorites come first
-            }
-            return b.count - a.count; // Then sort by Sims Inside
-        });
+        lotsData.sort((a, b) => b.isFavorite - a.isFavorite); // Favorites first
 
         const fetchLotDetailsPromises = lotsData.map(lot =>
             fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
@@ -579,24 +561,16 @@ function filterLots(type) {
                 </thead>
                 <tbody>`;
 
-        lotsData.forEach((lot, index) => {
-            if (lot.count > 0) {
-                const lotDetails = lotDetailsArray[index];
-                const lotType = categoryMapping[lotDetails.category] || 'Unknown';
-
-                tableHtml += `
-    <tr data-lot-id="${lot.id}">
-        <td>
-            <i class="${lot.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-               title="Click to toggle favorite" 
-               data-favorite-id="${lot.id}" 
-               onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
-            ${lot.name}
-        </td>
-        <td>${lot.count}</td>
-        <td>${lotType}</td>
-    </tr>`;
-            }
+        lotsData.forEach((lot) => {
+            tableHtml += `
+                <tr data-lot-id="${lot.id}">
+                    <td>
+                        <i class="${lot.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                           title="Click to toggle favorite" 
+                           onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
+                        ${lot.name}
+                    </td>
+                </tr>`;
         });
 
         tableHtml += `
@@ -631,6 +605,10 @@ function filterLots(type) {
 
         const data = await response.json(); 
         const lotData = data; 
+
+        // Get favorite status
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const isFavorite = favorites.lots && favorites.lots[lotId];
 
          // Mapping for admit modes
         const admitModeMapping = {
@@ -681,18 +659,14 @@ function filterLots(type) {
             })
             .map(row => row.querySelector('td').textContent); // Get the player's name
 
-        // Check for favorites in localStorage
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const isFavorite = favorites.lots && favorites.lots[lotId];
-
         // Display lot information in Console
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = `
             <div style="background-color: #f1c75e; color: black; padding: 10px; text-align: center; font-size: 20px;">
-                ${lotData.name}
                 <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
                    title="Click to toggle favorite" 
                    onclick="toggleFavorite('lots', '${lotId}', '${lotData.name}', event)"></i>
+                ${lotData.name}
             </div>
             <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
             <p><strong>Description:</strong></p>
@@ -711,9 +685,11 @@ function filterLots(type) {
 }
 
 async function displayPlayerInfo(avatarId) {
+
     // Remove placeholder text
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = ''; // Clear existing content
+    
     
     const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
 
@@ -724,6 +700,10 @@ async function displayPlayerInfo(avatarId) {
         }
 
         const playerData = await response.json(); 
+
+        // Get favorite status
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const isFavorite = favorites.sims && favorites.sims[avatarId];
 
         // Calculate player age from Unix timestamp
         const creationDate = new Date(playerData.date * 1000); // Convert to milliseconds
@@ -739,17 +719,13 @@ async function displayPlayerInfo(avatarId) {
         // Replace \r\n with <br> in description
         const formattedDescription = (playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
 
-        // Check for favorites in localStorage
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const isFavorite = favorites.sims && favorites.sims[avatarId];
-
         // Display all information in the Console
         consoleContent.innerHTML = `
             <div style="background-color: #f1c75e; color: black; padding: 10px; text-align: center; font-size: 20px;">
-                ${playerData.name}
                 <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
                    title="Click to toggle favorite" 
                    onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}', event)"></i>
+                ${playerData.name}
             </div>
             <p><strong>Description:</strong></p>
             <div class="description-container">${formattedDescription}</div>
@@ -832,7 +808,7 @@ async function searchSim(event) {
         const simName = event.target.value.trim();
         if (!simName) return;
 
-        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/name/${encodeURIComponent(simName)}`;
+        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${simName}`;
 
         try {
             const response = await fetch(url);
@@ -848,8 +824,8 @@ async function searchSim(event) {
             // Check if the player is online by searching in the Sims Online table
             const playersContainer = document.getElementById('players');
             const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
-                const idCell = row.querySelector('.hidden:nth-child(2)');
-                return idCell && idCell.textContent === playerData.avatar_id.toString();
+                const firstCell = row.querySelector('td');
+                return firstCell && firstCell.textContent === playerData.name;
             });
 
             const isOnline = Boolean(onlineRow);
@@ -858,18 +834,14 @@ async function searchSim(event) {
                 ? onlineRow.querySelector('td:nth-child(5)').textContent
                 : 'Offline';
 
-            // Check for favorites in localStorage
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-            const isFavorite = favorites.sims && favorites.sims[playerData.avatar_id];
-
             // Display all information in the Console
+            const isFavorite = favorites.sims && favorites.sims[playerData.avatar_id];
             const consoleContent = document.getElementById('console-content');
             consoleContent.innerHTML = `
-                <div style="background-color: #f1c75e; color: black; padding: 10px; text-align: center; font-size: 20px;">
+                <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
+                <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}"
+           onclick="toggleFavorite('sims', '${playerData.avatar_id}', '${playerData.name}', event)"></i>
                     ${playerData.name}
-                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                       title="Click to toggle favorite" 
-                       onclick="toggleFavorite('sims', '${playerData.avatar_id}', '${playerData.name}', event)"></i>
                 </div>
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${formattedDescription}</div>
@@ -889,7 +861,7 @@ async function searchLot(event) {
         const lotName = event.target.value.trim();
         if (!lotName) return;
 
-        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${encodeURIComponent(lotName)}`;
+        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${lotName}`;
 
         try {
             const response = await fetch(url);
@@ -897,31 +869,92 @@ async function searchLot(event) {
 
             const lotData = await response.json();
 
+            // Mapping for admit modes
+            const admitModeMapping = {
+                0: 'Admit All',
+                1: 'Admit List',
+                2: 'Ban List',
+                3: 'Ban All',
+                4: 'Admit All'
+            };
+
+            // Mapping for lot categories
+            const categoryMapping = {
+                1: 'Money',
+                2: 'Money',
+                3: 'Romance',
+                4: 'Service',
+                5: 'Store',
+                6: 'Skills',
+                7: 'Welcome',
+                8: 'Games',
+                9: 'Entertainment',
+                10: 'Residential',
+                11: 'Community'
+            };
+
+            // Format description and creation date
+            const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
+            const creationDate = new Date(lotData.created_date * 1000).toLocaleDateString();
+
             // Check if the lot is currently active by searching in the Active Lots table
             const lotsContainer = document.getElementById('lots');
             const isActive = Array.from(lotsContainer.querySelectorAll('tr')).some(row => {
-                const idCell = row.querySelector('td');
-                return idCell && idCell.textContent.trim() === lotData.name;
+                const firstCell = row.querySelector('td');
+                return firstCell && firstCell.textContent === lotData.name;
             });
 
             const activeStatus = isActive ? 'Yes' : 'No';
 
-            // Check for favorites in localStorage
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-            const isFavorite = favorites.lots && favorites.lots[lotData.location];
+            // Fetch owner's name using owner_id
+            const ownerResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`);
+            const ownerData = ownerResponse.ok ? await ownerResponse.json() : { name: 'Unknown' };
+            const ownerName = ownerData.name;
 
-            // Display lot information in the Console
+            // Fetch roommate names
+            const roommateNames = await Promise.all(
+                lotData.roommates
+                    .filter(id => id !== lotData.owner_id) // Exclude owner from roommates
+                    .map(async (roommateId) => {
+                        const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
+                        const roommateResponse = await fetch(roommateUrl);
+                        if (!roommateResponse.ok) {
+                            console.error(`Failed to fetch roommate with id ${roommateId}`);
+                            return 'Unknown';
+                        }
+                        const roommateData = await roommateResponse.json();
+                        return roommateData.name || 'Unknown';
+                    })
+            );
+
+            // Known Sims inside the lot from Sims Online table
+            const playersContainer = document.getElementById('players');
+            const knownSims = Array.from(playersContainer.querySelectorAll('tr'))
+                .filter(row => {
+                    const locationCell = row.querySelector('.hidden:nth-child(4)');
+                    return locationCell && locationCell.textContent == lotData.location;
+                })
+                .map(row => row.querySelector('td').textContent);
+
+            // Display lot information in Console
+            const isFavorite = favorites.lots && favorites.lots[lotData.id];
             const consoleContent = document.getElementById('console-content');
             consoleContent.innerHTML = `
-                <div style="background-color: #f1c75e; color: black; padding: 10px; text-align: center; font-size: 20px;">
+                <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
+                <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}"
+           onclick="toggleFavorite('lots', '${lotData.id}', '${lotData.name}', event)"></i>
                     ${lotData.name}
-                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                       title="Click to toggle favorite" 
-                       onclick="toggleFavorite('lots', '${lotData.location}', '${lotData.name}', event)"></i>
                 </div>
+                <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
                 <p><strong>Description:</strong></p>
-                <div class="description-container">${lotData.description || 'No description available.'}</div>
+                <div class="description-container">${formattedDescription}</div>
+                <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
+                <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
+                <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
+                <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
                 <p><strong>Currently Active:</strong> ${activeStatus}</p>
+                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
+                <p><em>There may be sims inside with their location hidden.</em></p>
             `;
         } catch (error) {
             console.error('Failed to fetch lot details:', error);
@@ -1055,75 +1088,25 @@ function addEventIconToLocation(locationName) {
 }
 
 function toggleFavorite(type, id, name, event) {
-    if (event) event.stopPropagation(); // Prevent parent row or container events from interfering
+    if (event) event.stopPropagation(); // Prevent triggering parent events
 
-    console.log(`toggleFavorite called with: type=${type}, id=${id}, name=${name}`);
-
-    // Retrieve current favorites from localStorage
     const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
     if (!favorites[type]) favorites[type] = {};
 
-    // Add or remove the favorite
     if (favorites[type][id]) {
-        console.log(`Removing from favorites: ${id}`);
         delete favorites[type][id]; // Remove from favorites
     } else {
-        console.log(`Adding to favorites: ${id}`);
         favorites[type][id] = name; // Add to favorites
     }
 
-    // Save the updated favorites back to localStorage
     localStorage.setItem('favorites', JSON.stringify(favorites));
-    console.log('Updated favorites:', favorites);
 
-    // Dynamically update the clicked star icon
-    const starIcon = event.target; // Use the event target to reference the clicked star
-    if (favorites[type][id]) {
-        starIcon.className = 'fa-solid fa-star'; // Change to filled star
-        console.log(`Star updated to filled for: ${id}`);
-    } else {
-        starIcon.className = 'fa-regular fa-star'; // Change to empty star
-        console.log(`Star updated to empty for: ${id}`);
-    }
-
-    // Update the star in the console if it exists
-    const consoleStar = document.querySelector(`#console-content .fa-star`);
-    if (consoleStar) {
-        consoleStar.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
-        console.log(`Console star updated for: ${id}`);
-    }
+    // Update the star icon dynamically
+    const starIcon = event.target;
+    starIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
 }
 
-// Function to add a favorite star
-function addFavoriteStar(type, id, name) {
-    // Check favorites from localStorage
-    const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-    const isFavorite = favorites[type] && favorites[type][id];
-
-    // Create the star icon element
-    const starIcon = document.createElement('i');
-    starIcon.className = isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star';
-    starIcon.style.cursor = 'pointer';
-    starIcon.style.marginLeft = '10px';
-    starIcon.title = 'Click to toggle favorite';
-
-    // Toggle favorite status on click
-    starIcon.addEventListener('click', () => {
-        if (!favorites[type]) favorites[type] = {};
-        if (favorites[type][id]) {
-            delete favorites[type][id]; // Remove from favorites
-            starIcon.className = 'fa-regular fa-star';
-        } else {
-            favorites[type][id] = name; // Add to favorites
-            starIcon.className = 'fa-solid fa-star';
-        }
-        localStorage.setItem('favorites', JSON.stringify(favorites));
-    });
-
-    return starIcon;
-}
-        
-function updateCountdown() {
+/* function updateCountdown() {
     const endTime = new Date("November 15, 2024 02:00:00 UTC").getTime();
     const now = new Date().getTime();
     const timeRemaining = endTime - now;
@@ -1141,13 +1124,13 @@ function updateCountdown() {
     }
   }
 
-const countdownInterval = setInterval(updateCountdown, 1000);
+const countdownInterval = setInterval(updateCountdown, 1000); */
 
 // Initialize the dashboard and set up periodic checks
 async function init() {
     createSnowflakes();
     tempoSim(); // Start simulation timing
- //   updateCountdown();
+   // updateCountdown();
     await loadOnlinePlayers(); // Load online players
     await loadLots(); // Load active lots
     fetchEvents(); // Load and display upcoming events
