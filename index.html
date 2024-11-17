@@ -620,7 +620,7 @@ function filterLots(type) {
 }
 
         async function displayLotInfo(lotId) {
-    // Use Railway proxy for fetching lot data
+    
     const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
 
     try {
@@ -715,7 +715,6 @@ async function displayPlayerInfo(avatarId) {
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = ''; // Clear existing content
     
-    // Use Railway proxy for fetching player data
     const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
 
     try {
@@ -1213,7 +1212,7 @@ const countdownInterval = setInterval(updateCountdown, 1000);
 async function init() {
     createSnowflakes();
     tempoSim(); // Start simulation timing
-    updateCountdown();
+ //   updateCountdown();
     await loadOnlinePlayers(); // Load online players
     await loadLots(); // Load active lots
     fetchEvents(); // Load and display upcoming events
@@ -1264,7 +1263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </a>
 </div>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-    <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div>
+ <!--   <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
 <div class="container">
