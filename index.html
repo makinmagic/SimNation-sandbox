@@ -377,6 +377,8 @@ body.dark-mode #events-container a {
 
 async function loadOnlinePlayers() {
     try {
+
+        // Set the Sims Online title to "Loading..." while data is being fetched
         const playersTitle = document.getElementById('players-title');
         if (playersTitle) {
             playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: Loading... <i class="fa-solid fa-hat-santa"></i>`;
@@ -391,11 +393,14 @@ async function loadOnlinePlayers() {
         const playersContainer = document.getElementById('players');
         playersContainer.innerHTML = ''; // Clear previous content
 
+        // Fetch active lots data and create a mapping
         const lotMapping = await loadActiveLots();
 
+        // Get favorites from localStorage
         const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
         const favoriteSims = favorites.sims || {};
 
+        // Sort Sims: Favorites first, then alphabetically
         const sortedAvatars = onlineData.avatars.sort((a, b) => {
             const isAFavorite = favoriteSims[a.avatar_id] ? 1 : 0;
             const isBFavorite = favoriteSims[b.avatar_id] ? 1 : 0;
@@ -405,10 +410,12 @@ async function loadOnlinePlayers() {
             return a.name.localeCompare(b.name); // Then sort alphabetically
         });
 
+        // Prepare fetch requests for all avatars in parallel
         const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
             fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
         );
 
+        // Wait for all player detail requests to complete
         const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
 
         let tableHtml = `
@@ -424,52 +431,59 @@ async function loadOnlinePlayers() {
                 </thead>
                 <tbody>`;
 
+        // Process sorted online players
         sortedAvatars.forEach((avatar, index) => {
-            const lotName = lotMapping[avatar.location] || 'Unknown';
-            const playerDetails = playerDetailsArray[index];
-            const creationDate = new Date(playerDetails.date * 1000);
+            const lotName = lotMapping[avatar.location] || 'Unknown'; // Get lot name
+            const playerDetails = playerDetailsArray[index]; // Get the corresponding player details
+            
+            // Calculate player age from Unix timestamp (avatar.date)
+            const creationDate = new Date(playerDetails.date * 1000); // Convert to milliseconds
             const currentDate = new Date();
-            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24));
+            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
 
+            // Check if this Sim is a favorite
             const isFavorite = favoriteSims[avatar.avatar_id];
 
-            tableHtml += `
-                <tr data-avatar-id="${avatar.avatar_id}">
-                    <td>
-                        <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                           title="Click to toggle favorite" 
-                           data-favorite-id="${avatar.avatar_id}" 
-                           onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
-                        ${avatar.name}
-                    </td>
-                    <td class="hidden">${avatar.avatar_id}</td>
-                    <td>${ageInDays} days</td>
-                    <td class="hidden">${avatar.location}</td>
-                    <td>${lotName}</td>
-                </tr>`;
+           tableHtml += `
+    <tr data-avatar-id="${avatar.avatar_id}">
+        <td>
+            <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+               title="Click to toggle favorite" 
+               data-favorite-id="${avatar.avatar_id}" 
+               onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
+            ${avatar.name}
+        </td>
+        <td class="hidden">${avatar.avatar_id}</td>
+        <td>${ageInDays} days</td>
+        <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
+        <td>${lotName}</td> <!-- This should be the visible Location name -->
+    </tr>`;
         });
 
         tableHtml += `
                 </tbody>
             </table>`;
 
-        playersContainer.innerHTML = tableHtml;
+        playersContainer.innerHTML = tableHtml; // Update the container with the table
 
+        // Add event listeners to each row in Sims Online table
         const playerRows = playersContainer.querySelectorAll('tr[data-avatar-id]');
         playerRows.forEach(row => {
             row.addEventListener('click', () => {
-                const avatarId = row.dataset.avatarId;
-                displayPlayerInfo(avatarId);
+                const avatarId = row.dataset.avatarId; // Get the avatar ID
+                displayPlayerInfo(avatarId); // Fetch and display player info
             });
         });
 
+        // Update the title with the online player count
         if (playersTitle) {
             playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-santa"></i>`;
         }
 
-    } catch (error) {
+} catch (error) {
         console.error('Failed to load online players:', error);
         document.getElementById('players').innerHTML = 'Error loading online players.';
+        // If there is an error, reset the title to show 0
         if (playersTitle) {
             playersTitle.innerHTML = `<i class="fa-solid fa-hat-wizard"></i> Sims Online: 0 <i class="fa-solid fa-hat-wizard"></i>`;
         }
@@ -582,6 +596,8 @@ function filterLots(type) {
         <td>${lot.count}</td>
         <td>${lotType}</td>
     </tr>`;
+            }
+        });
 
         tableHtml += `
                 </tbody>
