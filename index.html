@@ -407,6 +407,10 @@ async function loadOnlinePlayers() {
         // Wait for all player detail requests to complete
         const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
 
+        // Get favorites from localStorage
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const favoriteSims = favorites.sims || {};
+
         let tableHtml = `
             <table>
                 <thead>
@@ -430,9 +434,12 @@ async function loadOnlinePlayers() {
             const currentDate = new Date();
             const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Age in days
 
+            // Check if this Sim is a favorite
+            const isFavorite = favoriteSims[avatar.avatar_id];
+
             tableHtml += `
             <tr data-avatar-id="${avatar.avatar_id}">
-        <td>${avatar.name}</td>
+        <td>${avatar.name} ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited"></i>' : ''}</td>
         <td class="hidden">${avatar.avatar_id}</td>
         <td>${ageInDays} days</td>
         <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
@@ -537,6 +544,10 @@ function filterLots(type) {
 
         const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
 
+        // Retrieve favorites from localStorage
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const favoriteLots = favorites.lots || {};
+
         let tableHtml = `
             <table>
                 <thead>
@@ -553,9 +564,12 @@ function filterLots(type) {
                 const lotDetails = lotDetailsArray[index];
                 const lotType = categoryMapping[lotDetails.category] || 'Unknown';
 
+                // Check if this lot is a favorite
+                const isFavorite = favoriteLots[lot.id];
+
                 tableHtml += `
                     <tr data-lot-id="${lot.id}">
-                        <td>${lot.name}</td>
+                        <td>${lot.name} ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited"></i>' : ''}</td>
                         <td>${lot.count}</td>
                         <td>${lotType}</td>
                     </tr>`;
