@@ -1108,7 +1108,7 @@ function addEventIconToLocation(locationName) {
 }
 
 function toggleFavorite(type, id, name, event) {
-    if (event) event.stopPropagation(); // Prevent parent row or container events from interfering
+    if (event) event.stopPropagation(); // Prevent parent event propagation
 
     console.log(`toggleFavorite called with: type=${type}, id=${id}, name=${name}`);
 
@@ -1131,12 +1131,11 @@ function toggleFavorite(type, id, name, event) {
 
     // Dynamically update the star icon's appearance
     const starIcon = event.target; // Use the event target to reference the clicked star
-    if (favorites[type][id]) {
-        starIcon.className = 'fa-solid fa-star'; // Change to filled star
-        console.log(`Star updated to filled for: ${id}`);
+    if (starIcon) {
+        starIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star'; // Toggle class
+        console.log(`Star updated to ${favorites[type][id] ? 'filled' : 'empty'} for: ${id}`);
     } else {
-        starIcon.className = 'fa-regular fa-star'; // Change to empty star
-        console.log(`Star updated to empty for: ${id}`);
+        console.warn(`Star icon not found for: ${id}`);
     }
 }
 
