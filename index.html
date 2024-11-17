@@ -887,12 +887,52 @@ async function searchLot(event) {
                 11: 'Community'
             };
 
-            // Format description
+            // Format description and creation date
             const formattedDescription = (lotData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>');
+            const creationDate = new Date(lotData.created_date * 1000).toLocaleDateString();
 
             // Check for favorites in localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
             const isFavorite = favorites.lots && favorites.lots[lotData.location];
+
+            // Check if the lot is currently active by searching in the Active Lots table
+            const lotsContainer = document.getElementById('lots');
+            const isActive = Array.from(lotsContainer.querySelectorAll('tr')).some(row => {
+                const firstCell = row.querySelector('td');
+                return firstCell && firstCell.textContent === lotData.name;
+            });
+
+            const activeStatus = isActive ? 'Yes' : 'No';
+
+            // Fetch owner's name using owner_id
+            const ownerResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`);
+            const ownerData = ownerResponse.ok ? await ownerResponse.json() : { name: 'Unknown' };
+            const ownerName = ownerData.name;
+
+            // Fetch roommate names
+            const roommateNames = await Promise.all(
+                lotData.roommates
+                    .filter(id => id !== lotData.owner_id) // Exclude owner from roommates
+                    .map(async (roommateId) => {
+                        const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
+                        const roommateResponse = await fetch(roommateUrl);
+                        if (!roommateResponse.ok) {
+                            console.error(`Failed to fetch roommate with id ${roommateId}`);
+                            return 'Unknown';
+                        }
+                        const roommateData = await roommateResponse.json();
+                        return roommateData.name || 'Unknown';
+                    })
+            );
+
+            // Known Sims inside the lot from Sims Online table
+            const playersContainer = document.getElementById('players');
+            const knownSims = Array.from(playersContainer.querySelectorAll('tr'))
+                .filter(row => {
+                    const locationCell = row.querySelector('.hidden:nth-child(4)');
+                    return locationCell && locationCell.textContent == lotData.location;
+                })
+                .map(row => row.querySelector('td').textContent);
 
             // Display lot information in the Console
             const consoleContent = document.getElementById('console-content');
@@ -904,11 +944,16 @@ async function searchLot(event) {
                        title="Click to toggle favorite"
                        onclick="toggleFavorite('lots', '${lotData.location}', '${lotData.name}')"></i>
                 </div>
+                <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${formattedDescription}</div>
                 <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
                 <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
-                <p><strong>Currently Active:</strong> Yes</p>
+                <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
+                <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
+                <p><strong>Currently Active:</strong> ${activeStatus}</p>
+                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
+                <p><em>There may be sims inside with their location hidden.</em></p>
             `;
         } catch (error) {
             console.error('Failed to fetch lot details:', error);
