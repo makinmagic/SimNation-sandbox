@@ -1114,7 +1114,7 @@ function addEventIconToLocation(locationName) {
 }
 
 function toggleFavorite(type, id, name, event) {
-    if (event) event.stopPropagation(); // Prevent parent row or container events
+    if (event) event.stopPropagation(); // Prevent parent row or container events from interfering
 
     console.log(`toggleFavorite called with: type=${type}, id=${id}, name=${name}`);
 
@@ -1135,7 +1135,7 @@ function toggleFavorite(type, id, name, event) {
     localStorage.setItem('favorites', JSON.stringify(favorites));
     console.log('Updated favorites:', favorites);
 
-    // Dynamically update the star icon's appearance
+    // Dynamically update the clicked star icon
     const starIcon = event.target; // Use the event target to reference the clicked star
     if (favorites[type][id]) {
         starIcon.className = 'fa-solid fa-star'; // Change to filled star
@@ -1145,17 +1145,10 @@ function toggleFavorite(type, id, name, event) {
         console.log(`Star updated to empty for: ${id}`);
     }
 
-    // Update the table star for consistency
-    const tableStarIcon = document.querySelector(`[data-favorite-id="${id}"]`);
-    if (tableStarIcon) {
-        tableStarIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
-        console.log(`Table star updated for: ${id}`);
-    }
-
-    // Update the console star for consistency
-    const consoleStarIcon = document.querySelector(`#console-content .fa-star`);
-    if (consoleStarIcon) {
-        consoleStarIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    // Update the star in the console if it exists
+    const consoleStar = document.querySelector(`#console-content .fa-star`);
+    if (consoleStar) {
+        consoleStar.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
         console.log(`Console star updated for: ${id}`);
     }
 }
