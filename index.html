@@ -437,9 +437,15 @@ async function loadOnlinePlayers() {
             // Check if this Sim is a favorite
             const isFavorite = favoriteSims[avatar.avatar_id];
 
-            tableHtml += `
-            <tr data-avatar-id="${avatar.avatar_id}">
-        <td>${avatar.name} ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited"></i>' : ''}</td>
+           tableHtml += `
+    <tr data-avatar-id="${avatar.avatar_id}">
+        <td>
+            ${avatar.name} 
+            <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+               title="Click to toggle favorite" 
+               data-favorite-id="${avatar.avatar_id}" 
+               onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
+        </td>
         <td class="hidden">${avatar.avatar_id}</td>
         <td>${ageInDays} days</td>
         <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
@@ -559,22 +565,28 @@ function filterLots(type) {
                 </thead>
                 <tbody>`;
 
-        lotsData.forEach((lot, index) => {
-            if (lot.count > 0) {
-                const lotDetails = lotDetailsArray[index];
-                const lotType = categoryMapping[lotDetails.category] || 'Unknown';
+    lotsData.forEach((lot, index) => {
+    if (lot.count > 0) {
+        const lotDetails = lotDetailsArray[index];
+        const lotType = categoryMapping[lotDetails.category] || 'Unknown';
 
-                // Check if this lot is a favorite
-                const isFavorite = favoriteLots[lot.id];
+        // Check if this lot is a favorite
+        const isFavorite = favoriteLots[lot.id];
 
-                tableHtml += `
-                    <tr data-lot-id="${lot.id}">
-                        <td>${lot.name} ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited"></i>' : ''}</td>
-                        <td>${lot.count}</td>
-                        <td>${lotType}</td>
-                    </tr>`;
-            }
-        });
+        tableHtml += `
+            <tr data-lot-id="${lot.id}">
+                <td>
+                    ${lot.name} 
+                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                       title="Click to toggle favorite" 
+                       data-favorite-id="${lot.id}" 
+                       onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
+                </td>
+                <td>${lot.count}</td>
+                <td>${lotType}</td>
+            </tr>`;
+    }
+});
 
         tableHtml += `
                 </tbody>
@@ -1101,22 +1113,36 @@ function addEventIconToLocation(locationName) {
     });
 }
 
-function toggleFavorite(type, id, name) {
+function toggleFavorite(type, id, name, event) {
+    if (event) event.stopPropagation(); // Prevent parent row or container events from interfering
+
+    console.log(`toggleFavorite called with: type=${type}, id=${id}, name=${name}`);
+
+    // Retrieve current favorites from localStorage
     const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
     if (!favorites[type]) favorites[type] = {};
 
+    // Add or remove the favorite
     if (favorites[type][id]) {
+        console.log(`Removing from favorites: ${id}`);
         delete favorites[type][id]; // Remove from favorites
     } else {
+        console.log(`Adding to favorites: ${id}`);
         favorites[type][id] = name; // Add to favorites
     }
 
+    // Save the updated favorites back to localStorage
     localStorage.setItem('favorites', JSON.stringify(favorites));
+    console.log('Updated favorites:', favorites);
 
-    // Dynamically update the star icon in the console
-    const starIcon = document.querySelector(`.fa-star`);
-    if (starIcon) {
-        starIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    // Dynamically update the star icon's appearance
+    const starIcon = event.target; // Use the event target to reference the clicked star
+    if (favorites[type][id]) {
+        starIcon.className = 'fa-solid fa-star'; // Change to filled star
+        console.log(`Star updated to filled for: ${id}`);
+    } else {
+        starIcon.className = 'fa-regular fa-star'; // Change to empty star
+        console.log(`Star updated to empty for: ${id}`);
     }
 }
 
