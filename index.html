@@ -396,8 +396,19 @@ async function loadOnlinePlayers() {
         // Fetch active lots data and create a mapping
         const lotMapping = await loadActiveLots();
 
-        // Sort the avatars alphabetically by name
-        const sortedAvatars = onlineData.avatars.sort((a, b) => a.name.localeCompare(b.name));
+        // Get favorites from localStorage
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const favoriteSims = favorites.sims || {};
+
+        // Sort Sims: Favorites first, then alphabetically
+        const sortedAvatars = onlineData.avatars.sort((a, b) => {
+            const isAFavorite = favoriteSims[a.avatar_id] ? 1 : 0;
+            const isBFavorite = favoriteSims[b.avatar_id] ? 1 : 0;
+            if (isBFavorite !== isAFavorite) {
+                return isBFavorite - isAFavorite; // Favorites come first
+            }
+            return a.name.localeCompare(b.name); // Then sort alphabetically
+        });
 
         // Prepare fetch requests for all avatars in parallel
         const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
@@ -406,10 +417,6 @@ async function loadOnlinePlayers() {
 
         // Wait for all player detail requests to complete
         const playerDetailsArray = await Promise.all(fetchPlayerDetailsPromises);
-
-        // Get favorites from localStorage
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const favoriteSims = favorites.sims || {};
 
         let tableHtml = `
             <table>
@@ -534,25 +541,32 @@ function filterLots(type) {
         const lotsContainer = document.getElementById('lots');
         lotsContainer.innerHTML = ''; // Clear previous content
 
+        // Retrieve favorites from localStorage
+        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+        const favoriteLots = favorites.lots || {};
+
         let lotsData = activeLots.map((lotID, index) => {
             return {
                 name: lotMapping[lotID] || lotID,
                 count: onlineCounts[index],
-                id: lotID
+                id: lotID,
+                isFavorite: !!favoriteLots[lotID] // Mark if the lot is a favorite
             };
         });
 
-        lotsData.sort((a, b) => b.count - a.count);
+        // Sort Lots: Favorites first, then by Sims Inside (descending)
+        lotsData.sort((a, b) => {
+            if (b.isFavorite !== a.isFavorite) {
+                return b.isFavorite - a.isFavorite; // Favorites come first
+            }
+            return b.count - a.count; // Then sort by Sims Inside
+        });
 
         const fetchLotDetailsPromises = lotsData.map(lot =>
             fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
         );
 
         const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
-
-        // Retrieve favorites from localStorage
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-        const favoriteLots = favorites.lots || {};
 
         let tableHtml = `
             <table>
@@ -565,28 +579,25 @@ function filterLots(type) {
                 </thead>
                 <tbody>`;
 
-    lotsData.forEach((lot, index) => {
-    if (lot.count > 0) {
-        const lotDetails = lotDetailsArray[index];
-        const lotType = categoryMapping[lotDetails.category] || 'Unknown';
+        lotsData.forEach((lot, index) => {
+            if (lot.count > 0) {
+                const lotDetails = lotDetailsArray[index];
+                const lotType = categoryMapping[lotDetails.category] || 'Unknown';
 
-        // Check if this lot is a favorite
-        const isFavorite = favoriteLots[lot.id];
-
-        tableHtml += `
-            <tr data-lot-id="${lot.id}">
-                <td>
-                    ${lot.name} 
-                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                       title="Click to toggle favorite" 
-                       data-favorite-id="${lot.id}" 
-                       onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
-                </td>
-                <td>${lot.count}</td>
-                <td>${lotType}</td>
-            </tr>`;
-    }
-});
+                tableHtml += `
+                    <tr data-lot-id="${lot.id}">
+                        <td>
+                            ${lot.name} 
+                            <i class="${lot.isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                               title="Click to toggle favorite" 
+                               data-favorite-id="${lot.id}" 
+                               onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
+                        </td>
+                        <td>${lot.count}</td>
+                        <td>${lotType}</td>
+                    </tr>`;
+            }
+        });
 
         tableHtml += `
                 </tbody>
