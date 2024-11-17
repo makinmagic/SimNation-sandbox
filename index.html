@@ -857,10 +857,9 @@ async function searchSim(event) {
             consoleContent.innerHTML = `
                 <div style="background-color: #f1c75e; padding: 10px; text-align: center; font-size: 20px;">
                     ${playerData.name}
-                    <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-star" 
-                       style="cursor: pointer; margin-left: 10px;"
-                       title="Click to toggle favorite"
-                       onclick="toggleFavorite('sims', '${playerData.avatar_id}', '${playerData.name}')"></i>
+                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                       title="Click to toggle favorite" 
+                       onclick="toggleFavorite('sims', '${playerData.avatar_id}', '${playerData.name}', event)"></i>
                 </div>
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${formattedDescription}</div>
@@ -964,10 +963,9 @@ async function searchLot(event) {
             consoleContent.innerHTML = `
                 <div style="background-color: #f1c75e; padding: 10px; text-align: center; font-size: 20px;">
                     ${lotData.name}
-                    <i class="${isFavorite ? 'fa-solid' : 'fa-regular'} fa-star" 
-                       style="cursor: pointer; margin-left: 10px;"
-                       title="Click to toggle favorite"
-                       onclick="toggleFavorite('lots', '${lotData.location}', '${lotData.name}')"></i>
+                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+                       title="Click to toggle favorite" 
+                       onclick="toggleFavorite('lots', '${lotData.location}', '${lotData.name}', event)"></i>
                 </div>
                 <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" alt="${lotData.name}" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
                 <p><strong>Description:</strong></p>
