@@ -1114,7 +1114,7 @@ function addEventIconToLocation(locationName) {
 }
 
 function toggleFavorite(type, id, name, event) {
-    if (event) event.stopPropagation(); // Prevent parent row or container events from interfering
+    if (event) event.stopPropagation(); // Prevent parent row or container events
 
     console.log(`toggleFavorite called with: type=${type}, id=${id}, name=${name}`);
 
@@ -1143,6 +1143,20 @@ function toggleFavorite(type, id, name, event) {
     } else {
         starIcon.className = 'fa-regular fa-star'; // Change to empty star
         console.log(`Star updated to empty for: ${id}`);
+    }
+
+    // Update the table star for consistency
+    const tableStarIcon = document.querySelector(`[data-favorite-id="${id}"]`);
+    if (tableStarIcon) {
+        tableStarIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        console.log(`Table star updated for: ${id}`);
+    }
+
+    // Update the console star for consistency
+    const consoleStarIcon = document.querySelector(`#console-content .fa-star`);
+    if (consoleStarIcon) {
+        consoleStarIcon.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
+        console.log(`Console star updated for: ${id}`);
     }
 }
 
