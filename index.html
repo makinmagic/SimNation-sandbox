@@ -441,15 +441,12 @@ async function loadOnlinePlayers() {
     <tr data-avatar-id="${avatar.avatar_id}">
         <td>
             ${avatar.name} 
-            <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-               title="Click to toggle favorite" 
-               data-favorite-id="${avatar.avatar_id}" 
-               onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
+            ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited" data-favorite-id="' + avatar.avatar_id + '" onclick="toggleFavorite(\'sims\', \'' + avatar.avatar_id + '\', \'' + avatar.name + '\', event)"></i>' : ''}
         </td>
         <td class="hidden">${avatar.avatar_id}</td>
         <td>${ageInDays} days</td>
-        <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
-        <td>${lotName}</td> <!-- This should be the visible Location name -->
+        <td class="hidden">${avatar.location}</td>
+        <td>${lotName}</td>
     </tr>`;
         });
 
@@ -577,10 +574,7 @@ function filterLots(type) {
             <tr data-lot-id="${lot.id}">
                 <td>
                     ${lot.name} 
-                    <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
-                       title="Click to toggle favorite" 
-                       data-favorite-id="${lot.id}" 
-                       onclick="toggleFavorite('lots', '${lot.id}', '${lot.name}', event)"></i>
+                    ${isFavorite ? '<i class="fa-solid fa-star" title="Favorited" data-favorite-id="' + lot.id + '" onclick="toggleFavorite(\'lots\', \'' + lot.id + '\', \'' + lot.name + '\', event)"></i>' : ''}
                 </td>
                 <td>${lot.count}</td>
                 <td>${lotType}</td>
