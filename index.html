@@ -701,7 +701,7 @@ function filterLots(type) {
             <p><strong>Admit Mode:</strong> ${admitModeMapping[lotData.admit_mode] || 'Unknown'}</p>
             <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
-            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
+            <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.map(name => name.trim()).join(', ') : 'None'}</p>
             <p><em>There may be sims inside with their location hidden.</em></p>
         `;
     } catch (error) {
@@ -852,9 +852,9 @@ async function searchSim(event) {
             // Check if the player is online by searching in the Sims Online table
             const playersContainer = document.getElementById('players');
             const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
-                const firstCell = row.querySelector('td');
-                return firstCell && firstCell.textContent === playerData.name;
-            });
+    const firstCell = row.querySelector('td');
+    return firstCell && firstCell.textContent.trim().toLowerCase() === playerData.name.trim().toLowerCase();
+});
 
             const isOnline = Boolean(onlineRow);
             const onlineStatus = isOnline ? 'Yes' : 'No';
@@ -932,9 +932,9 @@ async function searchLot(event) {
             // Check if the lot is currently active by searching in the Active Lots table
             const lotsContainer = document.getElementById('lots');
             const isActive = Array.from(lotsContainer.querySelectorAll('tr')).some(row => {
-                const firstCell = row.querySelector('td');
-                return firstCell && firstCell.textContent === lotData.name;
-            });
+    const firstCell = row.querySelector('td');
+    return firstCell && firstCell.textContent.trim().toLowerCase() === lotData.name.trim().toLowerCase();
+});
 
             const activeStatus = isActive ? 'Yes' : 'No';
 
@@ -985,7 +985,7 @@ async function searchLot(event) {
                 <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
                 <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
                 <p><strong>Currently Active:</strong> ${activeStatus}</p>
-                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
+                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.map(name => name.trim()).join(', ') : 'None'}</p>
                 <p><em>There may be sims inside with their location hidden.</em></p>
             `;
         } catch (error) {
