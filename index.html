@@ -312,14 +312,13 @@ body.dark-mode {
     border-color: #888 !important;
 }
 
-#events-container, #sims-container a {
+#events-container a {
     color: #f1c75e;
     text-decoration: underline;
     font-weight: bold;
 }
 
-body.dark-mode #events-container,
-body.dark-mode #sims-container a {
+body.dark-mode #events-container a {
     color: #f1f1f1;
 }
 
@@ -768,7 +767,7 @@ async function displayPlayerInfo(avatarId) {
                    onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}', event)"></i>
             </div>
 	    <img src="${playerImage}" alt="Profile Picture" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
-            <p style="text-align: center; font-size: 14px; margin-top: 3px;">
+            <p style="text-align: center;">
                 <a href="https://forms.gle/sw6fbLx4iud8xGpc9" target="_blank" style="text-decoration: underline;">Submit/Change Profile Picture</a>
             </p>
             <p><strong>Description:</strong></p>
@@ -1289,44 +1288,37 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
    <!-- <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
-	
     <div id="main-container">
-    <div class="container">
-        <div id="sims-container" class="container">
+<div class="container">
             <div style="display: flex; align-items: center;">
-                <h3 id="players-title" style="flex-grow: 1; text-align: center;">
-                    <i class="fa-solid fa-hat-santa"></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i>
-                </h3>
-                <i class="fa-solid fa-search search-icon" onclick="toggleSearch('sim')" style="margin-left: 10px;"></i>
-                <input type="text" id="sim-search" placeholder="Search Sim..." autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
-            </div>
+    <h3 id="players-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-hat-santa"></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
+    <i class="fa-solid fa-search search-icon" onclick="toggleSearch('sim')" style="margin-left: 10px;"></i>
+    <input type="text" id="sim-search" placeholder="Search Sim..." autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
+</div>
             <div class="scrollable" id="players"></div>
         </div>
-    </div>
-    <div class="container">
-        <div style="display: flex; align-items: center;">
-            <h3 id="lots-title" style="flex-grow: 1; text-align: center;">
-                <i class="fa-solid fa-wreath"></i> Active Lots <i class="fa-solid fa-wreath"></i>
-            </h3>
-            <i class="fa-solid fa-search search-icon" onclick="toggleSearch('lot')"></i>
-            <input type="text" id="lot-search" placeholder="Search Lot..." autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchLot(event)">
-        </div>
-        <div id="lot-filter">
-            <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
-            <i class="fa-solid fa-hammer" title="Skills" onclick="filterLots('Skills')"></i>
-            <i class="fa-solid fa-dollar-sign" title="Money" onclick="filterLots('Money')"></i>
-            <i class="fa-solid fa-handshake" title="Welcome" onclick="filterLots('Welcome')"></i>
-            <i class="fa-solid fa-masks-theater" title="Entertainment" onclick="filterLots('Entertainment')"></i>
-            <i class="fa-solid fa-gift" title="Store" onclick="filterLots('Store')"></i>
-            <i class="fa-solid fa-heart" title="Romance" onclick="filterLots('Romance')"></i>
-            <i class="fa-solid fa-house-chimney" title="Residential" onclick="filterLots('Residential')"></i>
-            <i class="fa-solid fa-dice-three" title="Games" onclick="filterLots('Games')"></i>
-            <i class="fa-solid fa-building" title="Community" onclick="filterLots('Community')"></i>
-            <i class="fa-solid fa-arrow-rotate-left" title="Show All" onclick="filterLots('')"></i>
-        </div>
-        <div class="scrollable" id="lots"></div>
-    </div>
+        <div class="container">
+            <div style="display: flex; align-items: center;">
+    <h3 id="lots-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-wreath"></i> Active Lots <i class="fa-solid fa-wreath"></i></h3>
+    <i class="fa-solid fa-search search-icon" onclick="toggleSearch('lot')"></i>
+    <input type="text" id="lot-search" placeholder="Search Lot..." autocomplete="off" style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
 </div>
+            <div id="lot-filter">
+    <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
+    <i class="fa-solid fa-hammer" title="Skills" onclick="filterLots('Skills')"></i>
+    <i class="fa-solid fa-dollar-sign" title="Money" onclick="filterLots('Money')"></i>
+    <i class="fa-solid fa-handshake" title="Welcome" onclick="filterLots('Welcome')"></i>
+    <i class="fa-solid fa-masks-theater" title="Entertainment" onclick="filterLots('Entertainment')"></i>
+    <i class="fa-solid fa-gift" title="Store" onclick="filterLots('Store')"></i>
+    <i class="fa-solid fa-heart" title="Romance" onclick="filterLots('Romance')"></i>
+    <i class="fa-solid fa-house-chimney" title="Residential" onclick="filterLots('Residential')"></i>
+    <i class="fa-solid fa-dice-three" title="Games" onclick="filterLots('Games')"></i>
+    <i class="fa-solid fa-building" title="Community" onclick="filterLots('Community')"></i>
+    <i class="fa-solid fa-arrow-rotate-left" title="Show All" onclick="filterLots('')"></i>
+            </div>
+            <div class="scrollable" id="lots"></div>
+        </div>
+    </div>
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
     <div id="events-container" class="container">
