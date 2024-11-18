@@ -447,12 +447,12 @@ async function loadOnlinePlayers() {
             tableHtml += `
             <tr data-avatar-id="${avatar.avatar_id}">
         <td>
-		<i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
+            <i class="${isFavorite ? 'fa-solid fa-star' : 'fa-regular fa-star'}" 
                title="Click to toggle favorite" 
                data-favorite-id="${avatar.avatar_id}" 
                onclick="toggleFavorite('sims', '${avatar.avatar_id}', '${avatar.name}', event)"></i>
             ${avatar.name}
-		</td>
+        </td>
         <td class="hidden">${avatar.avatar_id}</td>
         <td>${ageInDays} days</td>
         <td class="hidden">${avatar.location}</td> <!-- This should be the Location ID (hidden) -->
@@ -681,7 +681,7 @@ function filterLots(type) {
             })
             .map(row => row.querySelector('td').textContent); // Get the player's name
 			
-		// Check for favorites in localStorage
+			// Check for favorites in localStorage
         const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
         const isFavorite = favorites.lots && favorites.lots[lotId];
 
@@ -711,11 +711,9 @@ function filterLots(type) {
 }
 
 async function displayPlayerInfo(avatarId) {
-
     // Remove placeholder text
     const consoleContent = document.getElementById('console-content');
     consoleContent.innerHTML = ''; // Clear existing content
-    
     
     const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
 
@@ -1190,7 +1188,7 @@ function addFavoriteStar(type, id, name) {
     return starIcon;
 }
 
-/* function updateCountdown() {
+function updateCountdown() {
     const endTime = new Date("November 15, 2024 02:00:00 UTC").getTime();
     const now = new Date().getTime();
     const timeRemaining = endTime - now;
@@ -1208,13 +1206,13 @@ function addFavoriteStar(type, id, name) {
     }
   }
 
-const countdownInterval = setInterval(updateCountdown, 1000); */
+const countdownInterval = setInterval(updateCountdown, 1000);
 
 // Initialize the dashboard and set up periodic checks
 async function init() {
     createSnowflakes();
     tempoSim(); // Start simulation timing
-    // updateCountdown();
+    updateCountdown();
     await loadOnlinePlayers(); // Load online players
     await loadLots(); // Load active lots
     fetchEvents(); // Load and display upcoming events
@@ -1265,7 +1263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </a>
 </div>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-    <!-- <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
+    <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div>
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
 <div class="container">
