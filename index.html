@@ -1148,11 +1148,17 @@ function toggleFavorite(type, id, name, event) {
         clickedStar.className = 'fa-regular fa-star'; // Mark as unfavorited
     }
 
-    // Update the star in the Console if it matches the current Console item
-    const consoleStar = document.querySelector(`#console-content .fa-star`);
+    // Isolate updates to the Console star
     const consoleContent = document.getElementById('console-content');
-    if (consoleStar && consoleContent.dataset.id === id && consoleContent.dataset.type === type) {
-        consoleStar.className = favorites[type][id] ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    if (consoleContent.dataset.id === id && consoleContent.dataset.type === type) {
+        const consoleStar = consoleContent.querySelector('.fa-star');
+        if (consoleStar) {
+            consoleStar.className = favorites[type][id]
+                ? 'fa-solid fa-star'
+                : 'fa-regular fa-star';
+        }
+    } else {
+        console.log(`Console star not affected because it does not match the clicked item (type: ${type}, id: ${id})`);
     }
 }
 
