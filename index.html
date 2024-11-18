@@ -549,7 +549,7 @@ function filterLots(type) {
             return {
                 name: lotMapping[lotID] || lotID,
                 count: onlineCounts[index],
-                id: lotID
+                id: lotID,
 				isFavorite: !!favoriteLots[lotID] // Mark if the lot is a favorite
             };
         });
