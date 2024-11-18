@@ -707,6 +707,18 @@ async function displayLotInfo(lotId) {
         consoleContent.innerHTML = 'Error loading lot details.';
     }
 }
+
+async function fetchPlayerImages() {
+    const playerImagesUrl = 'https://makinmagic.github.io/SimNation/player-images.json';
+    try {
+        const response = await fetch(playerImagesUrl);
+        if (!response.ok) throw new Error('Failed to fetch player images.');
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        return {}; // Return an empty object on error
+    }
+}
 	    
 async function displayPlayerInfo(avatarId) {
     // Remove placeholder text
@@ -714,6 +726,9 @@ async function displayPlayerInfo(avatarId) {
     consoleContent.innerHTML = ''; // Clear existing content
     consoleContent.dataset.id = avatarId; // Set the current Sim ID
     consoleContent.dataset.type = 'sims'; // Set the type to Sims
+
+	const playerImages = await fetchPlayerImages();
+    const playerImage = playerImages[avatarId] || 'https://makinmagic.github.io/SimNation/images/pfp-placeholder.png'; // Placeholder image if no profile picture
     
     const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
 
@@ -751,6 +766,10 @@ async function displayPlayerInfo(avatarId) {
                    title="Click to toggle favorite" 
                    onclick="toggleFavorite('sims', '${avatarId}', '${playerData.name}', event)"></i>
             </div>
+	    <img src="${playerImage}" alt="Profile Picture" style="width: 200px; height: 200px; border-radius: 8px; border: 3px solid #ffd700; display: block; margin: 10px auto; background: #f2f5f5;">
+            <p style="text-align: center; font-size: 12px;">
+                <a href="https://forms.gle/sw6fbLx4iud8xGpc9" target="_blank" style="text-decoration: underline; color: #FFD700;">Submit/Change Profile Picture</a>
+            </p>
             <p><strong>Description:</strong></p>
             <div class="description-container">${formattedDescription}</div>
             <p><strong>Age:</strong> ${ageInDays} days old</p>
@@ -1332,9 +1351,9 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     </div>
 </div>
-<div id="footer-note" style="text-align: center;">
-        Made with ❤️ for SimNation by Mr Teddy.<br>
-        <i class="fa-regular fa-star"></i> Click on a star to favourite a Sim or a Lot. This will make them show up at the top of the list when they're online!
+<div id="footer-note" style="text-align: center; margin-bottom: 0px; font-size: 16px;">
+        Made with ❤️ for SimNation by Mr Teddy<br><br>
+        <i class="fa-regular fa-star"></i> Click on the star next to a Sim or a Lot to favourite them. This will make them show up at the top of the list when they're online!
     </div>
 </body>
 </body>
