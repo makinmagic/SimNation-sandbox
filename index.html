@@ -722,7 +722,7 @@ async function displayLotInfo(lotId) {
 }
 
 async function fetchPlayerImages() {
-    const playerImagesUrl = 'https://makinmagic.github.io/SimNation/player-images.json';
+    const playerImagesUrl = 'https://makinmagic.github.io/SimNation/profile-pictures.json';
     try {
         const response = await fetch(playerImagesUrl);
         if (!response.ok) throw new Error('Failed to fetch player images.');
