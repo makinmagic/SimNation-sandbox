@@ -1236,8 +1236,8 @@ function addFavoriteStar(type, id, name) {
 }
 
 async function fetchMoneyObject() {
-	const cacheBuster = `?nocache=${new Date().getTime()}`;
-    const response = await fetch("https://makinmagic.github.io/SimNation/data/highest_paying_object.json");
+	const cacheBuster = `?t=${new Date().getTime()}`;
+    const response = await fetch(`https://makinmagic.github.io/SimNation/data/highest_paying_object.json${cacheBuster}`);
     const data = await response.json();
 
     const moneyObjectContainer = document.getElementById("money-object");
