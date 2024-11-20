@@ -1240,6 +1240,10 @@ async function fetchMoneyObject() {
     const data = await response.json();
 
     const moneyObjectContainer = document.getElementById("money-object");
+	if (!moneyObjectContainer) {
+        console.error("Error: Element with ID 'money-object' not found.");
+        return;
+    }
     const now = new Date();
     const utcNow = new Date(now.toISOString()); // Current time in UTC
     const today3amUTC = new Date(utcNow);
