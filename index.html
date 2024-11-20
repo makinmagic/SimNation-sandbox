@@ -1240,10 +1240,6 @@ async function fetchMoneyObject() {
     const data = await response.json();
 
     const moneyObjectContainer = document.getElementById("money-object");
-	if (!moneyObjectContainer) {
-        console.error("Error: Element with ID 'money-object' not found.");
-        return;
-    }
     const now = new Date();
     const utcNow = new Date(now.toISOString()); // Current time in UTC
     const today3amUTC = new Date(utcNow);
@@ -1251,12 +1247,12 @@ async function fetchMoneyObject() {
 
     const updatedAt = new Date(data.updated_at);
 
-// Logic to display or hide the money object
+    // Logic to display or hide the money object
     if (updatedAt >= today3amUTC) {
-        moneyObjectContainer.innerHTML = `Today's money obkect is: <strong>${data.highest_paying_object}</strong>! (Brought to you by The Piggy Bank)`;
+        moneyObjectContainer.innerHTML = `Today is: <strong>${data.highest_paying_object}</strong>! (Courtesy of The Piggy Bank!)`;
         moneyObjectContainer.style.display = "block";
     } else {
-        moneyObjectContainer.innerHTML = "Today's money object is being updated. Please check in-game for now!";
+        moneyObjectContainer.innerHTML = "Today's highest-paying object is being updated. Please check back later!";
         moneyObjectContainer.style.display = "block";
     }
 }
@@ -1337,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </a>
 </div>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-	<div id="money-object style="font-weight: bold;">Loading today's money object...</div>
+	<div id="money-object">Loading today's money object...</div>
    <!-- <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
