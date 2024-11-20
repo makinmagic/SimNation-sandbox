@@ -1249,10 +1249,10 @@ async function fetchMoneyObject() {
 
     // Logic to display or hide the money object
     if (updatedAt >= today3amUTC) {
-        moneyObjectContainer.innerHTML = `Today is: <strong>${data.highest_paying_object}</strong>! (Courtesy of The Piggy Bank!)`;
+        moneyObjectContainer.innerHTML = `Today's money object is: <strong>${data.highest_paying_object}</strong>! (Brought to you by The Piggy Bank)`;
         moneyObjectContainer.style.display = "block";
     } else {
-        moneyObjectContainer.innerHTML = "Today's highest-paying object is being updated. Please check back later!";
+        moneyObjectContainer.innerHTML = "Today's money object is being updated. Please check in-game for now!";
         moneyObjectContainer.style.display = "block";
     }
 }
@@ -1333,7 +1333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     </a>
 </div>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-	<div id="money-object">Loading today's money object...</div>
+	<div id="money-object" style="font-weight: bold;">Loading today's money object...</div>
    <!-- <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
