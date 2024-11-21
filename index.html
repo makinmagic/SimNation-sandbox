@@ -1248,21 +1248,22 @@ async function fetchMoneyObject() {
 
     const updatedAt = new Date(data.updated_at);
 
-// Logic to display or hide the money object
-if (updatedAt >= today3amUTC) {
-    let content;
+    // Logic to display or hide the money object
+    if (updatedAt >= today3amUTC) {
+        let content;
 
-    if (data.image_url) {
-        content = `Today's money object is: <strong>${data.highest_paying_object}</strong>! See all objects <a href="${data.image_url}" target="_blank">here</a>. (Brought to you by The Piggy Bank)`;
+        if (data.image_url) {
+            content = `Today's money object is: <strong>${data.highest_paying_object}</strong>! See all objects <a href="${data.image_url}" target="_blank">here</a>. (Brought to you by The Piggy Bank)`;
+        } else {
+            content = `Today's money object is: <strong>${data.highest_paying_object}</strong>! (Brought to you by The Piggy Bank)`;
+        }
+
+        moneyObjectContainer.innerHTML = content;
+        moneyObjectContainer.style.display = "block";
     } else {
-        content = `Today's money object is: <strong>${data.highest_paying_object}</strong>! (Brought to you by The Piggy Bank)`;
+        moneyObjectContainer.innerHTML = "Today's money object is being updated. Please check in-game for now!";
+        moneyObjectContainer.style.display = "block";
     }
-
-    moneyObjectContainer.innerHTML = content;
-    moneyObjectContainer.style.display = "block";
-} else {
-    moneyObjectContainer.innerHTML = "Today's money object is being updated. Please check in-game for now!";
-    moneyObjectContainer.style.display = "block";
 }
 	    
 /* function updateCountdown() {
