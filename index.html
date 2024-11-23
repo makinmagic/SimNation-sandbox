@@ -931,8 +931,8 @@ async function searchSim(event) {
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${(playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>')}</div>
                 <p><strong>Age:</strong> ${ageInDays} days old</p>
-                <p><strong>Location:</strong> ${playerData.location || 'Unknown'}</p>
-		<p><strong>Currently Online:</strong> ${onlineStatus}</p>
+                ${onlineStatus === 'Yes' ? `<p><strong>Location:</strong> ${playerData.location || 'Unknown'}</p>` : ''}
+    <p><strong>Currently Online:</strong> ${onlineStatus}</p>
             `;
         } catch (error) {
             console.error('Failed to fetch sim details:', error);
@@ -1025,7 +1025,7 @@ async function searchLot(event) {
                 })
                 .map(row => row.querySelector('td').textContent);
 
-            // Display lot information in Console
+                        // Display lot information in Console
             const consoleContent = document.getElementById('console-content');
             consoleContent.innerHTML = `
                 <div style="background-color: #f1c75e; padding: 10px; color: black; text-align: center; font-size: 20px;">
@@ -1042,8 +1042,10 @@ async function searchLot(event) {
                 <p><strong>Owner:</strong> ${ownerName || 'Unknown'}</p>
                 <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
                 <p><strong>Currently Active:</strong> ${activeStatus}</p>
-                <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.map(name => name.trim()).join(', ') : 'None'}</p>
-                <p><em>There may be sims inside with their location hidden.</em></p>
+                ${activeStatus === 'Yes' ? `
+        <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.map(name => name.trim()).join(', ') : 'None'}</p>
+        <p><em>There may be sims inside with their location hidden.</em></p>
+    ` : ''}
             `;
         } catch (error) {
             console.error('Failed to fetch lot details:', error);
