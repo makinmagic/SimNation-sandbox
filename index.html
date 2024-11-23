@@ -887,38 +887,36 @@ async function searchSim(event) {
             // Match the Sim name to the JSON file
             const playerImage = playerImages[playerData.name] || 'https://makinmagic.github.io/SimNation/images/pfp-placeholder.png';
 
-            // Debug
-            if (!playerImages[playerData.name]) {
-                console.warn(`Image not found for Sim: ${playerData.name}. Using placeholder.`);
-            } else {
-                console.log(`Image found for Sim: ${playerData.name}: ${playerImage}`);
-            }
+            // Debugging logs
+            console.log(`Image for ${playerData.name}: ${playerImage}`);
 
             // Calculate player age from Unix timestamp
-            const creationDate = new Date(playerData.date * 1000); // Convert to milliseconds
+            const creationDate = new Date(playerData.date * 1000);
             const currentDate = new Date();
-            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Calculate age in days
+            const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24));
 
-	// Check if the player is online by searching in the Sims Online table
-const playersContainer = document.getElementById('players');
-const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
-    const firstCell = row.querySelector('td'); // First column in the row
-    // Match trimmed and lowercased names for case-insensitive comparison
-    return firstCell && firstCell.textContent.trim().toLowerCase() === playerData.name.trim().toLowerCase();
-});
+            // Check if the player is online
+            const playersContainer = document.getElementById('players');
+            const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
+                const firstCell = row.querySelector('td');
+                return firstCell && firstCell.textContent.trim().toLowerCase() === playerData.name.trim().toLowerCase();
+            });
 
-const isOnline = Boolean(onlineRow);
-const onlineStatus = isOnline ? 'Yes' : 'No';
-const playerLocation = isOnline
-    ? onlineRow.querySelector('td:nth-child(5)')?.textContent.trim() || 'Unknown'
-    : 'Offline';
-console.log('Online Row:', onlineRow ? onlineRow.innerHTML : 'No row found');
-if (onlineRow) {
-    console.log('Location Cell:', onlineRow.querySelector('td:nth-child(5)')?.textContent || 'No location cell');
-}
-            // Check for favorites in localStorage
+            const isOnline = Boolean(onlineRow);
+            const playerLocation = isOnline
+                ? onlineRow.querySelector('td:nth-child(5)')?.textContent.trim() || 'Unknown'
+                : 'Offline';
+
+            console.log(`Player ${playerData.name} is ${isOnline ? 'online' : 'offline'}`);
+
+            // Check for favorites using name-to-ID mapping
+            const nameToIdMap = JSON.parse(localStorage.getItem('nameToIdMap')) || {};
+            const idFromName = nameToIdMap[simName] || playerData.avatar_id;
+            nameToIdMap[simName] = idFromName; // Update map if missing
+            localStorage.setItem('nameToIdMap', JSON.stringify(nameToIdMap));
+
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
-            const isFavorite = favorites.sims && favorites.sims[playerData.name];
+            const isFavorite = favorites.sims && favorites.sims[idFromName];
 
             // Display all information in the Console
             consoleContent.innerHTML = `
@@ -935,8 +933,8 @@ if (onlineRow) {
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${(playerData.description || 'No description available.').replace(/(\r\n|\n|\r)/g, '<br>')}</div>
                 <p><strong>Age:</strong> ${ageInDays} days old</p>
-                    ${onlineStatus === 'Yes' ? `<p><strong>Location:</strong> ${playerLocation}</p>` : ''}
-    <p><strong>Currently Online:</strong> ${onlineStatus}</p>
+                ${isOnline ? `<p><strong>Location:</strong> ${playerLocation}</p>` : ''}
+                <p><strong>Currently Online:</strong> ${isOnline ? 'Yes' : 'No'}</p>
             `;
         } catch (error) {
             console.error('Failed to fetch sim details:', error);
@@ -1187,9 +1185,19 @@ function toggleFavorite(type, id, name, event) {
 
     console.log(`toggleFavorite called for type: ${type}, id: ${id}, name: ${name}`);
 
-    // Retrieve current favorites from localStorage
+    // Retrieve current favorites and name-to-ID mapping from localStorage
     const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
+    const nameToIdMap = JSON.parse(localStorage.getItem('nameToIdMap')) || {};
+
+    // Ensure the type exists in the favorites object
     if (!favorites[type]) favorites[type] = {};
+
+    // Add name-to-ID mapping if it doesn't already exist
+    if (!nameToIdMap[name]) {
+        nameToIdMap[name] = id;
+        localStorage.setItem('nameToIdMap', JSON.stringify(nameToIdMap));
+        console.log(`Added name-to-ID mapping: ${name} -> ${id}`);
+    }
 
     // Add or remove the favorite
     if (favorites[type][id]) {
@@ -1211,7 +1219,7 @@ function toggleFavorite(type, id, name, event) {
     } else {
         clickedStar.className = 'fa-regular fa-star'; // Mark as unfavorited
     }
-
+}
     // Isolate updates to the Console star
     const consoleContent = document.getElementById('console-content');
     if (consoleContent.dataset.id === id && consoleContent.dataset.type === type) {
