@@ -900,17 +900,18 @@ async function searchSim(event) {
             const ageInDays = Math.floor((currentDate - creationDate) / (1000 * 60 * 60 * 24)); // Calculate age in days
 
 	// Check if the player is online by searching in the Sims Online table
-            const playersContainer = document.getElementById('players');
-            const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
-                const firstCell = row.querySelector('td');
-                return firstCell && firstCell.textContent === playerData.name;
-            });
+const playersContainer = document.getElementById('players');
+const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row => {
+    const firstCell = row.querySelector('td'); // First column in the row
+    // Match trimmed and lowercased names for case-insensitive comparison
+    return firstCell && firstCell.textContent.trim().toLowerCase() === playerData.name.trim().toLowerCase();
+});
 
-            const isOnline = Boolean(onlineRow);
-            const onlineStatus = isOnline ? 'Yes' : 'No';
-            const playerLocation = isOnline
-                ? onlineRow.querySelector('td:nth-child(5)').textContent
-                : 'Offline';
+const isOnline = Boolean(onlineRow);
+const onlineStatus = isOnline ? 'Yes' : 'No';
+const playerLocation = isOnline
+    ? onlineRow.querySelector('td:nth-child(5)').textContent.trim() // Get the Location column
+    : 'Offline';
 
             // Check for favorites in localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
