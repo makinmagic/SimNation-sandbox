@@ -910,9 +910,12 @@ const onlineRow = Array.from(playersContainer.querySelectorAll('tr')).find(row =
 const isOnline = Boolean(onlineRow);
 const onlineStatus = isOnline ? 'Yes' : 'No';
 const playerLocation = isOnline
-    ? onlineRow.querySelector('td:nth-child(5)').textContent.trim() // Get the Location column
+    ? onlineRow.querySelector('td:nth-child(5)')?.textContent.trim() || 'Unknown'
     : 'Offline';
-
+console.log('Online Row:', onlineRow ? onlineRow.innerHTML : 'No row found');
+if (onlineRow) {
+    console.log('Location Cell:', onlineRow.querySelector('td:nth-child(5)')?.textContent || 'No location cell');
+}
             // Check for favorites in localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
             const isFavorite = favorites.sims && favorites.sims[playerData.name];
