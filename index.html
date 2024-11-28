@@ -436,14 +436,29 @@ async function loadOnlinePlayers() {
         let tableHtml = `
             <table>
                 <thead>
-                    <tr>
-                        <th>Sim</th>
-                        <th class="hidden">ID</th>
-                        <th>Age</th>
-                        <th class="hidden">Location ID</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
+    <tr>
+        <th>
+            Sim 
+            <i class="fa-solid fa-arrow-up-arrow-down" 
+               style="cursor: pointer;" 
+               onclick="sortTable(0, 'text')"></i>
+        </th>
+        <th class="hidden">ID</th>
+        <th>
+            Age 
+            <i class="fa-solid fa-arrow-up-arrow-down" 
+               style="cursor: pointer;" 
+               onclick="sortTable(2, 'number')"></i>
+        </th>
+        <th class="hidden">Location ID</th>
+        <th>
+            Location 
+            <i class="fa-solid fa-arrow-up-arrow-down" 
+               style="cursor: pointer;" 
+               onclick="sortTable(4, 'text')"></i>
+        </th>
+    </tr>
+</thead>
                 <tbody>`;
 
         // Process sorted online players
@@ -1294,6 +1309,30 @@ if (updatedAt >= today3amUTC) {
     moneyObjectContainer.innerHTML = "Today's money object is being updated. Please check in-game for now!";
     moneyObjectContainer.style.display = "block";
 }
+}
+
+function sortTable(columnIndex, type) {
+  const table = document.querySelector('#players table');
+  const rows = Array.from(table.tBodies[0].rows);
+
+  const header = table.tHead.rows[0].cells[columnIndex];
+  const isAscending = header.dataset.sortOrder !== 'asc';
+  header.dataset.sortOrder = isAscending ? 'asc' : 'desc';
+
+  rows.sort((rowA, rowB) => {
+    const cellA = rowA.cells[columnIndex].textContent.trim();
+    const cellB = rowB.cells[columnIndex].textContent.trim();
+
+    if (type === 'number') {
+      return isAscending ? cellA - cellB : cellB - cellA;
+    } else {
+      return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+    }
+  });
+
+  // Re-append rows in sorted order
+  const tbody = table.tBodies[0];
+  rows.forEach(row => tbody.appendChild(row));
 }
 	    
 /* function updateCountdown() {
