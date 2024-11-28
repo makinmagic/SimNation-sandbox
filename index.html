@@ -437,12 +437,11 @@ async function loadOnlinePlayers() {
             <table>
                 <thead>
     <tr>
-        <th>
-            Sim 
-            <i class="fa-solid fa-arrow-up-arrow-down" 
-               style="cursor: pointer;" 
-               onclick="sortTable(0, 'text')"></i>
-        </th>
+	<the>
+    	Sim
+    	<i class="fa-solid fa-arrow-up-arrow-down" style="cursor: pointer;" onclick="sortTable(0, 'text')"></i>
+    	<i class="fa-solid fa-star" style="cursor: pointer;" onclick="sortByFavorites()"></i>
+	</th>
         <th class="hidden">ID</th>
         <th>
             Age 
@@ -1338,6 +1337,23 @@ function sortTable(columnIndex, type) {
   const tbody = table.tBodies[0];
   rows.forEach(row => tbody.appendChild(row));
 }
+
+function sortByFavorites() {
+  const table = document.querySelector('#players table');
+  const rows = Array.from(table.tBodies[0].rows);
+
+  // Sort by favorite status
+  rows.sort((rowA, rowB) => {
+    const isAFavorite = rowA.querySelector('.fa-solid.fa-star') ? 1 : 0;
+    const isBFavorite = rowB.querySelector('.fa-solid.fa-star') ? 1 : 0;
+
+    return isBFavorite - isAFavorite; // Favorites first
+  });
+
+  // Re-append rows in sorted order
+  const tbody = table.tBodies[0];
+  rows.forEach(row => tbody.appendChild(row));
+}
 	    
 /* function updateCountdown() {
     const endTime = new Date("November 15, 2024 02:00:00 UTC").getTime();
@@ -1423,7 +1439,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; align-items: center;">
     <h3 id="players-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-hat-santa"></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('sim')" style="margin-left: 10px;"></i>
-    <input type="text" id="sim-search" placeholder="Search Sim..." autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
+    <input type="text" id="sim-search" placeholder="Search any Sim" autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
 </div>
             <div class="scrollable" id="players"></div>
         </div>
@@ -1431,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div style="display: flex; align-items: center;">
     <h3 id="lots-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-wreath"></i> Active Lots <i class="fa-solid fa-wreath"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('lot')"></i>
-    <input type="text" id="lot-search" placeholder="Search Lot..." autocomplete="off" style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
+    <input type="text" id="lot-search" placeholder="Search any Lot" autocomplete="off" style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
 </div>
             <div id="lot-filter">
     <i class="fa-solid fa-mug-hot" title="Service" onclick="filterLots('Service')"></i>
