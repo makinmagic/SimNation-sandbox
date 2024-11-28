@@ -1320,8 +1320,13 @@ function sortTable(columnIndex, type) {
   header.dataset.sortOrder = isAscending ? 'asc' : 'desc';
 
   rows.sort((rowA, rowB) => {
-    const cellA = rowA.cells[columnIndex].textContent.trim();
-    const cellB = rowB.cells[columnIndex].textContent.trim();
+    let cellA = rowA.cells[columnIndex].textContent.trim();
+    let cellB = rowB.cells[columnIndex].textContent.trim();
+
+    if (type === 'number') {
+      cellA = parseInt(cellA.replace(/[^0-9]/g, ''), 10); // Extract the number
+      cellB = parseInt(cellB.replace(/[^0-9]/g, ''), 10); // Extract the number
+    }
 
     if (type === 'number') {
       return isAscending ? cellA - cellB : cellB - cellA;
@@ -1330,7 +1335,6 @@ function sortTable(columnIndex, type) {
     }
   });
 
-  // Re-append rows in sorted order
   const tbody = table.tBodies[0];
   rows.forEach(row => tbody.appendChild(row));
 }
