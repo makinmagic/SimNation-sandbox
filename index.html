@@ -419,7 +419,7 @@ async function loadOnlinePlayers() {
         // Set the Sims Online title to "Loading..." while data is being fetched
         const playersTitle = document.getElementById('players-title');
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: Loading... <i class="fa-solid fa-hat-santa"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-champagne-glasses"></i> Sims Online: Loading... <i class="fa-solid fa-champagne-glasses"></i>`;
         }
         
         const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
@@ -529,7 +529,7 @@ async function loadOnlinePlayers() {
 
         // Update the title with the online player count
         if (playersTitle) {
-            playersTitle.innerHTML = `<i class="fa-solid fa-hat-santa"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-hat-santa"></i>`;
+            playersTitle.innerHTML = `<i class="fa-solid fa-champagne-glasses"></i> Sims Online: ${onlineData.avatars_online_count} <i class="fa-solid fa-champagne-glasses"></i>`;
         }
 
 } catch (error) {
@@ -1508,7 +1508,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div id="main-container">
 <div class="container">
             <div style="display: flex; align-items: center;">
-    <h3 id="players-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-hat-santa"></i> Sims Online: 0 <i class="fa-solid fa-hat-santa"></i></h3>
+    <h3 id="players-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-champagne-glasses"></i> Sims Online: 0 <i class="fa-solid fa-champagne-glasses"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('sim')" style="margin-left: 10px;"></i>
     <input type="text" id="sim-search" placeholder="Search any Sim" autocomplete="off" style="display: none; margin-left: 10px;" onkeyup="searchSim(event)">
 </div>
@@ -1516,7 +1516,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="container">
             <div style="display: flex; align-items: center;">
-    <h3 id="lots-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-wreath"></i> Active Lots <i class="fa-solid fa-wreath"></i></h3>
+    <h3 id="lots-title" style="flex-grow: 1; text-align: center;"><i class="fa-solid fa-party-horn"></i> Active Lots <i class="fa-solid fa-party-horn"></i></h3>
     <i class="fa-solid fa-search search-icon" onclick="toggleSearch('lot')"></i>
     <input type="text" id="lot-search" placeholder="Search any Lot" autocomplete="off" style="display:none; margin-left: 10px;" onkeyup="searchLot(event)">
 </div>
@@ -1539,7 +1539,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <div id="bottom-container" style="display: flex; justify-content: space-between; gap: 1%;">
     <div id="events-container" class="container">
-    <h3 style="margin-bottom: 10px; margin-top: 20px;"><i class="fa-solid fa-gifts"></i> Upcoming Events <i class="fa-solid fa-gifts"></i></h3>
+    <h3 style="margin-bottom: 10px; margin-top: 20px;"><i class="fa-solid fa-calendar-days"></i> Upcoming Events <i class="fa-solid fa-calendar-days"></i></h3>
     <div style="text-align: center; margin-top: 5px; margin-bottom: 10px;">
             <a href="https://forms.gle/LgcNWCMhwdFu8w2T9" target="_blank" style="text-decoration: underline; font-weight: bold;">
                 Click here to add your event!
@@ -1561,7 +1561,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
     </div>
     <div id="console-container" class="container">
-        <h3><i class="fa-solid fa-snowflake"></i> Console <i class="fa-solid fa-snowflake"></i></h3>
+        <h3><i class="fa-solid fa-globe"></i> Console <i class="fa-solid fa-globe"></i></h3>
         <div id="console-content">
             <p style="text-align: center; color: #black;">Select or search for a Sim or Lot to see more information, or click on an Event to view details.</p>
             <!-- Content for Console will go here -->
