@@ -383,20 +383,19 @@ body.dark-mode #console-content a {
 .firework-launch {
     position: absolute;
     width: 4px;
-    height: 15px;
+    height: 10px;
     background-color: #FFFFFF;
     animation: launch 0.5s linear forwards;
-    opacity: 1;
 }
 
 /* Launch Animation */
 @keyframes launch {
     0% {
-        transform: translateY(100vh); /* Start from bottom of the viewport */
+        transform: translateY(100vh);
         opacity: 1;
     }
     100% {
-        transform: translateY(0); /* Move to the explosion point */
+        transform: translateY(0);
         opacity: 0;
     }
 }
@@ -1474,42 +1473,12 @@ function createFireworkWithLaunch() {
     // Set a random horizontal position
     const launchPosition = Math.random() * 100 + 'vw';
     fireworkLaunch.style.left = launchPosition;
-    fireworkLaunch.style.top = '100vh'; // Start from the bottom
     document.body.appendChild(fireworkLaunch);
 
-    // Trigger the explosion at the top of the launch
+    // Remove launch element after animation
     setTimeout(() => {
-        fireworkLaunch.remove(); // Remove the launch element
-        const fireworkContainer = document.createElement('div');
-        fireworkContainer.style.position = 'absolute';
-        fireworkContainer.style.left = launchPosition;
-        fireworkContainer.style.top = '50vh';
-        document.body.appendChild(fireworkContainer);
-
-        // Add particles to the explosion
-        const particleCount = 20;
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('firework-particle');
-
-            const angle = (i / particleCount) * 360;
-            const distance = Math.random() * 100 + 50;
-            const x = Math.cos((angle * Math.PI) / 180) * distance + 'px';
-            const y = Math.sin((angle * Math.PI) / 180) * distance + 'px';
-
-            particle.style.setProperty('--x', x);
-            particle.style.setProperty('--y', y);
-
-            const colors = ['#FFD700', '#FF4500', '#7FFF00', '#00BFFF', '#FF69B4'];
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-            fireworkContainer.appendChild(particle);
-        }
-
-        // Remove the firework container after animation
-        setTimeout(() => {
-            fireworkContainer.remove();
-        }, 2000);
+        fireworkLaunch.remove();
+        createFirework(); // Trigger explosion at the same position
     }, 500); // Match the duration of the launch animation
 }
 
@@ -1517,7 +1486,7 @@ function createFireworkWithLaunch() {
 function launchFireworksWithLaunch() {
     setInterval(() => {
         createFireworkWithLaunch();
-    }, 1000); // Launch a firework every second
+    }, 1000);
 }
 
 // Initialize the dashboard and set up periodic checks
