@@ -378,27 +378,6 @@ body.dark-mode #console-content a {
         opacity: 0;
     }
 }
-
-/* Firework Launch */
-.firework-launch {
-    position: absolute;
-    width: 4px;
-    height: 10px;
-    background-color: #FFFFFF;
-    animation: launch 0.5s linear forwards;
-}
-
-/* Launch Animation */
-@keyframes launch {
-    0% {
-        transform: translateY(100vh);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 0;
-    }
-}
         
     </style>
     <script>
@@ -1446,7 +1425,7 @@ function createFirework() {
         particle.style.setProperty('--x', x);
         particle.style.setProperty('--y', y);
 
-        const colors = ['#FFD700', '#FF4500', '#7FFF00', '#00BFFF', '#FF69B4'];
+        const colors = ['#806C00', '#BFA100', '#FFD700', '#FFE140', '#FFEB80'];
         particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
 
         // Append particle to the container
@@ -1466,33 +1445,10 @@ function launchFireworks() {
     }, 1000); // Launch a firework every second
 }
 
-function createFireworkWithLaunch() {
-    const fireworkLaunch = document.createElement('div');
-    fireworkLaunch.classList.add('firework-launch');
-
-    // Set a random horizontal position
-    const launchPosition = Math.random() * 100 + 'vw';
-    fireworkLaunch.style.left = launchPosition;
-    document.body.appendChild(fireworkLaunch);
-
-    // Remove launch element after animation
-    setTimeout(() => {
-        fireworkLaunch.remove();
-        createFirework(); // Trigger explosion at the same position
-    }, 500); // Match the duration of the launch animation
-}
-
-// Continuously Create Fireworks with Launch
-function launchFireworksWithLaunch() {
-    setInterval(() => {
-        createFireworkWithLaunch();
-    }, 1000);
-}
-
 // Initialize the dashboard and set up periodic checks
 async function init() {
     // createSnowflakes();
-	launchFireworksWithLaunch();
+	launchFireworks();
     tempoSim(); // Start simulation timing
 fetchMoneyObject(); // Display the money object
     // updateCountdown();
