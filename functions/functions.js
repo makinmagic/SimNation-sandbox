@@ -1,12 +1,12 @@
 async function loadLotName(lotId) {
             if (lotId === 0) return 'Unknown'; // Return 'Unknown' for lot ID 0
-            const lotData = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+            const lotData = await fetch('https://simnationserver.com:9009/userapi/city/1/city.json');
             return lotData ? lotData.name : 'N/A'; // Return the lot name if valid
         }
 
         async function loadActiveLots() {
     try {
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+        const response = await fetch('https://simnationserver.com:9009/userapi/city/1/city.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -37,7 +37,7 @@ async function loadOnlinePlayers() {
             playersTitle.innerHTML = `<span class="sims-online-icon"></span> Sims Online: Loading... <span class="sims-online-icon"></span>`;
         }
         
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/online');
+        const response = await fetch('https://simnationserver.com:9009/userapi/avatars/online');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -65,7 +65,7 @@ async function loadOnlinePlayers() {
 
         // Prepare fetch requests for all avatars in parallel
         const fetchPlayerDetailsPromises = sortedAvatars.map(avatar =>
-            fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
+            fetch(`https://simnationserver.com:9009/userapi/avatars/${avatar.avatar_id}`).then(response => response.json())
         );
 
         // Wait for all player detail requests to complete
@@ -195,7 +195,7 @@ function filterLots(type) {
         
         async function loadLots() {
     try {
-        const response = await fetch('https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/city/1/city.json');
+        const response = await fetch('https://simnationserver.com:9009/userapi/city/1/city.json');
         const jsonData = await response.json();
 
         const activeLots = jsonData.activeLots;
@@ -230,7 +230,7 @@ function filterLots(type) {
         });
 
         const fetchLotDetailsPromises = lotsData.map(lot =>
-            fetch(`https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lot.id}.json`).then(response => response.json())
+            fetch(`https://simnationserver.com:9009/userapi/city/1/i${lot.id}.json`).then(response => response.json())
         );
 
         const lotDetailsArray = await Promise.all(fetchLotDetailsPromises);
@@ -291,7 +291,7 @@ async function displayLotInfo(lotId) {
     consoleContent.dataset.id = lotId; // Set the current Lot ID
     consoleContent.dataset.type = 'lots'; // Set the type to Lots
 
-    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/i${lotId}.json`;
+    const url = `https://simnationserver.com:9009/userapi/city/1/i${lotId}.json`;
 
     try {
         const response = await fetch(url);
@@ -311,7 +311,7 @@ async function displayLotInfo(lotId) {
         };
 
         // Fetch owner's name using owner_id
-        const ownerNameUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`;
+        const ownerNameUrl = `https://simnationserver.com:9009/userapi/avatars/${lotData.owner_id}`;
         const ownerResponse = await fetch(ownerNameUrl);
         const ownerData = ownerResponse.ok ? await ownerResponse.json() : { name: 'Unknown' };
         const ownerName = ownerData.name || 'Unknown';
@@ -322,7 +322,7 @@ async function displayLotInfo(lotId) {
         // Fetch roommates' names (excluding the owner)
         const roommateNames = await Promise.all(
             roommatesWithoutOwner.map(async (roommateId) => {
-                const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
+                const roommateUrl = `https://simnationserver.com:9009/userapi/avatars/${roommateId}`;
                 const roommateResponse = await fetch(roommateUrl);
                 if (!roommateResponse.ok) {
                     console.error(`Failed to fetch roommate with id ${roommateId}`);
@@ -345,6 +345,20 @@ async function displayLotInfo(lotId) {
                 return locationCell && locationCell.textContent === lotId.toString();
             })
             .map(row => row.querySelector('td').textContent.trim()); // Trim each Sim's name
+            
+            
+        // Get total Sims inside from Active Lots table
+        let totalSimsInside = 0;
+        const lotsContainer = document.getElementById('lots');
+        const lotRow = Array.from(lotsContainer.querySelectorAll('tr')).find(row =>
+            row.dataset.lotId === lotId.toString()
+        );
+        if (lotRow) {
+            const simsInsideCell = lotRow.querySelector('td:nth-child(2)');
+            totalSimsInside = parseInt(simsInsideCell?.textContent.trim() || '0', 10);
+        }
+
+        const showHiddenNote = totalSimsInside > knownSims.length;
 
         // Check for favorites in localStorage
         const favorites = JSON.parse(localStorage.getItem('favorites')) || {};
@@ -358,7 +372,7 @@ async function displayLotInfo(lotId) {
                    title="Click to toggle favorite" 
                    onclick="toggleFavorite('lots', '${lotId}', '${lotData.name}', event)"></i>
             </div>
-            <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotId}.png" 
+            <img src="https://simnationserver.com:9009/userapi/city/1/${lotId}.png" 
                  alt="${lotData.name}" 
                  class="console-img">
             <p><strong>Description:</strong></p>
@@ -368,7 +382,7 @@ async function displayLotInfo(lotId) {
             <p><strong>Owner:</strong> ${ownerName}</p>
             <p><strong>Roommates:</strong> ${roommateNames.length > 0 ? roommateNames.join(', ') : 'None'}</p>
             <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.join(', ') : 'None'}</p>
-            <p><em>There may be sims inside with their location hidden.</em></p>
+            ${showHiddenNote ? `<p><em>There are sims inside with their location hidden.</em></p>` : ''}
         `;
     } catch (error) {
         console.error('Failed to fetch lot details:', error);
@@ -396,7 +410,7 @@ async function displayPlayerInfo(avatarId) {
     consoleContent.dataset.type = 'sims'; // Set the type to Sims
 
     const playerImages = await fetchPlayerImages();
-    const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/avatars/${avatarId}`;
+    const url = `https://simnationserver.com:9009/userapi/avatars/${avatarId}`;
 
     try {
         const response = await fetch(url);
@@ -486,6 +500,74 @@ async function displayPlayerInfo(avatarId) {
             setTimeout(tempoSim, 1000);
         }
 
+//Top-paying MOs
+
+const emojiMap = {
+  Pinatas: "🪅",
+  Writers: "📝",
+  Boards: "🧑‍🏫",
+  Easels: "🖌️",
+  Jams: "🍓",
+  Potions: "🧑‍🔬",
+  Phones: "☎️",
+  Gnomes: "⚒️"
+};
+
+async function loadTopPayingMOs() {
+  const proxyUrl = 'https://api.allorigins.win/raw?url=';
+  const targetUrl = 'https://simnationserver.com/citynews/payments.php';
+
+  try {
+    const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+    const data = await response.json();
+
+    const container = document.getElementById('top-paying-mos');
+    const viewAllLink = document.getElementById('viewAllLink');
+    const allMOList = document.getElementById('all-mo-list');
+    const modal = document.getElementById('moModal');
+
+    const entries = Object.entries(data);
+
+    // Top-paying MOs > 139%
+    const topMOs = entries
+      .filter(([, val]) => parseFloat(val) > 1.39)
+      .sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]))
+      .map(([key, val]) => {
+        const pct = (parseFloat(val) * 100).toFixed(0);
+        return `${key} (${pct}%)`;
+      });
+
+    container.firstChild.textContent = `Today's top-paying MOs are: ${topMOs.join(', ')}`;
+    viewAllLink.style.display = "inline";
+
+    // Populate modal with all entries
+    const sorted = entries.sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
+    allMOList.innerHTML = sorted.map(([key, val]) => {
+      const pct = (parseFloat(val) * 100).toFixed(0);
+      const emoji = emojiMap[key];
+      return `<p style="font-size: 1.2em;">${emoji ? emoji + ' ' : ''}<strong>${key}</strong>: ${pct}%</p>`;
+    }).join('');
+
+    // Open modal
+    viewAllLink.onclick = (e) => {
+      e.preventDefault();
+      modal.style.display = "block";
+    };
+
+    // Close modal
+    document.querySelector(".modal .close").onclick = () => {
+      modal.style.display = "none";
+    };
+    window.onclick = (e) => {
+      if (e.target == modal) modal.style.display = "none";
+    };
+
+  } catch (error) {
+    console.error('Error fetching top-paying MOs:', error);
+    document.getElementById('top-paying-mos').textContent = 'Unable to load top-paying MOs.';
+  }
+}
+
 // Toggle search input visibility
 function toggleSearch(type) {
     const simSearchInput = document.getElementById(`${type}-search`);
@@ -495,7 +577,7 @@ function toggleSearch(type) {
     } else {
         simSearchInput.style.display = 'none';
         simSearchInput.value = '';
-        document.getElementById('console-content').innerHTML = '<p style="text-align: center; color: black;">Select a Sim or a Lot to see more information.</p>';
+        document.getElementById('console-content').innerHTML = '<p style="text-align: center; color: #E7E7E7;">Select or search for a Sim or Lot to see more information, or click on an Event to view details.</p>';
     }
 }
 
@@ -504,7 +586,7 @@ async function searchSim(event) {
         const simName = event.target.value.trim();
         if (!simName) return;
 
-        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/avatars/name/${simName}`;
+        const url = `https://simnationserver.com:9009/userapi/city/1/avatars/name/${simName}`;
         const consoleContent = document.getElementById('console-content');
         consoleContent.innerHTML = ''; // Clear existing content
         consoleContent.dataset.id = simName; // Set the current Sim ID (by name)
@@ -583,7 +665,7 @@ async function searchLot(event) {
         const lotName = event.target.value.trim();
         if (!lotName) return;
 
-        const url = `https://web-production-3227.up.railway.app/http://simnationserver.com:9000/userapi/city/1/lots/name/${lotName}`;
+        const url = `https://simnationserver.com:9009/userapi/city/1/lots/name/${lotName}`;
 
         try {
             const response = await fetch(url);
@@ -631,9 +713,19 @@ async function searchLot(event) {
 });
 
             const activeStatus = isActive ? 'Yes' : 'No';
+            
+            const lotRow = Array.from(lotsContainer.querySelectorAll('tr')).find(row =>
+    row.querySelector('td')?.textContent.trim().toLowerCase() === lotData.name.trim().toLowerCase()
+);
+            
+            let totalSimsInside = 0;
+            if (lotRow) {
+                const simsInsideCell = lotRow.querySelector('td:nth-child(2)');
+                totalSimsInside = parseInt(simsInsideCell?.textContent.trim() || '0', 10);
+            }
 
             // Fetch owner's name using owner_id
-            const ownerResponse = await fetch(`https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${lotData.owner_id}`);
+            const ownerResponse = await fetch(`https://simnationserver.com:9009/userapi/avatars/${lotData.owner_id}`);
             const ownerData = ownerResponse.ok ? await ownerResponse.json() : { name: 'Unknown' };
             const ownerName = ownerData.name;
 
@@ -642,7 +734,7 @@ async function searchLot(event) {
                 lotData.roommates
                     .filter(id => id !== lotData.owner_id) // Exclude owner from roommates
                     .map(async (roommateId) => {
-                        const roommateUrl = `https://web-production-3227.up.railway.app/http://simnation.ddns.net:9000/userapi/avatars/${roommateId}`;
+                        const roommateUrl = `https://simnationserver.com:9009/userapi/avatars/${roommateId}`;
                         const roommateResponse = await fetch(roommateUrl);
                         if (!roommateResponse.ok) {
                             console.error(`Failed to fetch roommate with id ${roommateId}`);
@@ -661,6 +753,8 @@ async function searchLot(event) {
                     return locationCell && locationCell.textContent == lotData.location;
                 })
                 .map(row => row.querySelector('td').textContent);
+                
+            const showHiddenNote = totalSimsInside > knownSims.length;
 
                         // Display lot information in Console
             const consoleContent = document.getElementById('console-content');
@@ -671,9 +765,9 @@ async function searchLot(event) {
                        title="Click to toggle favorite" 
                        onclick="toggleFavorite('lots', '${lotData.location}', '${lotData.name}', event)"></i>
                 </div>
-                <img src="https://images.weserv.nl/?url=simnationserver.com:9000/userapi/city/1/${lotData.location}.png" 
-     alt="${lotData.name}" 
-     class="console-img">
+                <img src="https://simnationserver.com:9009/userapi/city/1/${lotData.location}.png" 
+                   alt="${lotData.name}" 
+                   class="console-img">
                 <p><strong>Description:</strong></p>
                 <div class="description-container">${formattedDescription}</div>
                 <p><strong>Lot Type:</strong> ${categoryMapping[lotData.category] || 'Unknown'}</p>
@@ -683,7 +777,7 @@ async function searchLot(event) {
                 <p><strong>Currently Active:</strong> ${activeStatus}</p>
                 ${activeStatus === 'Yes' ? `
         <p><strong>Known Sims Inside:</strong> ${knownSims.length > 0 ? knownSims.map(name => name.trim()).join(', ') : 'None'}</p>
-        <p><em>There may be sims inside with their location hidden.</em></p>
+                    ${showHiddenNote ? `<p><em>There are sims inside with their location hidden.</em></p>` : ''}
     ` : ''}
             `;
         } catch (error) {
