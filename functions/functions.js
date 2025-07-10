@@ -487,7 +487,21 @@ async function displayPlayerInfo(avatarId) {
         document.getElementById('console-content').innerHTML = 'Error loading player details.';
     }
 }
-        
+
+function setClockLabel() {
+    const lang =
+      document.documentElement.lang ||
+      navigator.language ||
+      navigator.userLanguage ||
+      "en";
+
+    const isPortuguese = lang.startsWith("pt");
+    const label = isPortuguese ? "Horário em Eldorado: " : "Time in Eldorado: ";
+
+    document.getElementById("tempoLabel").textContent = label;
+}
+
+
         function tempoSim() {
     const currenttime = new Date();
     const hours = currenttime.getUTCHours();
