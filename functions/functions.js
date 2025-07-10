@@ -523,8 +523,8 @@ function setClockLabel() {
     let tsomins = Math.floor((cycle % 300) / 5);
     if (tsomins < 10) tsomins = "0" + tsomins;
 
-    const formattedTime = `${tsohours}⸱${tsomins} ${suffix}`;
-    document.getElementById("tempoSim").textContent = formattedTime;
+    const formattedTime = `${tsohours}<wbr>:<wbr>${tsomins} <wbr>${suffix}`;
+    document.getElementById("tempoSim").innerHTML = formattedTime;
 
     setTimeout(tempoSim, 1000);
 }
