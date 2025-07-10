@@ -490,14 +490,13 @@ async function displayPlayerInfo(avatarId) {
 
 function setClockLabel() {
     const lang =
-      document.documentElement.lang ||
-      navigator.language ||
-      navigator.userLanguage ||
-      "en";
+        document.documentElement.lang ||
+        navigator.language ||
+        navigator.userLanguage ||
+        "en";
 
     const isPortuguese = lang.startsWith("pt");
     const label = isPortuguese ? "Horário em Eldorado: " : "Time in Eldorado: ";
-
     document.getElementById("tempoLabel").textContent = label;
 }
 
@@ -524,9 +523,8 @@ function setClockLabel() {
     let tsomins = Math.floor((cycle % 300) / 5);
     if (tsomins < 10) tsomins = "0" + tsomins;
 
-    const formattedTime = `${tsohours}h${tsomins} ${suffix}`;
-
-    document.getElementById('tempoSim').textContent = formattedTime;
+    const formattedTime = `${tsohours}:${tsomins} ${suffix}`;
+    document.getElementById("tempoSim").textContent = formattedTime;
 
     setTimeout(tempoSim, 1000);
 }
