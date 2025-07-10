@@ -503,14 +503,14 @@ async function displayPlayerInfo(avatarId) {
 //Top-paying MOs
 
 const emojiMap = {
-  Pinatas: "🪅",
-  Writers: "📝",
-  Boards: "🧑‍🏫",
-  Easels: "🖌️",
-  Jams: "🍓",
-  Potions: "🧑‍🔬",
-  Phones: "☎️",
-  Gnomes: "⚒️"
+  Pinata: "🪅",
+  Writer: "📝",
+  Board: "🧑‍🏫",
+  Easel: "🖌️",
+  Jam: "🍓",
+  Potion: "🧑‍🔬",
+  Phone: "☎️",
+  Gnome: "⚒️"
 };
 
 async function loadTopPayingMOs() {
