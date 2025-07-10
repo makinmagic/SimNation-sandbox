@@ -510,10 +510,14 @@ async function displayPlayerInfo(avatarId) {
     let tsomins = Math.floor((cycle % 300) / 5);
     if (tsomins < 10) tsomins = "0" + tsomins;
 
-    // Use non-standard formatting to avoid translation
     const formattedTime = `${tsohours}h${tsomins} (${suffix})`;
 
-    document.getElementById('tempoSim').innerText = formattedTime;
+    const tempoLabel = document.getElementById('tempoLabel');
+    if (!tempoLabel.textContent) {
+        tempoLabel.textContent = "Time in Eldorado: ";
+    }
+
+    document.getElementById('tempoSim').textContent = formattedTime;
     setTimeout(tempoSim, 1000);
 }
 
@@ -1112,7 +1116,7 @@ function sortByFavorites() {
   rows.forEach(row => tbody.appendChild(row));
 }
         
-document.addEventListener('DOMContentLoaded', () => {
+/* document.addEventListener('DOMContentLoaded', () => {
     // Check if dark mode was previously enabled
     if (localStorage.getItem('darkMode') === 'enabled') {
         document.body.classList.add('dark-mode');
@@ -1132,4 +1136,4 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('darkMode', 'disabled'); // Save preference
         }
     });
-});
+}); */
