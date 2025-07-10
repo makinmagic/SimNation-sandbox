@@ -382,7 +382,7 @@ async function displayLotInfo(lotId) {
   <p><strong>Owner:</strong> <span style="color: #f8f59c;">${ownerName}</span></p>
   <p><strong>Roommates:</strong> ${
     roommateNames.length > 0
-      ? roommateNames.map(name => `<span style="color: ##0061FF;">${name}</span>`).join(', ')
+      ? roommateNames.map(name => `<span style="color: #0061FF;">${name}</span>`).join(', ')
       : 'None'
   }</p>
   <p><strong>Known Sims Inside:</strong> ${
@@ -392,7 +392,7 @@ async function displayLotInfo(lotId) {
           if (trimmed === ownerName) {
             return `<span style="color: #f8f59c;">${trimmed}</span>`;
           } else if (roommateNames.includes(trimmed)) {
-            return `<span style="color: ##0061FF;">${trimmed}</span>`;
+            return `<span style="color: #0061FF;">${trimmed}</span>`;
           } else {
             return trimmed;
           }
@@ -792,7 +792,7 @@ consoleContent.innerHTML = `
   <p><strong>Owner:</strong> <span style="color: #f8f59c;">${ownerName || 'Unknown'}</span></p>
   <p><strong>Roommates:</strong> ${
     roommateNames.length > 0
-      ? roommateNames.map(name => `<span style="color: ##0061FF;">${name}</span>`).join(', ')
+      ? roommateNames.map(name => `<span style="color: #0061FF;">${name}</span>`).join(', ')
       : 'None'
   }</p>
   <p><strong>Currently Active:</strong> ${activeStatus}</p>
@@ -805,7 +805,7 @@ consoleContent.innerHTML = `
               if (trimmed === ownerName) {
                 return `<span style="color: #f8f59c;">${trimmed}</span>`;
               } else if (roommateNames.includes(trimmed)) {
-                return `<span style="color: ##0061FF;">${trimmed}</span>`;
+                return `<span style="color: #0061FF;">${trimmed}</span>`;
               } else {
                 return trimmed;
               }
