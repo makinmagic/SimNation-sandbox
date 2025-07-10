@@ -21,13 +21,13 @@
     SimNation Dashboard
     <img src="https://blogimages6.wordpress.com/wp-content/uploads/2024/11/ursula.png" class="dashboard-icon mirrored" alt="Mirrored Icon">
 </h1>
-    <div id="guideLink" style="text-align: center; font-weight: bold;">
-    <a href="https://simnationguide.com/" target="_blank" title="SimNation Guide">
-        <i class="fa-solid fa-circle-question"></i> Game Guide <i class="fa-solid fa-circle-question"></i>
+	<div id="guideLink" style="text-align: center; font-weight: bold;">
+    <a href="https://simnationserver.com/wiki/" target="_blank" title="SimNation Guide">
+        <i class="fa-solid fa-circle-question"></i> Game Wiki <i class="fa-solid fa-circle-question"></i>
     </a>
 </div>
     <div id="tempoSim" style="font-weight: bold;">Time in Eldorado: Loading time...</div>
-	<div id="top-paying-mos" style="font-weight: bold;">Loading today's money objects...</div>
+	<div id="top-paying-mos" style="font-weight: bold;">Loading top-paying MOs... <a href="#" id="viewAllLink">View All</a></div>
    <!-- <div id="countdown" style="text-align: center; font-weight: bold;">Time left in Icetopia and the Witches NPCs: <span id="time"></span></div> -->
     <div id="currentEvent" style="text-align: center; font-weight: bold;"></div>
     <div id="main-container">
@@ -105,7 +105,7 @@ async function init() {
     // createSnowflakes();
     // launchFireworks();
     tempoSim(); // Start simulation timing
-    loadTopPayingMOs() // Top MOs
+    loadTopPayingMOs();
     // fetchMoneyObject(); // Display the money object
     // updateCountdown();
     await loadOnlinePlayers(); // Load online players
@@ -119,5 +119,15 @@ window.onload = () => {
     setInterval(displayCurrentEvent, 60000); // Update "Current Event" status every minute
 };
 </script>	
+	
+	<!-- Modal -->
+<div id="moModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3 style="margin-top: 15px;">All MO Percentages</h3>
+    <div id="all-mo-list"></div>
+  </div>
+</div>
+	
 </body>
 </html>
