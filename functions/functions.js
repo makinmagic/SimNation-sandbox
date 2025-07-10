@@ -511,7 +511,7 @@ async function displayPlayerInfo(avatarId) {
     if (tsomins < 10) tsomins = "0" + tsomins;
 
     // Use non-standard formatting to avoid translation
-    const formattedTime = `${tsohours}h${tsomins} ${suffix}`;
+    const formattedTime = `${tsohours}h${tsomins} (${suffix})`;
 
     document.getElementById('tempoSim').innerText = formattedTime;
     setTimeout(tempoSim, 1000);
