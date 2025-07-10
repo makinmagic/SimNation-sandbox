@@ -510,14 +510,10 @@ async function displayPlayerInfo(avatarId) {
     let tsomins = Math.floor((cycle % 300) / 5);
     if (tsomins < 10) tsomins = "0" + tsomins;
 
-    const formattedTime = `${tsohours}h${tsomins} (${suffix})`;
-
-    const tempoLabel = document.getElementById('tempoLabel');
-    if (!tempoLabel.textContent) {
-        tempoLabel.textContent = "Time in Eldorado: ";
-    }
+    const formattedTime = `${tsohours}h${tsomins} ${suffix}`;
 
     document.getElementById('tempoSim').textContent = formattedTime;
+
     setTimeout(tempoSim, 1000);
 }
 
